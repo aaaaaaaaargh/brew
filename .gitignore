@@ -1,0 +1,6 @@
+build
+workspace
+ARCHIVE
+doc/doxygen/html
+**/cmake-build-debug
+**/.idea
