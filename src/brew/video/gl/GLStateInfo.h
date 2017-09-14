@@ -12,6 +12,8 @@
 #ifndef BREW_GLSTATEINFO_H
 #define BREW_GLSTATEINFO_H
 
+#include <brew/core/Types.h>
+
 #include <map>
 
 namespace brew {

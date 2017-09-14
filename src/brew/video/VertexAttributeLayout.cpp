@@ -16,4 +16,16 @@ namespace brew {
 VertexAttributeLayout::VertexAttributeLayout()
         : totalSize(0) {}
 
+SizeT VertexAttributeLayout::getAttributeOffset(const VertexAttribute& attrib, SizeT nth) const {
+    auto it = lookup.find(attrib.getHash());
+
+    if(it == lookup.end() || it->second.size() <= nth) {
+        throw NotFoundException("No such attribute.");
+    }
+
+    const Entry& entry = entries.at(it->second[nth]);
+
+    return entry.offset;
+}
+
 } /* namespace brew */

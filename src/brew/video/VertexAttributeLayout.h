@@ -73,7 +73,7 @@ public:
      * @throws NotFoundException if the attribute type does not exist.
      */
     template<typename VertexAttributeT>
-    SizeT getAttributeOffset(SizeT nth = 0) {
+    SizeT getAttributeOffset(SizeT nth = 0) const {
         VertexAttributeT attrib;
         auto it = lookup.find(attrib.getHash());
 
@@ -81,10 +81,19 @@ public:
             throw NotFoundException("No such attribute.");
         }
 
-        Entry& entry = entries[it->second[nth]];
+        const Entry& entry = entries.at(it->second[nth]);
 
         return entry.offset;
     }
+
+    /**
+     * Gets the byte offset of an attribute.
+     * @param attribute The attribute.
+     * @param nth The index if multiple attributes of the same type are defined in the layout.
+     * @return The byte offset of the given attribute type.
+     * @throws NotFoundException if the attribute type does not exist.
+     */
+    SizeT getAttributeOffset(const VertexAttribute& attribute, SizeT nth = 0) const;
 
     /**
      * Gets the size of an attribute.
@@ -92,7 +101,7 @@ public:
      * @return The size of the attribute.
      */
     template<typename VertexAttributeT>
-    SizeT getAttributeSize() {
+    SizeT getAttributeSize() const {
         VertexAttributeT attrib;
         return attrib.getSize();
     }

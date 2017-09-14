@@ -12,7 +12,6 @@
 #ifndef BREW_VERTEXBUFFER_H
 #define BREW_VERTEXBUFFER_H
 
-#include <brew/core/HeapBuffer.h>
 #include <brew/video/VertexAttributeLayout.h>
 #include <brew/video/GPUBuffer.h>
 
@@ -60,7 +59,7 @@ public:
      * @return The value.
      */
     template<typename Attrib>
-    typename Attrib::value_type read(SizeT index, SizeT nth=0) {
+    typename Attrib::value_type read(SizeT index, SizeT nth=0) const {
         SizeT offset = index * layout.getSize() + layout.getAttributeOffset<Attrib>(nth);
         return Attrib::read(*this, offset);
     }
@@ -78,6 +77,13 @@ public:
      */
     inline SizeT getNumVertices() const {
         return numVertices;
+    }
+
+    /**
+     * @return The context handle of this instance.
+     */
+    inline VertexBufferContextHandle& getContextHandle() {
+        return getObject();
     }
 
 private:

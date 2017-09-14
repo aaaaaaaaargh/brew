@@ -9,7 +9,7 @@
  *
  */
 
-#include <brew/video/gl/GLVertexBuffer.h>
+#include <brew/video/gl/GLIndexBuffer.h>
 #include <brew/video/gl/GLExtensions.h>
 #include <iostream>
 
@@ -22,30 +22,30 @@ namespace brew {
 
 using gl = GL30;
 
-GLVertexBufferContextHandle::GLVertexBufferContextHandle(GLContext& context, VertexBuffer& vertexBuffer)
+GLIndexBufferContextHandle::GLIndexBufferContextHandle(GLContext& context, IndexBuffer& indexBuffer)
         : GLObject(context) {
     gl::glGenBuffers(1, &glId);
 
     // The first syncToGPU() will force-request an update, so we do not have to initialize anything here.
 }
 
-GLVertexBufferContextHandle::~GLVertexBufferContextHandle() {
+GLIndexBufferContextHandle::~GLIndexBufferContextHandle() {
     gl::glDeleteBuffers(1, &glId);
 }
 
-void GLVertexBufferContextHandle::bind() {
-    gl::glBindBuffer(GL_ARRAY_BUFFER, glId);
+void GLIndexBufferContextHandle::bind() {
+    gl::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glId);
 }
 
-void GLVertexBufferContextHandle::unbind() {
-    gl::glBindBuffer(GL_ARRAY_BUFFER, 0);
+void GLIndexBufferContextHandle::unbind() {
+    gl::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void GLVertexBufferContextHandle::sync(VertexBuffer& vertexBuffer) {
+void GLIndexBufferContextHandle::sync(IndexBuffer& indexBuffer) {
     // Upload the initial data.
     bind();
 
-    auto& updateData = getGPUBufferUpdateData(vertexBuffer);
+    auto& updateData = getGPUBufferUpdateData(indexBuffer);
 
     // Sync to GPU.
     auto& syncRanges = updateData.syncRanges;
@@ -53,12 +53,12 @@ void GLVertexBufferContextHandle::sync(VertexBuffer& vertexBuffer) {
     if(updateData.syncDirection == GPUBufferUpdateData::SyncDirection::ToGPU) {
         if (syncRanges.empty()) {
             // No sync ranges, upload the whole buffer.
-            gl::glBufferData(GL_ARRAY_BUFFER, vertexBuffer.getSize(), vertexBuffer.getRawPointer(), GL_DYNAMIC_DRAW);
+            gl::glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.getSize(), indexBuffer.getRawPointer(), GL_DYNAMIC_DRAW);
         } else {
             // Sync parts of the buffer.
             for (auto& range : syncRanges) {
-                gl::glBufferSubData(GL_ARRAY_BUFFER, range.from, range.to - range.from,
-                                    vertexBuffer.getRawPointer() + range.from);
+                gl::glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, range.from, range.to - range.from,
+                                    indexBuffer.getRawPointer() + range.from);
             }
         }
 
@@ -66,12 +66,12 @@ void GLVertexBufferContextHandle::sync(VertexBuffer& vertexBuffer) {
     else if(updateData.syncDirection == GPUBufferUpdateData::SyncDirection::FromGPU) {
         if (syncRanges.empty()) {
             // No sync ranges, download the whole buffer.
-            gl::glGetBufferSubData(GL_ARRAY_BUFFER, 0, vertexBuffer.getSize(), vertexBuffer.getRawPointer());
+            gl::glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indexBuffer.getSize(), indexBuffer.getRawPointer());
         } else {
             // Sync parts of the buffer.
             for (auto& range : syncRanges) {
-                gl::glGetBufferSubData(GL_ARRAY_BUFFER, range.from, range.to - range.from,
-                                    vertexBuffer.getRawPointer() + range.from);
+                gl::glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER, range.from, range.to - range.from,
+                                    indexBuffer.getRawPointer() + range.from);
             }
         }
     }

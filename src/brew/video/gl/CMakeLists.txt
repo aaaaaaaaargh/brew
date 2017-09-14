@@ -7,6 +7,8 @@ brew_library(VideoGL
 		GLContext.cpp
 		GLExtensions.cpp
 		GLFrameBuffer.cpp
+		GLIndexBuffer.cpp
+		GLMesh.cpp
 		GLObject.cpp
 		GLShaderVariables.cpp
 		GLTexture.cpp

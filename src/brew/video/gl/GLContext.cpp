@@ -15,6 +15,8 @@
 #include <brew/video/gl/GLShaderVariables.h>
 #include <brew/video/gl/GLExtensions.h>
 #include <brew/video/gl/GLVertexBuffer.h>
+#include <brew/video/gl/GLIndexBuffer.h>
+#include <brew/video/gl/GLMesh.h>
 
 namespace brew {
 
@@ -46,6 +48,19 @@ std::unique_ptr<VertexBufferContextHandle> GLContext::createObject(VertexBuffer&
 void GLContext::updateObject(VertexBuffer& vertexBuffer) {
     auto& handle = static_cast<GLVertexBufferContextHandle&>(*vertexBuffer);
     handle.sync(vertexBuffer);
+}
+
+std::unique_ptr<IndexBufferContextHandle> GLContext::createObject(IndexBuffer& indexBuffer) {
+    return std::make_unique<GLIndexBufferContextHandle>(*this, indexBuffer);
+}
+
+void GLContext::updateObject(IndexBuffer& indexBuffer) {
+    auto& handle = static_cast<GLIndexBufferContextHandle&>(*indexBuffer);
+    handle.sync(indexBuffer);
+}
+
+std::unique_ptr<MeshContextHandle> GLContext::createObject(Mesh& mesh) {
+    return std::make_unique<GLMeshContextHandle>(*this, mesh);
 }
 
 } /* namespace brew */

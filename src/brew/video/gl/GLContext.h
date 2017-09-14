@@ -14,7 +14,6 @@
 
 #include <brew/video/VideoContext.h>
 #include <brew/video/gl/GLStateInfo.h>
-#include "GLStateInfo.h"
 
 namespace brew {
 
@@ -65,6 +64,26 @@ protected:
      * @param vertexBuffer The vertex buffer instance.
      */
     void updateObject(VertexBuffer& vertexBuffer) override;
+
+    /**
+    * Creates an index buffer handle.
+    * @param indexBuffer The index buffer instance.
+    * @return The context handle of the created instance.
+    */
+    std::unique_ptr<IndexBufferContextHandle> createObject(IndexBuffer& indexBuffer) override;
+
+    /**
+     * Updates an index buffer. Syncs from or to the GPU.
+     * @param indexBuffer The index buffer instance.
+     */
+    void updateObject(IndexBuffer& indexBuffer) override;
+
+    /**
+     * Creates a mesh buffer handle.
+     * @param mesh The mesh instance.
+     * @return The context handle of the created instance.
+     */
+    std::unique_ptr<MeshContextHandle> createObject(Mesh& mesh) override;
 
 public:
     /**

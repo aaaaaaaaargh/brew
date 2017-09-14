@@ -17,7 +17,6 @@ using namespace brew;
 
 TEST_F(GLContextTest, VertexBufferCreation) {
     VertexAttributeLayout layout;
-
     layout.add<PositionAttribute>();
 
     auto buffer = context->createVertexBuffer(2, layout);
@@ -41,7 +40,6 @@ TEST_F(GLContextTest, VertexBufferCreation) {
 
 TEST_F(GLContextTest, VertexBufferSync) {
     VertexAttributeLayout layout;
-
     layout.add<PositionAttribute>();
 
     auto buffer = context->createVertexBuffer(1, layout);

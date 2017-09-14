@@ -6,9 +6,12 @@ brew_library(Video
         Color.cpp
         FrameBuffer.cpp
         GPUBuffer.cpp
+        IndexBuffer.cpp
+        Mesh.cpp
         Pixmap.cpp
         RenderTarget.cpp
         ShaderVariables.cpp
+        SubMesh.cpp
         Texture.cpp
         VertexAttribute.cpp
         VertexAttributeLayout.cpp

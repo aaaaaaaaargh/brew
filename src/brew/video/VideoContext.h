@@ -20,6 +20,8 @@
 #include <brew/video/FrameBuffer.h>
 #include <brew/video/ShaderVariables.h>
 #include <brew/video/VertexBuffer.h>
+#include <brew/video/IndexBuffer.h>
+#include <brew/video/Mesh.h>
 
 namespace brew {
 
@@ -28,7 +30,9 @@ class VideoContext :
         private ProxyObjectManager<Texture, TextureContextHandle>,
         private ProxyObjectManager<FrameBuffer, FrameBufferContextHandle>,
         private ProxyObjectManager<ShaderVariables, ShaderVariablesContextHandle>,
-        private ProxyObjectManager<VertexBuffer, VertexBufferContextHandle>
+        private ProxyObjectManager<VertexBuffer, VertexBufferContextHandle>,
+        private ProxyObjectManager<IndexBuffer, IndexBufferContextHandle>,
+        private ProxyObjectManager<Mesh, MeshContextHandle>
 {
 public:
     /**
@@ -85,6 +89,22 @@ public:
      */
     std::shared_ptr<VertexBuffer> createVertexBuffer(SizeT numVertices,
                                                      const VertexAttributeLayout& layout);
+
+    /**
+     * Creates a new index buffer.
+     * @param numIndices The number of indices in this buffer.
+     * @return The created index buffer.
+     */
+    std::shared_ptr<IndexBuffer> createIndexBuffer(SizeT numIndices);
+
+    /**
+     * Creates a new mesh.
+     * @param vertexBuffer The vertex buffer to use for the mesh.
+     * @param indexBuffer The index buffer to use for the mesh.
+     * @return The created mesh.
+     */
+    std::shared_ptr<Mesh> createMesh(std::shared_ptr<VertexBuffer> vertexBuffer,
+                                     std::shared_ptr<IndexBuffer> indexBuffer);
 
 };
 
