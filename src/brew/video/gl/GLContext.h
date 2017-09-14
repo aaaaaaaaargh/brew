@@ -25,7 +25,7 @@ public:
      */
     GLContext();
 
-public:
+protected:
     /**
      * Creates a frame buffer handle.
      * @param frameBuffer The frame buffer instance.
@@ -52,6 +52,19 @@ public:
      * @param shaderVariables The shader variables instance.
      */
     void updateObject(ShaderVariables& shaderVariables) override;
+
+    /**
+     * Creates a vertex buffer handle.
+     * @param vertexBuffer The vertex buffer instance.
+     * @return The context handle of the created instance.
+     */
+    std::unique_ptr<VertexBufferContextHandle> createObject(VertexBuffer& vertexBuffer) override;
+
+    /**
+     * Updates a vertex buffer. Syncs from or to the GPU.
+     * @param vertexBuffer The vertex buffer instance.
+     */
+    void updateObject(VertexBuffer& vertexBuffer) override;
 
 public:
     /**

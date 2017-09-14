@@ -17,6 +17,7 @@ void VideoContext::processPendingOperations() {
     ProxyObjectManager<Texture, TextureContextHandle>::processAllObjects();
     ProxyObjectManager<FrameBuffer, FrameBufferContextHandle>::processAllObjects();
     ProxyObjectManager<ShaderVariables, ShaderVariablesContextHandle>::processAllObjects();
+    ProxyObjectManager<VertexBuffer, VertexBufferContextHandle>::processAllObjects();
 }
 
 std::shared_ptr<Texture> VideoContext::createTexture(SizeT width,
@@ -38,9 +39,15 @@ VideoContext::createFrameBuffer(SizeT width, SizeT height, u8 numColorAttachment
     );
 }
 
-std::shared_ptr<ShaderVariables> VideoContext::createShaderVariables(const ShaderVariablesDefinition& definition) {
+std::shared_ptr<ShaderVariables> VideoContext::createShaderVariables(const ShaderVariablesLayout& definition) {
     return ProxyObjectManager<ShaderVariables, ShaderVariablesContextHandle>::allocateObject(
             definition
+    );
+}
+
+std::shared_ptr<VertexBuffer> VideoContext::createVertexBuffer(SizeT numVertices, const VertexAttributeLayout& layout) {
+    return ProxyObjectManager<VertexBuffer, VertexBufferContextHandle>::allocateObject(
+            numVertices, layout
     );
 }
 

@@ -17,24 +17,24 @@
 using namespace brew;
 
 TEST(ShaderVariables, GetUndefinedVariable) {
-    ShaderVariablesDefinition def;
+    ShaderVariablesLayout def;
     EXPECT_THROW(def.getDefinition("foo"), NotFoundException);
 }
 
 TEST(ShaderVariables, DefineAndGetVariable) {
-    ShaderVariablesDefinition def;
+    ShaderVariablesLayout def;
 
     def.define<u8>("foo", 3);
 
     auto& varDef = def.getDefinition("foo");
 
-    EXPECT_EQ( ShaderVariablesDefinition::VarType::u8, varDef.getType() );
+    EXPECT_EQ( ShaderVariablesLayout::VarType::u8, varDef.getType() );
     EXPECT_EQ( "foo", varDef.getName() );
     EXPECT_EQ( 3, varDef.getNumElements() );
 }
 
 TEST(ShaderVariables, CorrectDefinitionOrder) {
-    ShaderVariablesDefinition def;
+    ShaderVariablesLayout def;
 
     def.define<u8>("foo");
     def.define<u8>("bar");
@@ -46,7 +46,7 @@ TEST(ShaderVariables, CorrectDefinitionOrder) {
 }
 
 TEST(ShaderVariables, DefinitionOrderAfterUndefine) {
-    ShaderVariablesDefinition def;
+    ShaderVariablesLayout def;
 
     def.define<u8>("foo");
     def.define<u8>("bar");
@@ -61,17 +61,17 @@ TEST(ShaderVariables, DefinitionOrderAfterUndefine) {
 }
 
 TEST(ShaderVariables, RedefineWithDifferentType) {
-    ShaderVariablesDefinition def;
+    ShaderVariablesLayout def;
 
     def.define<u8>("foo");
-    EXPECT_EQ(ShaderVariablesDefinition::VarType::u8, def.getDefinition("foo").getType());
+    EXPECT_EQ(ShaderVariablesLayout::VarType::u8, def.getDefinition("foo").getType());
 
     def.define<Real>("foo");
-    EXPECT_EQ(ShaderVariablesDefinition::VarType::Real, def.getDefinition("foo").getType());
+    EXPECT_EQ(ShaderVariablesLayout::VarType::Real, def.getDefinition("foo").getType());
 }
 
 TEST(ShaderVariables, DefineArrayByDimension) {
-    ShaderVariablesDefinition def;
+    ShaderVariablesLayout def;
 
     def.define<u8>("foo", 32);
 
@@ -79,7 +79,7 @@ TEST(ShaderVariables, DefineArrayByDimension) {
 }
 
 TEST(ShaderVariables, IterateOverVariables) {
-    ShaderVariablesDefinition def;
+    ShaderVariablesLayout def;
 
     def.define<u8>("a", 0);
     def.define<u8>("b", 1);
@@ -94,10 +94,10 @@ TEST(ShaderVariables, IterateOverVariables) {
 }
 
 TEST(ShaderVariables, DefineComplexTypes) {
-    ShaderVariablesDefinition def;
+    ShaderVariablesLayout def;
 
     def.define<Texture>("foo");
 
     EXPECT_NO_THROW(def.getDefinition("foo"));
-    EXPECT_EQ(ShaderVariablesDefinition::VarType::Texture, def.getDefinition("foo").getType());
+    EXPECT_EQ(ShaderVariablesLayout::VarType::Texture, def.getDefinition("foo").getType());
 }

@@ -9,7 +9,12 @@ public:
     SizeT objectValue = 0;
 };
 
-class FooProxy : public ProxyObject<FooObject> {
+class Bar {
+public:
+    SizeT bar = 0;
+};
+
+class FooProxy : public ProxyObject<FooObject>, public Bar {
 public:
     SizeT proxyValue = 0;
     SizeT* proxyDroppedCount = nullptr;
@@ -19,6 +24,12 @@ public:
         if(proxyDroppedCount) {
             (*proxyDroppedCount)++;
         }
+    }
+
+public:
+    void requestUpdate(bool force) {
+        ProxyObject::requestUpdate(force);
+        bar = 1234;
     }
 };
 
@@ -108,5 +119,19 @@ TEST(ProxyManager, DropProxies) {
     manager.processAllObjects();
 
     EXPECT_EQ(100, proxyDroppedCount);
+}
+
+TEST(ProxyManager, UpdateProxy) {
+    FooManager manager;
+
+    auto proxy = manager.createOne();
+
+    proxy->requestUpdate(true);
+
+    manager.processObject();
+
+    EXPECT_TRUE(proxy->isReady());
+    EXPECT_NO_THROW(proxy->operator*());
+    EXPECT_EQ(1234, proxy->bar);
 }
 

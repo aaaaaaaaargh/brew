@@ -14,6 +14,7 @@
 #include <brew/video/gl/GLTexture.h>
 #include <brew/video/gl/GLShaderVariables.h>
 #include <brew/video/gl/GLExtensions.h>
+#include <brew/video/gl/GLVertexBuffer.h>
 
 namespace brew {
 
@@ -36,6 +37,15 @@ std::unique_ptr<ShaderVariablesContextHandle> GLContext::createObject(ShaderVari
 void GLContext::updateObject(ShaderVariables& shaderVariables) {
     auto& handle = static_cast<GLShaderVariablesContextHandle&>(*shaderVariables);
     handle.syncToGPU(shaderVariables, false);
+}
+
+std::unique_ptr<VertexBufferContextHandle> GLContext::createObject(VertexBuffer& vertexBuffer) {
+    return std::make_unique<GLVertexBufferContextHandle>(*this, vertexBuffer);
+}
+
+void GLContext::updateObject(VertexBuffer& vertexBuffer) {
+    auto& handle = static_cast<GLVertexBufferContextHandle&>(*vertexBuffer);
+    handle.sync(vertexBuffer);
 }
 
 } /* namespace brew */

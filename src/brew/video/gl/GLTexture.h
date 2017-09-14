@@ -27,7 +27,7 @@ public:
      * @param context The GL context.
      * @param texture The texture to create the handle from.
      */
-    explicit GLTextureContextHandle(GLContext& context, Texture& texture);
+    GLTextureContextHandle(GLContext& context, Texture& texture);
 
     /**
      * Destructor.

@@ -16,10 +16,26 @@
 #include <memory>
 #include <mutex>
 #include <queue>
-
+#include <iostream>
 namespace brew {
 
-template<typename ProxyT, typename ObjectT> class ProxyObjectManager;
+/**
+ * The abstract proxy base class.
+ */
+class AbstractProxyObject {};
+
+template<typename ObjectT> class ProxyObject;
+
+/**
+ * The abstract proxy object manager base class.
+ */
+class AbstractProxyObjectManager {
+private:
+    template<typename ObjectT> friend class ProxyObject;
+
+protected:
+    virtual void requestUpdate(std::shared_ptr<AbstractProxyObject> obj) = 0;
+};
 
 /**
  * The proxy object base class. Although it is not strongly required, this should be
@@ -27,10 +43,7 @@ template<typename ProxyT, typename ObjectT> class ProxyObjectManager;
  * @tparam ObjectT The object type.
  */
 template<typename ObjectT>
-class ProxyObject {
-private:
-    typedef ProxyObjectManager<ProxyObject<ObjectT>, ObjectT> ManagerType;
-
+class ProxyObject : public AbstractProxyObject, public std::enable_shared_from_this<ProxyObject<ObjectT> > {
 public:
     /**
      * Creates a new proxy object.
@@ -59,25 +72,54 @@ public:
     }
 
     /**
+     * @return Whether an update update is requested.
+     */
+    bool isUpdateRequested() const {
+        return updateRequested;
+    }
+
+    /**
      * @return The owner of this object.
      */
-    ManagerType& getOwner() const {
+    AbstractProxyObjectManager& getOwner() const {
         return *manager;
+    }
+
+    /**
+     * Lockable implementation. Locks the object.
+     */
+    void lock() {
+        mutex.lock();
+    }
+
+    /**
+     * Lockable implementation. Unlocks the object.
+     */
+    void unlock() {
+        mutex.unlock();
+    }
+
+    /**
+     * Lockable implementation. Attempts to lock the object.
+     * @return Whether the object could be locked.
+     */
+    bool try_lock() {
+        return mutex.try_lock();
     }
 
 protected:
     /**
      * Requests an update of the object through the manager.
+     * @param force Whether to force to update the object even if it's not ready yet.
      */
-    void requestUpdate() {
-        std::lock_guard<std::mutex> lk(manager->objectsToProcessMutex);
-
-        if(updateRequested || !isReady()) {
+    void requestUpdate(bool force = false) {
+        if(updateRequested || (!force && !isReady())) {
             return;
         }
 
         updateRequested = true;
-        manager->objectsToUpdate.push(std::ref(*this));
+
+        manager->requestUpdate(this->shared_from_this());
     }
 
     /**
@@ -90,7 +132,8 @@ protected:
 private:
     template<typename ManagerProxyT, typename ManagerObjectT> friend class ProxyObjectManager;
     std::unique_ptr<ObjectT> object;
-    ManagerType* manager;
+    std::mutex mutex;
+    AbstractProxyObjectManager* manager;
     bool updateRequested;
     bool objectReady;
 };
@@ -108,7 +151,7 @@ private:
  * @tparam ObjectT The real object.
  */
 template<typename ProxyT, typename ObjectT>
-class ProxyObjectManager {
+class ProxyObjectManager : public AbstractProxyObjectManager {
 private:
     template<typename ProxyObjectT> friend class ProxyObject;
 
@@ -122,12 +165,13 @@ public:
     template<typename ... Args>
     std::shared_ptr<ProxyT> allocateObject(Args&& ... args) {
         auto obj = std::make_shared<ProxyT>(args...);
-        obj->manager = reinterpret_cast<ProxyObjectManager<ProxyObject<ObjectT>, ObjectT>*>(this);
+        obj->manager = this;
 
         std::lock_guard<std::mutex> lk(objectsToProcessMutex);
+
         objectsToInitialize.push(obj);
 
-        return std::move(obj);
+        return obj;
     }
 
 public:
@@ -141,12 +185,22 @@ public:
         if(objectsToInitialize.empty()) {
 
             if(!objectsToUpdate.empty()) {
-                auto& proxy = objectsToUpdate.front();
+                auto proxy = objectsToUpdate.front();
 
-                updateObject(proxy);
+                std::unique_lock<ProxyObject<ObjectT> > lk(*proxy, std::try_to_lock);
 
-                objectsToUpdate.pop();
-                objectsToProcessMutex.unlock();
+                if(lk.owns_lock()) {
+                    objectsToUpdate.pop();
+                    objectsToProcessMutex.unlock();
+
+                    updateObject(*proxy);
+
+                    proxy->updateRequested = false;
+                }
+                else {
+                    objectsToProcessMutex.unlock();
+                }
+
                 return false;
             }
 
@@ -155,11 +209,18 @@ public:
         }
 
         auto proxy = objectsToInitialize.front();
-        objectsToInitialize.pop();
-        objectsToProcessMutex.unlock();
+        std::unique_lock<ProxyT> lk(*proxy, std::try_to_lock);
 
-        proxy->object = createObject(*proxy);
-        proxy->objectReady = true;
+        if(lk.owns_lock()) {
+            objectsToInitialize.pop();
+            objectsToProcessMutex.unlock();
+
+            proxy->object = createObject(*proxy);
+            proxy->objectReady = true;
+        }
+        else {
+            objectsToProcessMutex.unlock();
+        }
 
         return true;
     }
@@ -171,6 +232,7 @@ public:
         while(processObject());
     }
 
+protected:
     /**
      * Creates an object instance for a proxy.
      * @param proxyObject The proxy to create the object for.
@@ -186,10 +248,17 @@ public:
         proxyObject.object = createObject(proxyObject);
     }
 
+protected:
+    void requestUpdate(std::shared_ptr<AbstractProxyObject> proxyObject) override {
+        std::lock_guard<std::mutex> lk(objectsToProcessMutex);
+
+        objectsToUpdate.push(std::static_pointer_cast<ProxyT>(proxyObject));
+    }
+
 private:
     std::mutex objectsToProcessMutex;
     std::queue<std::shared_ptr<ProxyT> > objectsToInitialize;
-    std::queue<std::reference_wrapper<ProxyT> > objectsToUpdate;
+    std::queue<std::shared_ptr<ProxyT> > objectsToUpdate;
 };
 
 } /* namespace brew */

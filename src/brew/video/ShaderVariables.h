@@ -32,7 +32,7 @@ namespace brew {
  * The ShadersVariablesDefinition class is required to initialize the shader variables layout before
  * creating them through the driver.
  */
-class ShaderVariablesDefinition {
+class ShaderVariablesLayout {
 public:
     /**
      * The type of a variable.
@@ -50,11 +50,11 @@ public:
      * This class holds information about defined variables.
      */
     class VarDefinition {
-        friend class ShaderVariablesDefinition;
+        friend class ShaderVariablesLayout;
     private:
-        explicit VarDefinition(const ShaderVariablesDefinition& owner);
+        explicit VarDefinition(const ShaderVariablesLayout& owner);
 
-        const ShaderVariablesDefinition& owner;
+        const ShaderVariablesLayout& owner;
         VarType type;
         String name;
         SizeT numElements;
@@ -93,7 +93,7 @@ public:
      */
     class const_iterator {
     public:
-        const_iterator(const ShaderVariablesDefinition& owner, std::vector<String>::const_iterator orderedIterator);
+        const_iterator(const ShaderVariablesLayout& owner, std::vector<String>::const_iterator orderedIterator);
 
     public:
         typedef const VarDefinition& element_type;
@@ -109,7 +109,7 @@ public:
         bool operator != (const const_iterator& other) const;
 
     private:
-        const ShaderVariablesDefinition& owner;
+        const ShaderVariablesLayout& owner;
         std::vector<String>::const_iterator orderedIterator;
     };
 
@@ -131,7 +131,7 @@ public:
      * @param numElements The number of array elements or 1 if the variable is not an array.
      * @return This instance for chaining.
      */
-    ShaderVariablesDefinition& define(VarType type, const String& name, SizeT numElements=1);
+    ShaderVariablesLayout& define(VarType type, const String& name, SizeT numElements=1);
 
     /**
      * Defines a new array variable.
@@ -142,7 +142,7 @@ public:
      * @throws InvalidArgumentException in case the native type is not supported.
      */
     template<typename T>
-    ShaderVariablesDefinition& define(const String& name, SizeT numElements=1) {
+    ShaderVariablesLayout& define(const String& name, SizeT numElements=1) {
         return define(getType<T>(), name, numElements);
     }
 
@@ -176,24 +176,24 @@ private:
     std::map<String, VarDefinition> lookup;
 };
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<u8>();
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<u16>();
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<u32>();
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<u64>();
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<u8>();
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<u16>();
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<u32>();
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<u64>();
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<s8>();
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<s16>();
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<s32>();
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<s64>();
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<s8>();
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<s16>();
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<s32>();
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<s64>();
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<Real>();
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Real>();
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<Vec2>();
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<Vec3>();
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<Vec4>();
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Vec2>();
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Vec3>();
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Vec4>();
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<Matrix4>();
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<Texture>();
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Matrix4>();
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Texture>();
 
 /**
  * A structure containing information about the value changes since the last GPU sync operation.
@@ -232,10 +232,10 @@ public:
      * Creates a new shader variables set.
      * @param definition The variables definition.
      */
-    explicit ShaderVariables(const ShaderVariablesDefinition& definition);
+    explicit ShaderVariables(const ShaderVariablesLayout& definition);
 
 public:
-    typedef ShaderVariablesDefinition::VarType VarType;
+    typedef ShaderVariablesLayout::VarType VarType;
 
     /**
      * Sets a shader variable.
@@ -246,7 +246,7 @@ public:
      */
     template<typename T>
     void set(const String& name, T value) {
-        VarType type = ShaderVariablesDefinition::getType<T>();
+        VarType type = ShaderVariablesLayout::getType<T>();
 
         const auto& definition = this->definition.getDefinition(name);
 
@@ -274,7 +274,7 @@ public:
      */
     template<typename T>
     void set(const String& name, std::initializer_list<T> values) {
-        VarType type = ShaderVariablesDefinition::getType<T>();
+        VarType type = ShaderVariablesLayout::getType<T>();
 
         const auto& definition = this->definition.getDefinition(name);
 
@@ -305,12 +305,12 @@ public:
     /**
      * @return The shader variables definition.
      */
-    inline const ShaderVariablesDefinition& getDefinition() const {
+    inline const ShaderVariablesLayout& getDefinition() const {
         return definition;
     }
 
 private:
-    ShaderVariablesDefinition definition;
+    ShaderVariablesLayout definition;
 
     friend class ShaderVariablesContextHandle;
     ShaderVariablesUpdateData updateData;

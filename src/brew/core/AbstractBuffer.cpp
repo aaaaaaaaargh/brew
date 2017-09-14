@@ -14,8 +14,7 @@
 
 namespace brew {
 
-void AbstractBuffer::copyTo(AbstractBuffer& target, const SizeT& targetOffset,
-                            const SizeT& srcOffset, const SizeT& length) const {
+void AbstractBuffer::copyTo(AbstractBuffer& target, SizeT targetOffset, SizeT srcOffset, SizeT length) const {
   SizeT len = length;
   if (len == 0) {
     if (srcOffset >= getSize()) {
@@ -50,16 +49,14 @@ void AbstractBuffer::copyTo(AbstractBuffer& target, const SizeT& targetOffset,
   delete[] buffer;
 }
 
-void AbstractBuffer::write(const Byte* data, const SizeT& offset,
-                           const SizeT& len) {
+void AbstractBuffer::write(const Byte* data, SizeT offset, SizeT len) {
   if (offset + len > size) {
     throw BufferOverflowException("Buffer overflow while writing.");
   }
   return onWrite(data, offset, len);
 }
 
-SizeT AbstractBuffer::read(Byte* dest, const SizeT& offset,
-                           const SizeT& len) const {
+SizeT AbstractBuffer::read(Byte* dest, SizeT offset, SizeT len) const {
   if (offset + len > size) {
     throw BufferOverflowException("Buffer overflow while reading.");
   }

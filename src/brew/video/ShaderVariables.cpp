@@ -15,15 +15,15 @@
 
 namespace brew {
 
-ShaderVariablesDefinition::VarDefinition::VarDefinition(const ShaderVariablesDefinition& owner)
+ShaderVariablesLayout::VarDefinition::VarDefinition(const ShaderVariablesLayout& owner)
         : owner(owner){}
 
-SizeT ShaderVariablesDefinition::VarDefinition::getIndex() const {
+SizeT ShaderVariablesLayout::VarDefinition::getIndex() const {
     auto it = std::find(owner.orderedLookup.begin(), owner.orderedLookup.end(), name);
     return static_cast<SizeT>(it - owner.orderedLookup.begin());
 }
 
-ShaderVariablesDefinition& ShaderVariablesDefinition::define(ShaderVariablesDefinition::VarType type,
+ShaderVariablesLayout& ShaderVariablesLayout::define(ShaderVariablesLayout::VarType type,
                                                              const String& name,
                                                              SizeT numElements) {
     auto orderedLookupIterator = std::find(orderedLookup.begin(), orderedLookup.end(), name);
@@ -45,7 +45,7 @@ ShaderVariablesDefinition& ShaderVariablesDefinition::define(ShaderVariablesDefi
     return *this;
 }
 
-void ShaderVariablesDefinition::undefine(const String& name) {
+void ShaderVariablesLayout::undefine(const String& name) {
     auto it = lookup.find(name);
 
     if(it == lookup.end()) {
@@ -58,7 +58,7 @@ void ShaderVariablesDefinition::undefine(const String& name) {
     lookup.erase(it);
 }
 
-const ShaderVariablesDefinition::VarDefinition& ShaderVariablesDefinition::getDefinition(const String& name) const {
+const ShaderVariablesLayout::VarDefinition& ShaderVariablesLayout::getDefinition(const String& name) const {
     auto it = lookup.find(name);
 
     if(it == lookup.end()) {
@@ -68,102 +68,102 @@ const ShaderVariablesDefinition::VarDefinition& ShaderVariablesDefinition::getDe
     return it->second;
 }
 
-ShaderVariablesDefinition::const_iterator ShaderVariablesDefinition::begin() const {
+ShaderVariablesLayout::const_iterator ShaderVariablesLayout::begin() const {
     return const_iterator(*this, orderedLookup.begin());
 }
 
-ShaderVariablesDefinition::const_iterator ShaderVariablesDefinition::end() const {
+ShaderVariablesLayout::const_iterator ShaderVariablesLayout::end() const {
     return const_iterator(*this, orderedLookup.end());
 }
 
-ShaderVariablesDefinition::const_iterator::const_iterator(const ShaderVariablesDefinition& owner,
+ShaderVariablesLayout::const_iterator::const_iterator(const ShaderVariablesLayout& owner,
                                                           std::vector<String>::const_iterator orderedIterator)
 : owner(owner), orderedIterator(orderedIterator) {}
 
-ShaderVariablesDefinition::const_iterator::element_type ShaderVariablesDefinition::const_iterator::operator*() const {
+ShaderVariablesLayout::const_iterator::element_type ShaderVariablesLayout::const_iterator::operator*() const {
     return owner.getDefinition(*orderedIterator);
 }
 
-ShaderVariablesDefinition::const_iterator& ShaderVariablesDefinition::const_iterator::operator++() {
+ShaderVariablesLayout::const_iterator& ShaderVariablesLayout::const_iterator::operator++() {
     ++orderedIterator;
     return *this;
 }
 
-ShaderVariablesDefinition::const_iterator& ShaderVariablesDefinition::const_iterator::operator++(int) {
+ShaderVariablesLayout::const_iterator& ShaderVariablesLayout::const_iterator::operator++(int) {
     orderedIterator++;
     return *this;
 }
 
 
-ShaderVariablesDefinition::const_iterator ShaderVariablesDefinition::const_iterator::operator+(SizeT increment) const {
+ShaderVariablesLayout::const_iterator ShaderVariablesLayout::const_iterator::operator+(SizeT increment) const {
     return const_iterator(owner, orderedIterator+increment);
 }
 
-bool ShaderVariablesDefinition::const_iterator::operator==(const ShaderVariablesDefinition::const_iterator& other) const {
+bool ShaderVariablesLayout::const_iterator::operator==(const ShaderVariablesLayout::const_iterator& other) const {
     return orderedIterator == other.orderedIterator;
 }
 
-bool ShaderVariablesDefinition::const_iterator::operator!=(const ShaderVariablesDefinition::const_iterator& other) const {
+bool ShaderVariablesLayout::const_iterator::operator!=(const ShaderVariablesLayout::const_iterator& other) const {
     return orderedIterator != other.orderedIterator;
 }
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<u8>() {
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<u8>() {
     return VarType::u8;
 }
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<u16>() {
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<u16>() {
     return VarType::u16;
 }
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<u32>() {
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<u32>() {
     return VarType::u32;
 }
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<u64>() {
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<u64>() {
     return VarType::u64;
 }
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<s8>() {
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<s8>() {
     return VarType::s8;
 }
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<s16>() {
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<s16>() {
     return VarType::s16;
 }
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<s32>() {
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<s32>() {
     return VarType::s32;
 }
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<s64>() {
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<s64>() {
     return VarType::s64;
 }
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<Real>() {
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Real>() {
     return VarType::Real;
 }
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<Vec2>() {
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Vec2>() {
     return VarType::Vec2;
 }
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<Vec3>() {
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Vec3>() {
     return VarType::Vec3;
 }
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<Vec4>() {
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Vec4>() {
     return VarType::Vec4;
 }
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<Matrix4>() {
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Matrix4>() {
     return VarType::Matrix4;
 }
 
-template<> ShaderVariablesDefinition::VarType ShaderVariablesDefinition::getType<Texture>() {
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Texture>() {
     return VarType::Texture;
 }
 
-ShaderVariables::ShaderVariables(const ShaderVariablesDefinition& definition)
+ShaderVariables::ShaderVariables(const ShaderVariablesLayout& definition)
 : definition(definition) {}
 
 ShaderVariablesUpdateData& ShaderVariablesContextHandle::getShaderVariablesUpdateData(ShaderVariables& shaderVariables) {

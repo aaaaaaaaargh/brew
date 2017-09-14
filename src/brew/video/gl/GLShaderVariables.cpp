@@ -66,7 +66,7 @@ void GLShaderVariablesContextHandle::syncToGPU(ShaderVariables& vars, bool perfo
 }
 
 void GLShaderVariablesContextHandle::writeValue(
-        const ShaderVariablesDefinition::VarDefinition& def,
+        const ShaderVariablesLayout::VarDefinition& def,
         ShaderVariablesUpdateData::AbstractValue& value) {
 
     VariableLayout& layout = this->layout[def.getName()];
@@ -181,7 +181,7 @@ void GLShaderVariablesContextHandle::initialize(ShaderVariables& vars) {
     buffer = std::make_unique<HeapBuffer>(dataSize);
 }
 
-SizeT GLShaderVariablesContextHandle::getTypeSize(const ShaderVariablesDefinition::VarDefinition& varDef) {
+SizeT GLShaderVariablesContextHandle::getTypeSize(const ShaderVariablesLayout::VarDefinition& varDef) {
     SizeT typeSize;
 
     switch(varDef.getType()) {
@@ -235,6 +235,76 @@ SizeT GLShaderVariablesContextHandle::getTypeSize(const ShaderVariablesDefinitio
     }
 
     return typeSize;
+}
+
+String GLShaderVariablesContextHandle::generateUniformDeclarationSource(
+        const ShaderVariablesLayout& definition,
+        const String& blockName
+) {
+    StringStream result;
+    result << "layout (std140) uniform ";
+    result << blockName;
+    result << "{";
+
+    for(auto& var : definition) {
+        String typeDeclaration;
+        SizeT arrayDims = var.getNumElements();
+
+        switch(var.getType()) {
+            case ShaderVariables::VarType::u8:
+            case ShaderVariables::VarType::u16:
+            case ShaderVariables::VarType::u32:
+            case ShaderVariables::VarType::u64:
+                typeDeclaration = "int";
+                break;
+            case ShaderVariables::VarType::s8:
+            case ShaderVariables::VarType::s16:
+            case ShaderVariables::VarType::s32:
+            case ShaderVariables::VarType::s64:
+                typeDeclaration = "uint";
+                break;
+            case ShaderVariables::VarType::Real:
+                typeDeclaration = "float";
+                break;
+            case ShaderVariables::VarType::Vec2:
+                typeDeclaration = "float";
+                arrayDims *= 2;
+                break;
+            case ShaderVariables::VarType::Vec3:
+                typeDeclaration = "float";
+                arrayDims *= 3;
+                break;
+            case ShaderVariables::VarType::Vec4:
+                typeDeclaration = "float";
+                arrayDims *= 4;
+                break;
+            case ShaderVariables::VarType::Matrix4:
+                typeDeclaration = "float";
+                arrayDims *= 16;
+                break;
+            case ShaderVariables::VarType::Texture:
+                typeDeclaration = "sampler2D";
+                break;
+        }
+
+        StringStream ss;
+
+        ss << typeDeclaration;
+
+        ss << " " << var.getName();
+
+        if(arrayDims > 1) {
+            ss << "[" << arrayDims << "]";
+        }
+
+        ss << ";";
+
+        result << ss.str();
+    }
+
+    result << "};";
+
+    return result.str();
 }
 
 } /* namespace brew */

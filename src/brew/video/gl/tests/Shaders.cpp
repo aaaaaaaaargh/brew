@@ -17,7 +17,7 @@
 using namespace brew;
 
 TEST_F(GLContextTest, SetShaderVars) {
-    ShaderVariablesDefinition shaderDef;
+    ShaderVariablesLayout shaderDef;
     shaderDef.define<Real>("foo");
 
     auto shaderVars = context->createShaderVariables(shaderDef);
@@ -34,7 +34,7 @@ TEST_F(GLContextTest, SetShaderVars) {
 }
 
 TEST_F(GLContextTest, UpdateShaderVars) {
-    ShaderVariablesDefinition shaderDef;
+    ShaderVariablesLayout shaderDef;
     shaderDef.define<Real>("foo");
 
     auto shaderVars = context->createShaderVariables(shaderDef);
@@ -54,7 +54,7 @@ TEST_F(GLContextTest, UpdateShaderVars) {
 }
 
 TEST_F(GLContextTest, CreateShaderVarsBufferWithSingleValue) {
-    ShaderVariablesDefinition shaderDef;
+    ShaderVariablesLayout shaderDef;
     shaderDef.define<Real>("foo");
 
     auto shaderVars = context->createShaderVariables(shaderDef);
@@ -74,7 +74,7 @@ TEST_F(GLContextTest, CreateShaderVarsBufferWithSingleValue) {
 }
 
 TEST_F(GLContextTest, CreateShaderVarsBufferWithArray) {
-    ShaderVariablesDefinition shaderDef;
+    ShaderVariablesLayout shaderDef;
     shaderDef.define<Real>("foo", 3);
 
     auto shaderVars = context->createShaderVariables(shaderDef);
@@ -98,7 +98,7 @@ TEST_F(GLContextTest, CreateShaderVarsBufferWithArray) {
 }
 
 TEST_F(GLContextTest, UpdateShaderVarsBuffer) {
-    ShaderVariablesDefinition shaderDef;
+    ShaderVariablesLayout shaderDef;
     shaderDef.define<Real>("foo");
 
     auto shaderVars = context->createShaderVariables(shaderDef);
@@ -121,4 +121,13 @@ TEST_F(GLContextTest, UpdateShaderVarsBuffer) {
     EXPECT_FLOAT_EQ(3456, result);
 }
 
+TEST_F(GLContextTest, ShaderInterfaceBlockGeneration) {
+    ShaderVariablesLayout shaderDef;
+    shaderDef.define<Real>("foo");
+    shaderDef.define<Vec3>("bar");
+    shaderDef.define<Texture>("baz");
 
+    String expected = "layout (std140) uniform quux{float foo;float bar[3];sampler2D baz;};";
+
+    EXPECT_EQ(expected, GLShaderVariablesContextHandle::generateUniformDeclarationSource(shaderDef, "quux"));
+}

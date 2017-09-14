@@ -27,7 +27,7 @@ public:
      * @param frameBuffer The frame buffer instance.
      * @throws RuntimeException in case there was an error creating the frame buffer.
      */
-    explicit GLFrameBufferContextHandle(GLContext& context, const FrameBuffer& frameBuffer);
+    GLFrameBufferContextHandle(GLContext& context, const FrameBuffer& frameBuffer);
 
     /**
      * Destructor.

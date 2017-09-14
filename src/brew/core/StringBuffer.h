@@ -38,8 +38,24 @@ public:
 	}
 
 protected:
-	virtual void onWrite(const Byte* data, const SizeT& offset, const SizeT& len);
-	virtual SizeT onRead(Byte* dest, const SizeT& offset, const SizeT& len) const;
+	/**
+     * Writes data into the buffer.
+     * @param data A pointer to the data to write.
+     * @param offset The offset to write the data to.
+     * @param len The size of the data.
+     */
+	void onWrite(const Byte* data, SizeT offset,
+				 SizeT len) override;
+
+	/**
+     * Reads data from the buffer.
+     * @param dest A raw pointer to the destination.
+     * @param offset The offset to read from.
+     * @param len The size of the data.
+     * @return The number of bytes read.
+     */
+	SizeT onRead(Byte* dest, SizeT offset,
+				 SizeT len) const override;
 
 private:
 	String string;

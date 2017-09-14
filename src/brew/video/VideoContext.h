@@ -19,6 +19,7 @@
 #include <brew/video/Texture.h>
 #include <brew/video/FrameBuffer.h>
 #include <brew/video/ShaderVariables.h>
+#include <brew/video/VertexBuffer.h>
 
 namespace brew {
 
@@ -26,7 +27,8 @@ class VideoContext :
         public Object,
         private ProxyObjectManager<Texture, TextureContextHandle>,
         private ProxyObjectManager<FrameBuffer, FrameBufferContextHandle>,
-        private ProxyObjectManager<ShaderVariables, ShaderVariablesContextHandle>
+        private ProxyObjectManager<ShaderVariables, ShaderVariablesContextHandle>,
+        private ProxyObjectManager<VertexBuffer, VertexBufferContextHandle>
 {
 public:
     /**
@@ -73,7 +75,17 @@ public:
      * @param definition The shader variables definition.
      * @return The created shader variables.
      */
-    std::shared_ptr<ShaderVariables> createShaderVariables(const ShaderVariablesDefinition& definition);
+    std::shared_ptr<ShaderVariables> createShaderVariables(const ShaderVariablesLayout& definition);
+
+    /**
+     * Creates a new vertex buffer.
+     * @param numVertices The number of vertices in this buffer.
+     * @param layout The vertex attribute layout of this buffer.
+     * @return The created vertex buffer.
+     */
+    std::shared_ptr<VertexBuffer> createVertexBuffer(SizeT numVertices,
+                                                     const VertexAttributeLayout& layout);
+
 };
 
 } /* namespace brew */

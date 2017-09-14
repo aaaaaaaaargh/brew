@@ -5,10 +5,14 @@ project(BrewVideo)
 brew_library(Video
         Color.cpp
         FrameBuffer.cpp
+        GPUBuffer.cpp
         Pixmap.cpp
         RenderTarget.cpp
         ShaderVariables.cpp
         Texture.cpp
+        VertexAttribute.cpp
+        VertexAttributeLayout.cpp
+        VertexBuffer.cpp
         VideoCanvas.cpp
         VideoContext.cpp
 )

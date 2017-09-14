@@ -25,12 +25,23 @@ public:
      * @param context The GL context.
      * @param vars The shader variables to create the handle from.
      */
-    explicit GLShaderVariablesContextHandle(GLContext& context, ShaderVariables& vars);
+    GLShaderVariablesContextHandle(GLContext& context, ShaderVariables& vars);
 
     /**
      * Destructor.
      */
     ~GLShaderVariablesContextHandle();
+
+public:
+    /**
+     * Creates the source code for the uniform declarations used in the given shader variable set.
+     * @param shaderVariables The shader variables.
+     * @return The generated source code.
+     */
+    static String generateUniformDeclarationSource(
+            const ShaderVariablesLayout& definition,
+            const String& blockName = "shaderVars"
+    );
 
 public:
     /**
@@ -69,9 +80,9 @@ private:
 private:
     void initialize(ShaderVariables& vars);
 
-    static SizeT getTypeSize(const ShaderVariablesDefinition::VarDefinition& varDef);
+    static SizeT getTypeSize(const ShaderVariablesLayout::VarDefinition& varDef);
 
-    void writeValue(const ShaderVariablesDefinition::VarDefinition& def,
+    void writeValue(const ShaderVariablesLayout::VarDefinition& def,
                     ShaderVariablesUpdateData::AbstractValue& value);
 };
 

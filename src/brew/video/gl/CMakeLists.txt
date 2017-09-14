@@ -10,6 +10,7 @@ brew_library(VideoGL
 		GLObject.cpp
 		GLShaderVariables.cpp
 		GLTexture.cpp
+		GLVertexBuffer.cpp
 		)
 
 brew_link_libraries(GL)

@@ -27,7 +27,7 @@ namespace brew {
  */
 class AbstractBuffer {
  public:
-  explicit AbstractBuffer(const SizeT& numBytes) : size(numBytes) {}
+  explicit AbstractBuffer(SizeT numBytes) : size(numBytes) {}
   virtual ~AbstractBuffer() = default;
 
  protected:
@@ -41,8 +41,7 @@ class AbstractBuffer {
    * @param offset The offset to write the data to.
    * @param len The size of the data.
    */
-  virtual void onWrite(const Byte* data, const SizeT& offset,
-                       const SizeT& len) = 0;
+  virtual void onWrite(const Byte* data, SizeT offset, SizeT len) = 0;
 
   /**
    * Reads data from the buffer.
@@ -51,12 +50,25 @@ class AbstractBuffer {
    * @param len The size of the data.
    * @return The number of bytes read.
    */
-  virtual SizeT onRead(Byte* dest, const SizeT& offset,
-                       const SizeT& len) const = 0;
+  virtual SizeT onRead(Byte* dest, SizeT offset, SizeT len) const = 0;
 
  public:
-  void write(const Byte* data, const SizeT& offset, const SizeT& len);
-  SizeT read(Byte* dest, const SizeT& offset, const SizeT& len) const;
+  /**
+   * Writes data into the buffer.
+   * @param data A pointer to the data to write.
+   * @param offset The offset to write the data to.
+   * @param len The size of the data.
+   */
+  void write(const Byte* data, SizeT offset, SizeT len);
+
+  /**
+   * Reads data from the buffer.
+   * @param dest A raw pointer to the destination.
+   * @param offset The offset to read from.
+   * @param len The size of the data.
+   * @return The number of bytes read.
+   */
+  SizeT read(Byte* dest, SizeT offset, SizeT len) const;
 
   /**
    * Writes an object of type T to this buffer.
@@ -65,7 +77,7 @@ class AbstractBuffer {
    * @param num The number of T objects to write.
    */
   template <typename T>
-  void write(T* dest, const SizeT& offset, const SizeT& num = 1) {
+  void write(T* dest, SizeT offset, SizeT num = 1) {
     const SizeT n = sizeof(T) * num;
     if (offset + n > size)
       throw std::overflow_error("Buffer overflow while writing");
@@ -79,7 +91,7 @@ class AbstractBuffer {
    * @param num The number of T objects to read.
    */
   template <typename T>
-  SizeT read(T* dest, const SizeT& offset, const SizeT& num = 1) const {
+  SizeT read(T* dest, SizeT offset, SizeT num = 1) const {
     const SizeT n = sizeof(T) * num;
     if (offset + n > size)
       throw std::overflow_error("Buffer overflow while reading");
@@ -89,7 +101,7 @@ class AbstractBuffer {
   /**
    * @return the finite size of this buffer.
    */
-  inline const SizeT& getSize() const { return size; }
+  inline SizeT getSize() const { return size; }
 
   /**
    * Attempts to copy this buffer into another buffer. Uses an internal buffer
@@ -100,8 +112,8 @@ class AbstractBuffer {
    * @param srcOffset The source offset to read from.
    * @param len The number of bytes to copy or 0 to write the entire buffer.
    */
-  void copyTo(AbstractBuffer& target, const SizeT& targetOffset = 0,
-              const SizeT& srcOffset = 0, const SizeT& len = 0) const;
+  void copyTo(AbstractBuffer& target, SizeT targetOffset = 0,
+              SizeT srcOffset = 0, SizeT len = 0) const;
 
  private:
   SizeT size;
