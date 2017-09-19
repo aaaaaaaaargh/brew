@@ -11,7 +11,6 @@
 
 #include <brew/video/gl/GLVertexBuffer.h>
 #include <brew/video/gl/GLExtensions.h>
-#include <iostream>
 
 // Nasty X11 declarations.
 #ifdef None

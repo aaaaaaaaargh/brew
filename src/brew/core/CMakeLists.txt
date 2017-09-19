@@ -10,6 +10,7 @@ brew_library(Core
         Log.cpp
         String.cpp
         StringBuffer.cpp
+        SystemInfo.cpp
 )
 
 add_subdirectory(tests)

@@ -13,9 +13,6 @@
 #include <brew/video/gl/GLExtensions.h>
 #include <brew/video/gl/GLTexture.h>
 
-#include <iostream>
-#include <cstring>
-
 namespace brew {
 
 using gl = GL30;

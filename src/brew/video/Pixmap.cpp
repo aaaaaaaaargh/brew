@@ -13,7 +13,6 @@
 #include <brew/math/Math.h>
 
 #include <cstring>
-#include <iostream>
 
 namespace brew
 {

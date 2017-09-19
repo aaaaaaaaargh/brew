@@ -8,7 +8,7 @@
  *  Created on: 06.09.17
  *
  */
-#include <iostream>
+
 #ifndef BREW_RENDERTARGET_H
 #define BREW_RENDERTARGET_H
 
