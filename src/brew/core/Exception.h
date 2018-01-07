@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: 04.09.17
  *
@@ -84,6 +84,14 @@ public:
  * A special class for invalid argument exceptions.
  */
 class InvalidArgumentException : public Exception {
+public:
+    using Exception::Exception;
+};
+
+/**
+ * A special class for unsupported operations.
+ */
+class NotSupportedException : public Exception {
 public:
     using Exception::Exception;
 };

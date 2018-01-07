@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: 02.01.2015
  *
@@ -12,7 +12,7 @@
 #ifndef BREW_PLANE_H
 #define BREW_PLANE_H
 
-#include <brew/core/Vec3.h>
+#include <brew/math/Vec3.h>
 
 namespace brew
 {
@@ -53,7 +53,7 @@ public:
 	 * @param normal facing direction of the plane
 	 * @param d plane size
 	 */
-	Plane(const Vec3& normal, const Real& d);
+	Plane(const Vec3& normal, Real d);
 	
 	/**
 	 * Creates a new plane from a normal and a point in space.
@@ -91,7 +91,7 @@ public:
 	 * @param nz The normal z axis.
 	 * @param d The distance from origin.
 	 */
-	void set(const Real& nx, const Real& ny, const Real& nz, const Real& d);
+	void set(Real nx, Real ny, Real nz, Real d);
 
 	/**
 	 * Sets this plane from a point in space and a given normal vector.
@@ -109,7 +109,7 @@ public:
 	 * @param norY The normal y direction.
 	 * @param norZ The normal z direction.
 	 */
-	inline void set(const Real& pointX, const Real& pointY, const Real& pointZ, const Real& norX, const Real& norY, const Real& norZ)
+	inline void set(Real pointX, Real pointY, Real pointZ, Real norX, Real norY, Real norZ)
 	{
 		set(Vec3(pointX, pointY, pointZ), Vec3(norX, norY, norZ));
 	}
@@ -124,18 +124,20 @@ public:
 	}
 
 	/**
+	 * Gets the side that is facing toward the given point.
 	 * @param point the point to check.
 	 * @return the facing side of the plane. See PlaneSide for further description.
 	 */
 	PlaneSide getFacingSide(const Vec3& point) const;
 	
 	/**
+	 * Gets the side that is facing toward the given point.
 	 * @param x x component of the point to check.
 	 * @param y y component of the point to check.
 	 * @param z z component of the point to check.
 	 * @return the facing side of the plane. See PlaneSide for further description.
 	 */
-	inline PlaneSide facingSide(const Real& x, const Real&y, const Real& z) const
+	inline PlaneSide getFacingSide(Real x, Real y, Real z) const
 	{
 		return getFacingSide(Vec3(x,y,z));
 	}

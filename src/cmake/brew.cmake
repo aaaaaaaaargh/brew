@@ -7,6 +7,9 @@ option(BREW_BUILD_STATIC_LIBRARY "Create static libraries instead of shared ones
 # Initializes the build system. Sets input and target directories as well as global macros.
 # This macro is usually called once before anything else in the build process happens.
 macro(brew_init)
+    # Set the flag indicating that this is a BREW build.
+    set_property(GLOBAL PROPERTY _THIS_IS_A_BREW_BUILD 1)
+
     # Detect the BREW include directory.
     get_filename_component(BREW_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR} ABSOLUTE)
     set(BREW_INCLUDE_DIR "${BREW_INCLUDE_DIR}" CACHE INTERNAL "")
@@ -77,8 +80,10 @@ macro(brew_library name)
   set(sources "${ARGN}")
 
   if(BREW_BUILD_MONOLITHIC)
-    # Non-monolithic build
+    # Monolithic build
     add_library(${target} OBJECT ${sources})
+
+    message(STATUS "Adding component ${name} to monolithic library.")
 
     set_property(GLOBAL APPEND PROPERTY
       _BREW_MONOLITHIC_SOURCES

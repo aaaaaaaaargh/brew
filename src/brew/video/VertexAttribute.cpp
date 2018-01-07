@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: 13.09.17
  *
@@ -89,4 +89,11 @@ VertexAttribute::hash_type PositionAttribute::getHash() const {
     return std::hash<String>{}("position");
 }
 
+VertexAttribute::hash_type NormalAttribute::getHash() const {
+    return std::hash<String>{}("normal");
+}
+
+VertexAttribute::hash_type TexCoordAttribute::getHash() const {
+    return std::hash<String>{}("texCoord");
+}
 } /* namespace brew */

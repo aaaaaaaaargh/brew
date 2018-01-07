@@ -5,11 +5,14 @@ project(BrewVideoGL)
 brew_library(VideoGL
 		GLCanvas.cpp
 		GLContext.cpp
+		GLGPUExecutionContext.cpp
 		GLExtensions.cpp
 		GLFrameBuffer.cpp
 		GLIndexBuffer.cpp
 		GLMesh.cpp
 		GLObject.cpp
+		GLShader.cpp
+		GLShaderProgram.cpp
 		GLShaderVariables.cpp
 		GLTexture.cpp
 		GLVertexBuffer.cpp

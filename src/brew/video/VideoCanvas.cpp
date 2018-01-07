@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: 06.09.17
  *
@@ -15,7 +15,7 @@ namespace brew {
 
 
 VideoCanvas::VideoCanvas(VideoContext& ctx) :
-        width(0), height(0), inited(false), context(ctx) {
+        RenderTarget(ctx), width(0), height(0), inited(false) {
 
 }
 
@@ -57,7 +57,7 @@ void VideoCanvas::renderFrame() {
 
     onBeginFrame();
 
-    context.processPendingOperations();
+    getContext().processPendingOperations();
 
     {
         RenderEvent e(*this, RenderEvent::Type::BeginFrame);

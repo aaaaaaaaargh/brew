@@ -3,14 +3,14 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: 02.01.2015
  *
  */
 
-#include <brew/core/Plane.h>
-#include <brew/core/Math.h>
+#include <brew/math/Plane.h>
+#include <brew/math/Math.h>
 
 namespace brew
 {
@@ -26,7 +26,7 @@ Plane::Plane(const Plane& other) :
 {
 }
 
-Plane::Plane(const Vec3& normal, const Real& d) :
+Plane::Plane(const Vec3& normal, Real d) :
 		normal(normal), d(d)
 {
 	this->normal.normalize();
@@ -61,7 +61,7 @@ void Plane::set(const Vec3& point1, const Vec3& point2,
 	d = -point1.dot(normal);
 }
 
-void Plane::set(const Real& nx, const Real& ny, const Real& nz, const Real& d)
+void Plane::set(Real nx, Real ny, Real nz, Real d)
 {
 	normal.set(nx, ny, nz);
 	normal.normalize();

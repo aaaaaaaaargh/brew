@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: Feb 11, 2016
  *
@@ -171,7 +171,7 @@ Matrix4& Matrix4::operator*=(const Matrix4& other) {
     return *this;
 }
 
-void Matrix4::operator*(Vec3& v) const {
+void Matrix4::apply(Vec3& v) const {
     Real w = 1.0f / (v.x * a[0 * 4 + 3] + v.y * a[1 * 4 + 3] + v.z * a[2 * 4 + 3] + a[3 * 4 + 3]);
 
     v.set(
@@ -181,7 +181,7 @@ void Matrix4::operator*(Vec3& v) const {
     );
 }
 
-void Matrix4::operator*(Vec4& v) const {
+void Matrix4::apply(Vec4& v) const {
     v.set(
             (v.x * a[0 * 4 + 0] + v.y * a[1 * 4 + 0] + v.z * a[2 * 4 + 0] + v.w * a[3 * 4 + 0]),
             (v.x * a[0 * 4 + 1] + v.y * a[1 * 4 + 1] + v.z * a[2 * 4 + 1] + v.w * a[3 * 4 + 1]),

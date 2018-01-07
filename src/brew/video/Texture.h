@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: 08.09.17
  *
@@ -87,7 +87,7 @@ class Texture;
  * A struct of data that is only of one-time use for the allocation of a texture.
  */
 struct TextureAllocationData {
-    std::unique_ptr<Pixmap> pixmap;
+    std::shared_ptr<Pixmap> pixmap;
     Color initialColor;
 };
 
@@ -131,7 +131,7 @@ public:
      * @param format The texture format.
      * @param filtering The texture filtering.
      */
-    Texture(std::unique_ptr<Pixmap> pixmap,
+    Texture(std::shared_ptr<Pixmap> pixmap,
             TextureFormat format,
             TextureFiltering filtering,
             u8 numMipMaps

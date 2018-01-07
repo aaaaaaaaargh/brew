@@ -3,13 +3,14 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: 08.09.17
  *
  */
 
 #include <brew/video/gl/GLShaderVariables.h>
+#include <brew/video/gl/GLShaderProgram.h>
 #include <brew/video/gl/GLExtensions.h>
 #include <brew/video/gl/GLTexture.h>
 
@@ -37,7 +38,7 @@ void GLShaderVariablesContextHandle::syncToGPU(ShaderVariables& vars, bool perfo
         return;
     }
 
-    bind();
+    gl::glBindBuffer(GL_UNIFORM_BUFFER, glId);
 
     for(auto& value : updates.values) {
         // Copy the updated value to our buffer.
@@ -135,25 +136,63 @@ void GLShaderVariablesContextHandle::writeValue(
             break;
         }
         case ShaderVariables::VarType::Texture:{
-            auto& val = static_cast<ShaderVariablesUpdateData::Value<Texture>&>(value);
-            SizeT i=0;
+            auto& val = static_cast<ShaderVariablesUpdateData::Value<std::shared_ptr<Texture> >&>(value);
+
+            boundTextures[def.getName()] = val.elements;
+            auto& ids = boundTextureIds[def.getName()];
+            ids.clear();
+
+            // Keep track of the GL ids.
             for(auto& tex : val.elements) {
-                auto& glTex = static_cast<GLTextureContextHandle&>(tex.getContextHandle());
+                auto& glTex = static_cast<GLTextureContextHandle&>(tex->getContextHandle());
                 GLuint id = glTex.getGLId();
-                buffer->write(&id, layout.offset, sizeof(GLuint) * i);
-                i++;
+                ids.push_back(id);
             }
             break;
         }
     }
 }
 
-void GLShaderVariablesContextHandle::bind() {
+void GLShaderVariablesContextHandle::bind(const GLShaderProgramContextHandle& shaderProgram) {
     gl::glBindBuffer(GL_UNIFORM_BUFFER, glId);
+
+    u8 textureUnit = 0;
+
+    for(auto& name : boundTextureNames) {
+        std::vector<GLint> activeTextureUnits;
+
+        for(auto& tex : boundTextures[name]) {
+            auto& glTex = static_cast<GLTextureContextHandle&>(tex->getContextHandle());
+            glTex.bind(textureUnit);
+            activeTextureUnits.push_back(textureUnit++);
+        }
+
+        auto& ids = boundTextureIds[name];
+
+        auto locationIterator = uniformLookup.find(name);
+        if(locationIterator == uniformLookup.end()) {
+            auto loc = gl::glGetUniformLocation(shaderProgram.getGLId(), name.c_str());
+
+            uniformLookup.insert(std::make_pair(name, loc));
+            locationIterator = uniformLookup.find(name);
+        }
+
+        auto location = locationIterator->second;
+
+        gl::glUniform1iv(location, ids.size(), &activeTextureUnits[0]);
+    }
 }
 
 void GLShaderVariablesContextHandle::unbind() {
     gl::glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    u8 textureUnit = 0;
+
+    for(auto& name : boundTextureNames) {
+        for (auto& tex : boundTextures[name]) {
+            GLTextureContextHandle::unbind(getContext(), textureUnit++);
+        }
+    }
 }
 
 void GLShaderVariablesContextHandle::initialize(ShaderVariables& vars) {
@@ -164,6 +203,12 @@ void GLShaderVariablesContextHandle::initialize(ShaderVariables& vars) {
     layout.clear();
 
     for(auto& varDef : definition) {
+        if(varDef.getType() == ShaderVarType::Texture) {
+            // Sampler2D is not allowed in uniform blocks, so we need to keep them out of the buffer.
+            boundTextureNames.push_back(varDef.getName());
+            continue;
+        }
+
         SizeT typeSize = getTypeSize(varDef);
 
         VariableLayout layout;
@@ -243,9 +288,21 @@ String GLShaderVariablesContextHandle::generateUniformDeclarationSource(
     result << blockName;
     result << "{";
 
+    StringStream samplers;
+
     for(auto& var : definition) {
-        String typeDeclaration;
         SizeT arrayDims = var.getNumElements();
+
+        if(var.getType() == ShaderVariables::VarType::Texture) {
+            samplers << "uniform sampler2D " << var.getName() << ";";
+
+            if(arrayDims > 1) {
+                samplers << "[" << arrayDims << "]";
+            }
+            continue;
+        }
+
+        String typeDeclaration;
 
         switch(var.getType()) {
             case ShaderVariables::VarType::u8:
@@ -276,11 +333,7 @@ String GLShaderVariablesContextHandle::generateUniformDeclarationSource(
                 arrayDims *= 4;
                 break;
             case ShaderVariables::VarType::Matrix4:
-                typeDeclaration = "float";
-                arrayDims *= 16;
-                break;
-            case ShaderVariables::VarType::Texture:
-                typeDeclaration = "sampler2D";
+                typeDeclaration = "mat4";
                 break;
         }
 
@@ -300,6 +353,7 @@ String GLShaderVariablesContextHandle::generateUniformDeclarationSource(
     }
 
     result << "};";
+    result << samplers.str();
 
     return result.str();
 }

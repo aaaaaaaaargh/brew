@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: 06.09.17
  *
@@ -15,9 +15,14 @@
 #include <brew/core/EventSource.h>
 #include <brew/core/Rect.h>
 
+#include <brew/video/Renderable.h>
+
+#include <functional>
+
 namespace brew {
 
 class RenderTarget;
+class VideoContext;
 
 /**
  * An class for render events.
@@ -78,7 +83,12 @@ public:
 class RenderTarget {
 	BREW_EVENTSOURCE(RenderListener, RenderEvent);
 
-	virtual ~RenderTarget() = default;
+public:
+    /**
+     * Creates a new render target.
+     * @param context The context bound to this target.
+     */
+    explicit RenderTarget(VideoContext& context);
 
 public:
 	/**
@@ -101,6 +111,23 @@ public:
 	 */
 	virtual SizeT getHeight() const = 0;
 
+    /**
+     * @return the context bound to this render target.
+     */
+    VideoContext& getContext() {
+        return context;
+    }
+
+	/**
+     * @return the context bound to this render target.
+     */
+	const VideoContext& getContext() const {
+		return context;
+	}
+
+
+private:
+    VideoContext& context;
 };
 
 } /* namespace brew */

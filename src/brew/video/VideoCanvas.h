@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: Aug 20, 2016
  *
@@ -42,20 +42,6 @@ public:
      */
     SizeT getHeight() const override {
         return height;
-    }
-
-    /**
-     * @return the context bound to this canvas
-     */
-    VideoContext& getContext() {
-        return context;
-    }
-
-    /**
-     * @return a const reference to the context bound to this canvas
-     */
-    const VideoContext& getContext() const {
-        return context;
     }
 
 public:
@@ -118,7 +104,6 @@ protected:
 
 protected:
     SizeT width, height;
-    VideoContext& context;
     bool inited;
 };
 

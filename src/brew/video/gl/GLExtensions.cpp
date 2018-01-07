@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: Birth of universe.
  *
@@ -26,6 +26,9 @@ void GLExtensions::init() {
 #ifdef GL_VERSION_3_0
 	GL30::init();
 #endif
+#ifdef GL_VERSION_3_1
+    GL31::init();
+#endif
 #ifdef GL_VERSION_3_2
 	GL32::init();
 #endif
@@ -34,9 +37,11 @@ void GLExtensions::init() {
 template<typename PFNPROC>
 void initExtension(const String& name, PFNPROC& ptr) {
 	if (ptr != nullptr) {
-		//	throwAndLog("GLExtensions", VideoException("GL extension '" + name + "' is already initialized!"));
+		throw RuntimeException("GL extension '" + name + "' is already initialized!");
 	}
+
 	ptr = (PFNPROC) GLExtensions::getProcAddress(name);
+
 	if (ptr == nullptr) {
 		throw RuntimeException("Unable to load GL extension '" + name + "'");
 	}
@@ -137,6 +142,11 @@ void GL20::glDeleteProgram(GLuint program) {
 PFNGLATTACHSHADERPROC _glAttachShader = nullptr;
 void GL20::glAttachShader(GLuint program, GLuint shader) {
 	_glAttachShader(program, shader);
+}
+
+PFNGLDETACHSHADERPROC _glDetachShader = nullptr;
+void GL20::glDetachShader(GLuint program, GLuint shader) {
+	_glDetachShader(program, shader);
 }
 
 PFNGLLINKPROGRAMPROC _glLinkProgram = nullptr;
@@ -242,6 +252,7 @@ void GL20::init() {
 	INIT_EXTENSION(glCreateProgram);
 	INIT_EXTENSION(glDeleteProgram);
 	INIT_EXTENSION(glAttachShader);
+	INIT_EXTENSION(glDetachShader);
 	INIT_EXTENSION(glLinkProgram);
 	INIT_EXTENSION(glGetProgramiv);
 	INIT_EXTENSION(glGetProgramInfoLog);
@@ -365,6 +376,31 @@ void GL30::init() {
 }
 
 #endif // GL_VERSION_3_0
+
+#ifdef GL_VERSION_3_1
+
+PFNGLGETUNIFORMBLOCKINDEXPROC _glGetUniformBlockIndex;
+GLuint GL31::glGetUniformBlockIndex(GLuint program, const GLchar* uniformBlockName) {
+	return _glGetUniformBlockIndex(program, uniformBlockName);
+}
+
+PFNGLUNIFORMBLOCKBINDINGPROC _glUniformBlockBinding;
+void GL31::glUniformBlockBinding(GLuint program, GLuint blockIndex, GLuint bindingPoint) {
+	_glUniformBlockBinding(program, blockIndex, bindingPoint);
+}
+
+PFNGLBINDBUFFERBASEPROC _glBindBufferBase;
+void GL31::glBindBufferBase(GLenum target, GLuint index, GLuint buffer) {
+    _glBindBufferBase(target, index, buffer);
+}
+
+void GL31::init() {
+	INIT_EXTENSION(glGetUniformBlockIndex);
+	INIT_EXTENSION(glUniformBlockBinding);
+    INIT_EXTENSION(glBindBufferBase);
+}
+
+#endif // GL_VERSION_3_1
 
 #ifdef GL_VERSION_3_2
 

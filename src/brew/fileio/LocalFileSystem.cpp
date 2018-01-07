@@ -17,7 +17,7 @@
 #include <fstream>
 #include <dirent.h>
 #include <fcntl.h>
-#include <zconf.h>
+#include <unistd.h>
 
 namespace brew {
 

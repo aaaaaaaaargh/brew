@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: Aug 21, 2016
  *
@@ -32,8 +32,10 @@ void GLXCanvas::onInit() {
 }
 
 void GLXCanvas::onDrop() {
-	if (glxContext != nullptr)
-		glXDestroyContext(display, glxContext);
+	if (glxContext != nullptr) {
+        glXDestroyContext(display, glxContext);
+    }
+    
 	glxContext = nullptr;
 	X11Canvas::onDrop();
 }

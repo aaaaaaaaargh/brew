@@ -127,6 +127,20 @@ bool HeapDirectory::isDirectory(const String& file) const
 	return false;
 }
 
+void HeapDirectory::addFile(const String& file, const std::vector<brew::Byte>& data) {
+	if(exists(file)) {
+		throw IOException("File '" + path+ VirtualFileSystem::directory_separator + file + "' already exists.");
+	}
+
+	heap_data.insert(std::make_pair(file, data));
+}
+
+void HeapDirectory::addFile(const String& file, const String& data) {
+    std::vector<brew::Byte> binaryData(data.begin(), data.end());
+
+    addFile(file, binaryData);
+}
+
 HeapFile::HeapFile(std::vector<Byte>& buffer) :
 		buffer(buffer)
 {

@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: 12.09.17
  *
@@ -13,7 +13,7 @@
 
 namespace brew {
 
-IndexBuffer::IndexBuffer(SizeT numIndices)
+IndexBuffer::IndexBuffer(index_type numIndices)
 : GPUBuffer(numIndices * sizeof(index_type)), numIndices(numIndices) {
 
 }

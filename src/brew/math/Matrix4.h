@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: Feb 11, 2016
  *
@@ -181,7 +181,7 @@ public:
      * Multiplies a vector with this matrix.
      * @param vector The vector to multiply.
      */
-	void operator * (Vec3& vector) const;
+	void apply(Vec3& vector) const;
 
     /**
      * Multiplies a vector with this matrix.
@@ -190,7 +190,7 @@ public:
      */
     inline Vec3 operator * (const Vec3& other) const {
         Vec3 result(other);
-        operator*(result);
+		apply(result);
         return result;
     }
 
@@ -198,7 +198,7 @@ public:
      * Multiplies a vector with this matrix.
      * @param vector The vector to multiply.
      */
-	void operator * (Vec4& vector) const;
+	void apply(Vec4& vector) const;
 
     /**
      * Multiplies a vector with this matrix.
@@ -207,7 +207,7 @@ public:
      */
     inline Vec4 operator * (const Vec4& other) const {
         Vec4 result(other);
-        operator*(result);
+        apply(result);
         return result;
     }
 

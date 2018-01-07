@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: 08.09.17
  *
@@ -27,10 +27,10 @@ Texture::Texture(SizeT width, SizeT height,
     allocationData->initialColor = initialColor;
 }
 
-Texture::Texture(std::unique_ptr<Pixmap> pixmap, TextureFormat format, TextureFiltering filtering, u8 numMipMaps)
-        : width(width), height(height), format(format), filtering(filtering), numMipMaps(numMipMaps) {
+Texture::Texture(std::shared_ptr<Pixmap> pixmap, TextureFormat format, TextureFiltering filtering, u8 numMipMaps)
+        : width(pixmap->getWidth()), height(pixmap->getHeight()), format(format), filtering(filtering), numMipMaps(numMipMaps) {
     allocationData = std::make_unique<TextureAllocationData>();
-    allocationData->pixmap = std::move(pixmap);
+    allocationData->pixmap = pixmap;
 }
 
 std::unique_ptr<TextureAllocationData>& TextureContextHandle::getTextureAllocationData(Texture& texture) {

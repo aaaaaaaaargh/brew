@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: 13.09.17
  *
@@ -55,11 +55,11 @@ GLMeshContextHandle::~GLMeshContextHandle() {
 }
 
 void GLMeshContextHandle::bind() {
-
+    gl::glBindVertexArray(glId);
 }
 
 void GLMeshContextHandle::unbind() {
-
+    gl::glBindVertexArray(0);
 }
 
 } /* namespace brew */

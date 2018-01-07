@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: 11.09.17
  *
@@ -15,12 +15,20 @@
 
 namespace brew {
 
+const String ShaderVariables::BuiltInCombinedCameraMatrix = "combinedCamera";
+
 ShaderVariablesLayout::VarDefinition::VarDefinition(const ShaderVariablesLayout& owner)
         : owner(owner){}
 
 SizeT ShaderVariablesLayout::VarDefinition::getIndex() const {
     auto it = std::find(owner.orderedLookup.begin(), owner.orderedLookup.end(), name);
     return static_cast<SizeT>(it - owner.orderedLookup.begin());
+}
+
+ShaderVariablesLayout::ShaderVariablesLayout(bool registerBuiltInVars) {
+    if(registerBuiltInVars) {
+        define<Matrix4>(ShaderVariables::BuiltInCombinedCameraMatrix);
+    }
 }
 
 ShaderVariablesLayout& ShaderVariablesLayout::define(ShaderVariablesLayout::VarType type,
@@ -159,7 +167,7 @@ template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Matrix4
     return VarType::Matrix4;
 }
 
-template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Texture>() {
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<std::shared_ptr<Texture> >() {
     return VarType::Texture;
 }
 

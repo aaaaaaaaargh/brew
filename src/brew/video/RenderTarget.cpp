@@ -3,13 +3,14 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: Sep 7, 2016
  *
  */
 
 #include <brew/video/RenderTarget.h>
+#include "VideoContext.h"
 
 namespace brew {
 
@@ -30,6 +31,11 @@ void RenderListener::onRenderEvent(const RenderEvent& evt) {
 		onResize(evt);
 		break;
 	}
+}
+
+RenderTarget::RenderTarget(VideoContext& context)
+: context(context) {
+
 }
 
 } /* namespace brew */

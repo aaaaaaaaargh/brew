@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 random arts
  *
  *  Created on: 11.09.17
  *
@@ -29,22 +29,24 @@
 namespace brew {
 
 /**
+ * The type of a shader variable.
+ */
+enum class ShaderVarType {
+    u8, u16, u32, u64,
+    s8, s16, s32, s64,
+    Real,
+    Matrix4,
+    Vec2, Vec3, Vec4,
+    Texture
+};
+
+/**
  * The ShadersVariablesDefinition class is required to initialize the shader variables layout before
  * creating them through the driver.
  */
 class ShaderVariablesLayout {
 public:
-    /**
-     * The type of a variable.
-     */
-    enum class VarType {
-        u8, u16, u32, u64,
-        s8, s16, s32, s64,
-        Real,
-        Matrix4,
-        Vec2, Vec3, Vec4,
-        Texture
-    };
+    using VarType = ShaderVarType;
 
     /**
      * This class holds information about defined variables.
@@ -86,6 +88,13 @@ public:
          */
         SizeT getIndex() const;
     };
+
+public:
+    /**
+     * Creates a new shader variables layout.
+     * @param registerBuiltInVars Whether to register the engines built-in variables (e.g. camera matrices).
+     */
+    ShaderVariablesLayout(bool registerBuiltInVars = true);
 
 public:
     /**
@@ -193,7 +202,7 @@ template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Vec3>()
 template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Vec4>();
 
 template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Matrix4>();
-template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Texture>();
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<std::shared_ptr<Texture> >();
 
 /**
  * A structure containing information about the value changes since the last GPU sync operation.
@@ -227,6 +236,9 @@ protected:
 };
 
 class ShaderVariables : public ProxyObject<ShaderVariablesContextHandle> {
+public:
+    static const String BuiltInCombinedCameraMatrix; //< The built-in variable name for the combined camera matrix.
+
 public:
     /**
      * Creates a new shader variables set.
