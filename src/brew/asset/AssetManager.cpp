@@ -7,9 +7,20 @@
 
 namespace brew {
 
-AssetManager::AssetManager(std::shared_ptr<brew::VirtualFileSystem> vfs)
-: vfs(vfs) {
+AssetManager::AssetManager(std::shared_ptr<brew::VirtualFileSystem> vfs) {
+    this->vfs = vfs;
+}
 
+void AssetPipeline::makeParams(std::vector<std::shared_ptr<AssetPipeline::ParamsInfo>>& paramsInfo) {
+    // Recursion tail.
+}
+
+AssetManager& AssetPipeline::getManager() {
+    return static_cast<AssetManager&>(manager);
+}
+
+bool AssetPromise::getResult() {
+    return promise->get_future().get();
 }
 
 }

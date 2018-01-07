@@ -21,33 +21,86 @@ class BType {};
 class CType {};
 class DType {};
 
-TEST(Asset, BundleCRUD) {
-    AssetBundle bundle;
+class ATypeProcessorParams : public AssetProcessorParams {};
 
-    bundle.put<int>("foo", 1234);
-    bundle.put<String>("foo", "FoO!");
+class ATypeProcessor : public AssetProcessor<ATypeProcessorParams> {
+public:
+    bool canLoad(const AssetPipeline& pipeline, const String& tag, const ATypeProcessorParams& params) override {
+        return tag.find("aFile") != String::npos;
+    };
 
-    ASSERT_EQ(1234, bundle.get<int>("foo"));
-    ASSERT_EQ("FoO!", bundle.get<String>("foo"));
+    void load(AssetPipeline& pipeline, const String& tag, const ATypeProcessorParams& params) override {
+        std::cout << "Loading " << tag << " as AType.\n";
+    };
+};
 
-    bundle.removeAll("foo");
+class BTypeProcessorParams : public AssetProcessorParams {};
 
-    ASSERT_THROW(bundle.get<int>("foo"), NotFoundException);
-}
+class BTypeProcessor : public AssetProcessor<BTypeProcessorParams> {
+public:
+    bool canLoad(const AssetPipeline& pipeline, const String& tag, const BTypeProcessorParams& params) override {
+        return tag.find("bFile") != String::npos;
+    };
+
+    void load(AssetPipeline& pipeline, const String& tag, const BTypeProcessorParams& params) override {
+        pipeline.load("aFile");
+    };
+};
 
 TEST(Asset, LoadSimpleAsset) {
     auto vfs = std::make_shared<VirtualFileSystem>();
 
     auto heapDir = std::make_unique<HeapDirectory>();
 
-    heapDir->addFile("testFile", "This is just a test.");
+    heapDir->addFile("aFile", "A file.");
 
     vfs->mount("/dynamic", std::move(heapDir));
 
     AssetManager am(vfs);
 
-    am.load<AType>("/dynamic/testFile", [] (AType& asset) {
-        std::cout << "Loaded!\n";
-    });
+    ATypeProcessorParams aTypeProcessorParams;
+    am.registerProcessor<ATypeProcessor>(aTypeProcessorParams);
 
+    auto result = am.load("/dynamic/aFile");
+
+    EXPECT_TRUE(result.getResult());
+}
+
+TEST(Asset, LoadAssetWithoutLoader) {
+    auto vfs = std::make_shared<VirtualFileSystem>();
+
+    auto heapDir = std::make_unique<HeapDirectory>();
+
+    heapDir->addFile("aFile", "A file.");
+
+    vfs->mount("/dynamic", std::move(heapDir));
+
+    AssetManager am(vfs);
+
+    auto result = am.load("/dynamic/aFile");
+
+    EXPECT_FALSE(result.getResult());
+}
+
+TEST(Asset, LoadRecursive) {
+    auto vfs = std::make_shared<VirtualFileSystem>();
+
+    auto heapDir = std::make_unique<HeapDirectory>();
+
+    heapDir->addFile("aFile", "A file.");
+    heapDir->addFile("bFile", "B file.");
+
+    vfs->mount("/dynamic", std::move(heapDir));
+
+    AssetManager am(vfs);
+
+    ATypeProcessorParams aTypeProcessorParams;
+    am.registerProcessor<ATypeProcessor>(aTypeProcessorParams);
+
+    BTypeProcessorParams bTypeProcessorParams;
+    am.registerProcessor<BTypeProcessor>(bTypeProcessorParams);
+
+    auto result = am.load("/dynamic/bFile");
+
+    EXPECT_TRUE(result.getResult());
 }
