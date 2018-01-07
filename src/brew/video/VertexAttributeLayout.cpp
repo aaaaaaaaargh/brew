@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2018 random arts
+ *  Copyright 2015-2018 [insert fancy company name here]
  *
  *  Created on: 13.09.17
  *

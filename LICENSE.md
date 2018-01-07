@@ -1,4 +1,4 @@
 |_  _ _
 |_)| (/_VV
 
-Copyright 2015-2017 random arts
+Copyright 2015-2017 [insert fancy company name here]

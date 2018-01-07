@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2018 random arts
+ *  Copyright 2015-2018 [insert fancy company name here]
  *
  *  Created on: 02.01.18
  *
@@ -25,12 +25,12 @@ class ATypeProcessorParams : public AssetProcessorParams {};
 
 class ATypeProcessor : public AssetProcessor<ATypeProcessorParams> {
 public:
-    bool canLoad(const AssetPipeline& pipeline, const String& tag, const ATypeProcessorParams& params) override {
+    bool canLoad(const AssetPipeline& pipeline, const VirtualFileSystem& vfs, const AssetBundle& bundle, const String& tag, const ATypeProcessorParams& params) override {
         return tag.find("aFile") != String::npos;
     };
 
-    void load(AssetPipeline& pipeline, const String& tag, const ATypeProcessorParams& params) override {
-        std::cout << "Loading " << tag << " as AType.\n";
+    void load(AssetPipeline& pipeline, const VirtualFileSystem& vfs, AssetBundle& bundle, const String& tag, const ATypeProcessorParams& params) override {
+        bundle.put(tag, AType());
     };
 };
 
@@ -38,12 +38,14 @@ class BTypeProcessorParams : public AssetProcessorParams {};
 
 class BTypeProcessor : public AssetProcessor<BTypeProcessorParams> {
 public:
-    bool canLoad(const AssetPipeline& pipeline, const String& tag, const BTypeProcessorParams& params) override {
+    bool canLoad(const AssetPipeline& pipeline, const VirtualFileSystem& vfs, const AssetBundle& bundle, const String& tag, const BTypeProcessorParams& params) override {
         return tag.find("bFile") != String::npos;
     };
 
-    void load(AssetPipeline& pipeline, const String& tag, const BTypeProcessorParams& params) override {
+    void load(AssetPipeline& pipeline, const VirtualFileSystem& vfs, AssetBundle& bundle, const String& tag, const BTypeProcessorParams& params) override {
         pipeline.load("aFile");
+
+        bundle.put(tag, BType());
     };
 };
 
