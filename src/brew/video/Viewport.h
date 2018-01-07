@@ -152,6 +152,19 @@ public:
      */
     void setCamera(std::shared_ptr<Camera> camera);
 
+    /**
+     * Performs a screen space to world space coordinate transformation-
+     * @param screenCoords the screen coordinates to convert to world coordinates.
+     * @param useFarPlane projects the world coordinate onto the cameras far plane if set to true. Uses near plane instead if false.
+     */
+    Vec3 unproject(const Vec2& screenCoords, bool useFarPlane=true) const;
+
+    /**
+     * Performs a world space to screen space coordinate transformation-
+     * @param worldCoords the world coordinates to convert to screen coordinates.
+     */
+    Vec2 project(const Vec3& worldCoords) const;
+
 private:
     SizeT physicalX, physicalY;
     SizeT physicalWidth, physicalHeight;

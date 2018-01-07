@@ -59,7 +59,7 @@ void PixmapProcessor::load(AssetPipeline& assetPipeline,
                            const VirtualFileSystem& vfs,
                            AssetBundle& bundle,
                            const String& tag,
-                           const PixmapProcessorParams& params) {
+                           const PixmapProcessorParams& params) const {
     auto file = vfs.getFile(tag);
     auto fs = file->open(std::ios::in);
 
@@ -79,7 +79,7 @@ void PixmapProcessor::load(AssetPipeline& assetPipeline,
     // Set the color format for our pixmap to match the stb_image conventions.
     ColorFormat fmt = ColorFormat::RGBA8U;
 
-    bundle.put(tag, std::make_unique<Pixmap>(result, x, y, fmt));
+    bundle.put(tag, std::make_shared<Pixmap>(result, x, y, fmt));
 
     // Cleanup.
     stbi_image_free(result);
@@ -90,7 +90,7 @@ bool PixmapProcessor::canLoad(const AssetPipeline& assetPipeline,
                               const VirtualFileSystem& vfs,
                               const AssetBundle& bundle,
                               const String& tag,
-                              const PixmapProcessorParams& params) {
+                              const PixmapProcessorParams& params) const {
     std::string ifile = tag;
     std::transform(ifile.begin(), ifile.end(), ifile.begin(), ::tolower);
 
@@ -111,5 +111,9 @@ bool PixmapProcessor::canLoad(const AssetPipeline& assetPipeline,
     }
 
     return true;
+}
+
+bool PixmapProcessor::acceptsType(const String& typeHint) const {
+    return typeHint == "pixmap";
 }
 } /* namespace brew */

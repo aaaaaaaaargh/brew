@@ -5,28 +5,34 @@
  *
  *  Copyright 2015-2018 [insert fancy company name here]
  *
- *  Created on: 23.09.16
+ *  Created on: 28.09.16
  *
  */
 
-#ifndef BREW_PIXMAPPROCESSOR_H
-#define BREW_PIXMAPPROCESSOR_H
+#ifndef BREW_TEXTUREPROCESSOR_H
+#define BREW_TEXTUREPROCESSOR_H
 
 #include <brew/asset/AssetProcessor.h>
+#include <brew/video/VideoContext.h>
 
 namespace brew {
 
 /**
- * The pixmap processing parameters.
+ * The texture processing parameters.
  */
-class PixmapProcessorParams : public AssetProcessorParams {
+class TextureProcessorParams : public AssetProcessorParams {
+public:
+    explicit TextureProcessorParams(VideoContext& context);
 
+public:
+    VideoContext& context; //< The video context to use.
+    bool freeSourcePixmap = true; //< Whether to release the source pixmap asset after texture creation.
 };
 
 /**
- * An asset processor for pixmaps.
+ * An asset processor for textures.
  */
-class PixmapProcessor : public AssetProcessor<PixmapProcessorParams> {
+class TextureProcessor : public AssetProcessor<TextureProcessorParams> {
 public:
     /**
      * Loads a given asset.
@@ -37,10 +43,10 @@ public:
      * @param params The processing parameters.
      */
     void load(AssetPipeline& assetPipeline,
-                      const VirtualFileSystem& vfs,
-                      AssetBundle& bundle,
-                      const String& tag,
-                      const PixmapProcessorParams& params) const override;
+              const VirtualFileSystem& vfs,
+              AssetBundle& bundle,
+              const String& tag,
+              const TextureProcessorParams& params) const override;
 
     /**
      * Checks whether this processor can load the given asset.
@@ -51,10 +57,10 @@ public:
      * @param params The processing parameters.
      */
     bool canLoad(const AssetPipeline& assetPipeline,
-                         const VirtualFileSystem& vfs,
-                         const AssetBundle& bundle,
-                         const String& tag,
-                         const PixmapProcessorParams& params) const override;
+                 const VirtualFileSystem& vfs,
+                 const AssetBundle& bundle,
+                 const String& tag,
+                 const TextureProcessorParams& params) const override;
 
     /**
      * Checks whether a type hint is accepted by this processor.
@@ -66,4 +72,4 @@ public:
 
 } /* namespace brew */
 
-#endif //BREW_PIXMAPPROCESSOR_H
+#endif //BREW_TEXTUREPROCESSOR_H

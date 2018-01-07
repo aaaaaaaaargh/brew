@@ -13,6 +13,7 @@
 #define BREW_COREPROCESSORS_H
 
 #include <brew/asset/AssetManager.h>
+#include <brew/video/VideoContext.h>
 
 namespace brew {
 
@@ -27,8 +28,9 @@ public:
     /**
      * Registers all available core processors to the given asset manager.
      * @param assetManager The asset manager.
+     * @param videoContext The default video context to use.
      */
-    static void registerTo(AssetManager& assetManager);
+    static void registerTo(AssetManager& assetManager, VideoContext& videoContext);
 };
 
 } /* namespace brew */

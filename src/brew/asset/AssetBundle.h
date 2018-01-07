@@ -31,7 +31,7 @@ private:
 
     template<typename AssetT>
     struct WrappedAsset : AbstractWrappedAsset {
-        std::unique_ptr<AssetT> asset;
+        std::shared_ptr<AssetT> asset;
     };
 
 public:
@@ -42,27 +42,27 @@ public:
      * Adds a new asset to the bundle.
      * @tparam AssetT The asset type.
      * @param name The asset name.
-     * @param asset The asset to add.
-     */
-    template <typename AssetT>
-    void put(const String& name, AssetT && asset) {
-        put(name, std::make_unique<AssetT>(asset));
-    }
-
-    /**
-     * Adds a new asset to the bundle.
-     * @tparam AssetT The asset type.
-     * @param name The asset name.
      * @param asset A pointer containing the asset to add.
      */
     template <typename AssetT>
-    void put(const String& name, std::unique_ptr<AssetT> && asset) {
+    void put(const String& name, std::shared_ptr<AssetT> asset) {
         auto hash = typeid(AssetT).hash_code();
 
         auto wrappedAsset = std::make_unique<WrappedAsset<AssetT> >();
         wrappedAsset->asset = std::move(asset);
 
         assets[hash][name] = std::unique_ptr<AbstractWrappedAsset>(wrappedAsset.release());
+    }
+
+    /**
+     * Adds a new asset to the bundle.
+     * @tparam AssetT The asset type.
+     * @param name The asset name.
+     * @param asset The asset to add.
+     */
+    template <typename AssetT>
+    void put(const String& name, AssetT& asset) {
+        put(name, std::shared_ptr<AssetT>(asset));
     }
 
     /**
@@ -73,7 +73,7 @@ public:
      * @throws NotFoundException if there is no asset with the given type and name.
      */
     template <typename AssetT>
-    AssetT& get(const String& name) const {
+    std::shared_ptr<AssetT> get(const String& name) const {
         auto hash = typeid(AssetT).hash_code();
         auto mapIt = assets.find(hash);
 
@@ -81,11 +81,31 @@ public:
             auto it = mapIt->second.find(name);
             if(it != mapIt->second.end()) {
                 auto& wrappedAsset = static_cast<WrappedAsset<AssetT>&>(*it->second);
-                return *wrappedAsset.asset;
+                return wrappedAsset.asset;
             }
         }
 
         throw NotFoundException("No such asset '" + name + "' for given type.");
+    }
+    /**
+     * Checks if an asset exists.
+     * @tparam AssetT The asset type.
+     * @param name The asset name.
+     * @return Whether the asset exists.
+     */
+    template <typename AssetT>
+    bool contains(const String& name) const {
+        auto hash = typeid(AssetT).hash_code();
+        auto mapIt = assets.find(hash);
+
+        if(mapIt != assets.end()) {
+            auto it = mapIt->second.find(name);
+            if (it != mapIt->second.end()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

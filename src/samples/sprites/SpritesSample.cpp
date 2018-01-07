@@ -12,16 +12,20 @@ using namespace brew;
 class MyRenderListener : public RenderListener {
 public:
     explicit MyRenderListener(VideoContext& ctx) {
+        // Create the virtual file system.
         auto vfs = std::make_shared<VirtualFileSystem>();
         vfs->mountLocal("/", BREW_SAMPLE_VFS_ROOT);
 
+        // Create the asset manager.
         assets = std::make_shared<AssetManager>(vfs);
-        CoreAssetProcessors::registerTo(*assets);
+        CoreAssetProcessors::registerTo(*assets, ctx);
 
-        if(!assets->load("sample.png").getResult()) {
+        // Attempt to load the sample texture.
+        if(!assets->load("sample.png", "texture").getResult()) {
             throw RuntimeException("Could not load sample image.");
         }
 
+        // Create a mesh for our sprite.
         VertexAttributeLayout vertLayout;
         vertLayout
                 .add<PositionAttribute>()
@@ -58,18 +62,21 @@ public:
         iBuffer->syncToGPU();
         vBuffer->syncToGPU();
 
+        // Create the mesh.
+        this->mesh = ctx.createMesh(vBuffer, iBuffer);
+
+        // Create the shader and shader variables.
         ShaderVariablesLayout shaderVarLayout = {};
-        shaderVarLayout.define(ShaderVarType::Real, "t");
-        shaderVarLayout.define(ShaderVarType::Texture, "texture");
+        shaderVarLayout.define(ShaderVarType::Real, "t"); // t := time.
+        shaderVarLayout.define(ShaderVarType::Texture, "texture"); // The texture to render.
 
         this->shaderVars = ctx.createShaderVariables(shaderVarLayout);
 
-        // Create a simple pixmap.
-        auto& spritePixmap = assets->getDefaultBundle().get<brew::Pixmap>("sample.png");
-
-        auto texture = ctx.createTexture(spritePixmap);
+        // Get the texture and set it in our shader.
+        auto texture = assets->getDefaultBundle().get<brew::Texture>("sample.png");
         this->shaderVars->set("texture", texture);
 
+        // Create the GLSL source code.
         String uniformDeclarationSrc = GLContext::getUniformDeclarations(shaderVars);
 
         String vertexShaderSrc =
@@ -86,22 +93,28 @@ public:
                 "in vec2 uv;"
                 "void main() { gl_FragColor = texture2D(texture, uv) * t; }";
 
+        // Create the shaders.
         auto vertexShader = ctx.createShader(ShaderType::Vertex, vertexShaderSrc);
         auto fragmentShader = ctx.createShader(ShaderType::Fragment, fragmentShaderSrc);
         this->shaderProgram = ctx.createShaderProgram({vertexShader, fragmentShader});
-
-        this->mesh = ctx.createMesh(vBuffer, iBuffer);
-
-        viewport.getCamera().setPosition(3,3,3);
-        viewport.getCamera().lookAt(0,0,0);
     }
 
     void onBeginFrame(const RenderEvent& evt) override {
         RenderTarget& target = evt.renderTarget;
 
-        this->shaderVars->set<Real>("t", std::sin(t));
+        // Increase time in our shader.
+        this->shaderVars->set<Real>("t", 1.0f + std::sin(t) * 0.5f);
         t+= 0.1f;
 
+        // Update the camera.
+        viewport.getCamera().setPosition(
+                std::sin(t*0.1f) * 3.0f,
+                3,
+                std::cos(t*0.1f) * 3.0f
+        );
+        viewport.getCamera().lookAt(0,0,0);
+
+        // Execute the
         evt.renderTarget.getContext().execute([&](GPUExecutionContext& ctx) {
             RenderBatch batch;
 

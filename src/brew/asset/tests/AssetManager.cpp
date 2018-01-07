@@ -25,11 +25,11 @@ class ATypeProcessorParams : public AssetProcessorParams {};
 
 class ATypeProcessor : public AssetProcessor<ATypeProcessorParams> {
 public:
-    bool canLoad(const AssetPipeline& pipeline, const VirtualFileSystem& vfs, const AssetBundle& bundle, const String& tag, const ATypeProcessorParams& params) override {
+    bool canLoad(const AssetPipeline& pipeline, const VirtualFileSystem& vfs, const AssetBundle& bundle, const String& tag, const ATypeProcessorParams& params) const override {
         return tag.find("aFile") != String::npos;
     };
 
-    void load(AssetPipeline& pipeline, const VirtualFileSystem& vfs, AssetBundle& bundle, const String& tag, const ATypeProcessorParams& params) override {
+    void load(AssetPipeline& pipeline, const VirtualFileSystem& vfs, AssetBundle& bundle, const String& tag, const ATypeProcessorParams& params) const override {
         bundle.put(tag, AType());
     };
 };
@@ -38,11 +38,11 @@ class BTypeProcessorParams : public AssetProcessorParams {};
 
 class BTypeProcessor : public AssetProcessor<BTypeProcessorParams> {
 public:
-    bool canLoad(const AssetPipeline& pipeline, const VirtualFileSystem& vfs, const AssetBundle& bundle, const String& tag, const BTypeProcessorParams& params) override {
+    bool canLoad(const AssetPipeline& pipeline, const VirtualFileSystem& vfs, const AssetBundle& bundle, const String& tag, const BTypeProcessorParams& params) const override {
         return tag.find("bFile") != String::npos;
     };
 
-    void load(AssetPipeline& pipeline, const VirtualFileSystem& vfs, AssetBundle& bundle, const String& tag, const BTypeProcessorParams& params) override {
+    void load(AssetPipeline& pipeline, const VirtualFileSystem& vfs, AssetBundle& bundle, const String& tag, const BTypeProcessorParams& params) const override {
         pipeline.load("aFile");
 
         bundle.put(tag, BType());

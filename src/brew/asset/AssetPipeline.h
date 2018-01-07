@@ -58,7 +58,7 @@ private:
 
 private:
     template<typename... ProcessorParamsT>
-    static AssetPromise request(detail::AbstractAssetManager& assetManager, const String& tag, AssetPipeline* parent, ProcessorParamsT &&... params) {
+    static AssetPromise request(detail::AbstractAssetManager& assetManager, const String& tag, const String& typeHint, AssetPipeline* parent, ProcessorParamsT &&... params) {
         auto promise = std::make_shared<std::promise<bool> >();
 
         auto pipeline = std::make_shared<AssetPipeline>(assetManager);
@@ -66,7 +66,7 @@ private:
 
         makeParams(pipeline->paramsInfo, params...);
 
-        pipeline->invoke(tag, promise);
+        pipeline->invoke(tag, typeHint, promise);
 
         return AssetPromise(std::move(pipeline), std::move(promise));
     };
@@ -80,13 +80,13 @@ public:
      * @return A promise resolved once the asset has been loaded or an error occured.
      */
     template<typename... ProcessorParamsT>
-    AssetPromise load(const String& tag, ProcessorParamsT &&... params) {
-        return request(manager, tag, this, params...);
+    AssetPromise load(const String& tag, const String& typeHint, ProcessorParamsT &&... params) {
+        return request(manager, tag, typeHint, this, params...);
     };
 
 private:
     template<typename... ProcessorParamsT>
-    void invoke(const String& tag, std::shared_ptr<std::promise<bool> > promise, ProcessorParamsT &&... params) {
+    void invoke(const String& tag, const String& typeHint, std::shared_ptr<std::promise<bool> > promise, ProcessorParamsT &&... params) {
         std::vector<std::shared_ptr<ParamsInfo> > thisParamsInfo;
         makeParams(thisParamsInfo, params...);
 
@@ -118,15 +118,18 @@ private:
             // Get the bundle.
             auto bundle = &manager.getDefaultBundle();
 
-            if(proc.check(*this, *manager.vfs, *bundle, tag, *procParams)) {
-                // Start a new thread and add it to running threads.
-                runningThreads.push_back(std::thread([=, &proc] {
-                    proc.invoke(*this, *manager.vfs, *bundle, tag, *procParams);
-                    promise->set_value(true);
-                }));
+            if(typeHint == "" || proc.acceptsType(typeHint)) {
+                // Type is accepted.
+                if (proc.check(*this, *manager.vfs, *bundle, tag, *procParams)) {
+                    // Start a new thread and add it to running threads.
+                    runningThreads.push_back(std::thread([=, &proc] {
+                        proc.invoke(*this, *manager.vfs, *bundle, tag, *procParams);
+                        promise->set_value(true);
+                    }));
 
-                // Done.
-                return;
+                    // Done.
+                    return;
+                }
             }
         }
 

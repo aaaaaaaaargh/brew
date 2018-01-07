@@ -46,6 +46,31 @@ void Viewport::setCamera(std::shared_ptr<Camera> camera) {
     this->camera = camera;
 }
 
+Vec3 Viewport::unproject(const Vec2& screenCoords, bool useFarPlane) const {
+    Real x = screenCoords.x, y = screenCoords.y;
+    x = x - physicalX;
+    y = physicalHeight - y - 1.0f;
+    y = y - physicalY;
+
+    Vec3 v;
+
+    v.x = (2.0f * x) / physicalWidth - 1.0f;
+    v.y = (2.0f * y) / physicalHeight - 1.0f;
+    v.z = 2.0f * v.z - 1.0f;
+
+    return camera->getInverseCombinedMatrix() * v;
+}
+
+Vec2 Viewport::project(const Vec3& worldCoords) const {
+    Vec3 v = camera->getCombinedMatrix() * worldCoords;
+
+    v.x = physicalWidth * (v.x + 1.0f) / 2.0f + physicalX;
+    v.y = physicalHeight* (v.y + 1.0f) / 2.0f + physicalY;
+    v.z = (v.z + 1.0f) / 2.0f;
+
+    return Vec2(v.x, v.y);
+}
+
 /**
  * Native viewport implementation.
  */

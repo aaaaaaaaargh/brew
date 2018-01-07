@@ -121,34 +121,6 @@ void Camera::lookAt(Real x, Real y, Real z, Real upX, Real upY, Real upZ) {
     lookAt(Vec3(x,y,z), Vec3(upX, upY, upZ));
 }
 
-Vec3 Camera::unproject(const Vec2& screenCoords, bool useFarPlane) const {
-    /*Real x = screenCoords.x, y = screenCoords.y;
-    x = x - mViewport.getTopLeft().x;
-    y = mViewport.getDimensions().y - y - 1.0;
-    y = y - mViewport.getTopLeft().y;
-    Vec3 v = screenCoords;
-    v.x = (2.0 * x) / mViewport.getDimensions().x - 1.0;
-    v.y = (2.0 * y) / mViewport.getDimensions().y - 1.0;
-    v.z = 2 * v.z - 1;
-    Matrix4::project(mInvCombinedMatrix, v);
-    return v;*/
-
-    return Vec3::ZERO;
-
-}
-
-Vec2 Camera::project(const Vec3& worldCoords) const {
-
-    /*Vec3 v = worldCoords;
-    Matrix4::project(mCombinedMatrix, v);
-    v.x = mViewport.getDimensions().x * (v.x + 1) / 2 + mViewport.getTopLeft().x;
-    v.y = mViewport.getDimensions().y * (v.y + 1) / 2 + mViewport.getTopLeft().y;
-    v.z = (v.z + 1) / 2;
-    return v;*/
-
-    return Vec2::ZERO;
-}
-
 /*
 Ray Camera::getCameraRay(const Vector2f& position) const
 {

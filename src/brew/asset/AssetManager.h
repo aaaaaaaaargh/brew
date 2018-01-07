@@ -25,9 +25,9 @@ public:
     using AbstractAssetManager::AbstractAssetManager;
 
     template<typename... ProcessorParamsT>
-    AssetPromise load(const String& tag, ProcessorParamsT &&... params) {
+    AssetPromise load(const String& tag, const String& typeHint, ProcessorParamsT &&... params) {
         // Create a new pipeline and process the asset.
-        return AssetPipeline::request(*this, tag, nullptr, params...);
+        return AssetPipeline::request(*this, tag, typeHint, nullptr, params...);
     };
 
     template<typename AssetProcessorT, typename ProcessorParamsT=typename AssetProcessorT::params_type>

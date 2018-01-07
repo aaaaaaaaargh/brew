@@ -70,12 +70,19 @@ public:
 	}
 
 	/**
-	 * @return the cameras combined matrix (that is InvertedViewMatrix * ProjectionMatrix)
+	 * @return the cameras combined matrix (that is ViewMatrix * ProjectionMatrix)
 	 */
 	inline const Matrix4& getCombinedMatrix() const
 	{
 		return combinedMatrix;
 	}
+
+    /**
+     * @return the cameras inverse combined matrix.
+     */
+    inline const Matrix4 getInverseCombinedMatrix() const {
+        return invCombinedMatrix;
+    }
 
 	void setNear(Real _near);
 
@@ -184,21 +191,6 @@ public:
 	 * @param upZ The up vector z component.
 	 */
 	void lookAt(Real x, Real y, Real z, Real upX=0, Real upY=1, Real upZ=0);
-
-	/**
-	 * Performs a screen space to world space coordinate transformation-
-	 * @param screenCoords the screen coordinates to convert to world coordinates.
-	 * @param useFarPlane projects the world coordinate onto the far plane if set to true. Uses near plane instead if false.
-	 */
-	Vec3 unproject(const Vec2& screenCoords, bool useFarPlane=true) const;
-
-	/**
-	 * Performs a world space to screen space coordinate transformation-
-	 * @param worldCoords the world coordinates to convert to screen coordinates.
-	 */
-	Vec2 project(const Vec3& worldCoords) const;
-
-	//Ray getCameraRay(const Vec2& position) const;
 
 protected:
     /**

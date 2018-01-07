@@ -36,6 +36,8 @@ protected:
                        const AssetBundle& bundle,
                        const String& tag,
                        const AssetProcessorParams& params) = 0;
+
+    virtual bool acceptsType(const String& typeHint) const = 0;
 };
 } /* namespace detail */
 
@@ -74,7 +76,7 @@ public:
                       const VirtualFileSystem& vfs,
                       AssetBundle& bundle,
                       const String& tag,
-                      const ParamsT& params) = 0;
+                      const ParamsT& params) const = 0;
 
     /**
      * Checks whether this processor can load the given asset.
@@ -88,7 +90,16 @@ public:
                          const VirtualFileSystem& vfs,
                          const AssetBundle& bundle,
                          const String& tag,
-                         const ParamsT& params) = 0;
+                         const ParamsT& params) const = 0;
+
+    /**
+     * Checks whether a type hint is accepted by this processor.
+     * @param typeHint The type hint.
+     * @return Whether the given type hint is accepted.
+     */
+    bool acceptsType(const String& typeHint) const override{
+        return false;
+    }
 };
 
 } /* namespace brew */
