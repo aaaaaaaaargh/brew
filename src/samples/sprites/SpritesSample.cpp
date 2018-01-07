@@ -1,12 +1,27 @@
+#include <brew/asset/AssetManager.h>
+#include <brew/asset/core/CoreAssetProcessors.h>
+
 #include <brew/video/gl/GLContext.h>
 #include <brew/video/linux/GLXCanvas.h>
 #include <brew/video/RenderBatch.h>
+
+#include "SampleConfig.h"
 
 using namespace brew;
 
 class MyRenderListener : public RenderListener {
 public:
     explicit MyRenderListener(VideoContext& ctx) {
+        auto vfs = std::make_shared<VirtualFileSystem>();
+        vfs->mountLocal("/", BREW_SAMPLE_VFS_ROOT);
+
+        assets = std::make_shared<AssetManager>(vfs);
+        CoreAssetProcessors::registerTo(*assets);
+
+        if(!assets->load("sample.png").getResult()) {
+            throw RuntimeException("Could not load sample image.");
+        }
+
         VertexAttributeLayout vertLayout;
         vertLayout
                 .add<PositionAttribute>()
@@ -50,10 +65,7 @@ public:
         this->shaderVars = ctx.createShaderVariables(shaderVarLayout);
 
         // Create a simple pixmap.
-        auto spritePixmap = std::make_shared<brew::Pixmap>(32, 32);
-        spritePixmap->applyFilter([&] (SizeT x, SizeT y, Color& color)  {
-            color.set(0, 32.0f / x, 32.0f / y, 1.0f);
-        });
+        auto& spritePixmap = assets->getDefaultBundle().get<brew::Pixmap>("sample.png");
 
         auto texture = ctx.createTexture(spritePixmap);
         this->shaderVars->set("texture", texture);
@@ -107,6 +119,8 @@ public:
     inline Viewport& getViewport() {
         return viewport;
     }
+
+    std::shared_ptr<AssetManager> assets;
 
     NativeViewport viewport;
     std::shared_ptr<Mesh> mesh;

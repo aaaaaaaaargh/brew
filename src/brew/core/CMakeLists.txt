@@ -8,6 +8,7 @@ brew_library(Core
         Exception.cpp
         HeapBuffer.cpp
         Log.cpp
+        Object.cpp
         String.cpp
         StringBuffer.cpp
         SystemInfo.cpp

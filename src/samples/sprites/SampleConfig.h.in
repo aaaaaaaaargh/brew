@@ -1,0 +1,11 @@
+/**
+ *  Copyright 2015-2018 random arts
+ *  Created on: 07.01.18
+ */
+
+#ifndef BREW_SAMPLECONFIG_H
+#define BREW_SAMPLECONFIG_H
+
+#cmakedefine BREW_SAMPLE_VFS_ROOT "@BREW_SAMPLE_VFS_ROOT@"
+
+#endif //BREW_SAMPLECONFIG_H

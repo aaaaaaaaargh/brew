@@ -82,6 +82,22 @@ public:
     );
 
     /**
+     * Creates a new texture from an existing pixmap.
+     * @param pixmap The source pixmap.
+     * @param format The texture format.
+     * @param filtering The texture filtering.
+     * @param numMipMaps The number of mip-maps to generate.
+     * @return The created texture.
+     */
+    inline std::shared_ptr<Texture> createTexture(const Pixmap& pixmap,
+                                           TextureFormat format = Texture::DefaultTextureFormat,
+                                           TextureFiltering filtering = Texture::DefaultTextureFiltering,
+                                           u8 numMipMaps = Texture::DefaultMipMaps
+    ) {
+        return createTexture(std::make_shared<Pixmap>(pixmap), format, filtering, numMipMaps);
+    }
+
+    /**
      * Creates a new frame buffer.
      * @param width The frame buffers initial width.
      * @param height The frame buffers initial height.

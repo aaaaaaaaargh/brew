@@ -16,6 +16,8 @@ function(_brew_get_component_dependencies component ret)
     set(_BREW_VIDEO_DEPENDENCIES Core Math)
     set(_BREW_VIDEOGL_DEPENDENCIES Video)
     set(_BREW_VIDEOLINUX_DEPENDENCIES VideoGL)
+    set(_BREW_ASSETS_DEPENDENCIES Core FileIO)
+    set(_BREW_COREASSETPROCESSORS_DEPENDENCIES Video Assets)
 
     string(TOUPPER ${component} icomponent)
 
@@ -74,10 +76,14 @@ else()
     #find_library(BREW_LIBRARY NAMES Brew)
 endif()
 
+find_package(Threads REQUIRED)
+set(BREW_LIBRARIES ${BREW_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+set(BREW_DEFINITIONS ${BREW_DEFINITIONS} "-pthread")
+
 include(FindPackageHandleStandardArgs)
-# handle the QUIETLY and REQUIRED arguments and set LIBXML2_FOUND to TRUE
+# handle the QUIETLY and REQUIRED arguments and set BREW_FOUND to TRUE
 # if all listed variables are TRUE
 find_package_handle_standard_args(BREW  DEFAULT_MSG
-        BREW_LIBRARIES BREW_INCLUDE_DIR)
+        BREW_LIBRARIES BREW_INCLUDE_DIR BREW_DEFINITIONS)
 
 mark_as_advanced(BREW_INCLUDE_DIR BREW_LIBRARY )

@@ -1,0 +1,1 @@
+Sample image by Buch [http://blog-buch.rhcloud.com], retrieved via https://opengameart.org/content/a-platformer-in-the-forest.

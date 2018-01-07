@@ -9,4 +9,6 @@ brew_library(Asset
         AssetPromise.cpp
 )
 
+add_subdirectory(core)
+
 add_subdirectory(tests)

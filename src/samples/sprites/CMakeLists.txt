@@ -6,7 +6,12 @@ set(SRCS
         "SpritesSample.cpp"
         )
 
-find_package(BREW REQUIRED COMPONENTS VideoLinux)
+set(BREW_SAMPLE_VFS_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
+
+configure_file("SampleConfig.h.in" "SampleConfig.h")
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+find_package(BREW REQUIRED COMPONENTS VideoLinux CoreProcessors)
 
 include_directories(${BREW_INCLUDE_DIRS})
 

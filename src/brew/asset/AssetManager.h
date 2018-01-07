@@ -16,10 +16,11 @@
 
 #include <brew/asset/AssetPromise.h>
 #include <brew/asset/AssetPipeline.h>
+#include <brew/core/Object.h>
 
 namespace brew {
 
-class AssetManager : public detail::AbstractAssetManager {
+class AssetManager : public detail::AbstractAssetManager, public Object {
 public:
     using AbstractAssetManager::AbstractAssetManager;
 
@@ -29,12 +30,14 @@ public:
         return AssetPipeline::request(*this, tag, nullptr, params...);
     };
 
-    template<typename AssetProcessorT, typename ProcessorParamsT>
+    template<typename AssetProcessorT, typename ProcessorParamsT=typename AssetProcessorT::params_type>
     void registerProcessor(const ProcessorParamsT defaultProcessorParams = ProcessorParamsT()) {
         auto hash = typeid(AssetProcessorT).hash_code();
         auto& entry = processors[hash];
 
         entry.processor = std::make_unique<AssetProcessorT>();
+        entry.processor->setAppContextFrom(*this);
+
         entry.paramsTypeHash = typeid(AssetProcessorT).hash_code();
         entry.params = std::make_unique<ProcessorParamsT>(defaultProcessorParams);
     };

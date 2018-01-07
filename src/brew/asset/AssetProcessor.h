@@ -14,6 +14,7 @@
 
 #include <brew/fileio/VirtualFileSystem.h>
 #include <brew/asset/AssetBundle.h>
+#include <brew/core/Object.h>
 
 namespace brew {
 
@@ -21,7 +22,7 @@ class AssetProcessorParams;
 class AssetPipeline;
 
 namespace detail {
-class AbstractAssetProcessor {
+class AbstractAssetProcessor : public Object {
     friend class brew::AssetPipeline;
 
 protected:
@@ -56,6 +57,9 @@ protected:
     inline bool check(const AssetPipeline& pipeline, const VirtualFileSystem& vfs, const AssetBundle& bundle, const String& tag, const AssetProcessorParams& params) final {
         return canLoad(pipeline, vfs, bundle, tag, static_cast<const ParamsT&>(params));
     }
+
+public:
+    typedef ParamsT params_type; //< The processor parameters type.
 
 public:
     /**
