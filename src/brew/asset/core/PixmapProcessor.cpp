@@ -79,7 +79,13 @@ void PixmapProcessor::load(AssetPipeline& assetPipeline,
     // Set the color format for our pixmap to match the stb_image conventions.
     ColorFormat fmt = ColorFormat::RGBA8U;
 
-    bundle.put(tag, std::make_shared<Pixmap>(result, x, y, fmt));
+    auto pixmap = std::make_shared<Pixmap>(result, x, y, fmt);
+
+    if(params.invertYAxis) {
+        pixmap = std::make_shared<Pixmap>(pixmap->flipped(false, true));
+    }
+
+    bundle.put(tag, pixmap);
 
     // Cleanup.
     stbi_image_free(result);

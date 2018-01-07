@@ -38,7 +38,8 @@ public:
         entry.processor = std::make_unique<AssetProcessorT>();
         entry.processor->setAppContextFrom(*this);
 
-        entry.paramsTypeHash = typeid(AssetProcessorT).hash_code();
+        entry.paramsTypeHash = typeid(ProcessorParamsT).hash_code();
+
         entry.params = std::make_unique<ProcessorParamsT>(defaultProcessorParams);
     };
 };

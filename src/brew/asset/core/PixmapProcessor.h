@@ -20,7 +20,8 @@ namespace brew {
  * The pixmap processing parameters.
  */
 class PixmapProcessorParams : public AssetProcessorParams {
-
+public:
+    bool invertYAxis = false; //< Whether to invert the y axis of the pixmap. Useful for texture generation.
 };
 
 /**

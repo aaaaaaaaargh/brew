@@ -66,7 +66,7 @@ private:
 
         makeParams(pipeline->paramsInfo, params...);
 
-        pipeline->invoke(tag, typeHint, promise);
+        pipeline->invoke(tag, typeHint, promise, params...);
 
         return AssetPromise(std::move(pipeline), std::move(promise));
     };
@@ -143,6 +143,7 @@ private:
     template<typename P0, typename... ProcessorParamsT>
     static void makeParams(std::vector<std::shared_ptr<ParamsInfo> >& paramsInfo, P0 && p0, ProcessorParamsT... params) {
         auto info = std::make_shared<ParamsInfo>();
+
         info->typeHash = typeid(P0).hash_code();
 
         paramsInfo.emplace_back(std::move(info));

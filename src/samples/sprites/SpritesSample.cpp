@@ -4,6 +4,7 @@
 #include <brew/video/gl/GLContext.h>
 #include <brew/video/linux/GLXCanvas.h>
 #include <brew/video/RenderBatch.h>
+#include <brew/asset/core/PixmapProcessor.h>
 
 #include "SampleConfig.h"
 
@@ -21,7 +22,10 @@ public:
         CoreAssetProcessors::registerTo(*assets, ctx);
 
         // Attempt to load the sample texture.
-        if(!assets->load("sample.png", "texture").getResult()) {
+        PixmapProcessorParams params;
+        params.invertYAxis = true;
+
+        if(!assets->load("sample.png", "texture", params).getResult()) {
             throw RuntimeException("Could not load sample image.");
         }
 
@@ -114,7 +118,7 @@ public:
         );
         viewport.getCamera().lookAt(0,0,0);
 
-        // Execute the
+        // Render the scene.
         evt.renderTarget.getContext().execute([&](GPUExecutionContext& ctx) {
             RenderBatch batch;
 
@@ -127,10 +131,6 @@ public:
             batch.add(renderable);
             batch.flush(target, viewport, ctx);
         });
-    }
-
-    inline Viewport& getViewport() {
-        return viewport;
     }
 
     std::shared_ptr<AssetManager> assets;
@@ -152,7 +152,7 @@ int main() {
     canvas.init(640, 480);
 
     auto myListener = std::make_shared<MyRenderListener>(ctx);
-    auto& viewport = myListener->getViewport();
+    auto& viewport = myListener->viewport;
 
     canvas.addRenderListener(myListener);
 
