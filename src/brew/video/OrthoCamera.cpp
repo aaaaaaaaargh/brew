@@ -51,4 +51,9 @@ void OrthoCamera::onUpdate() {
 
 }
 
+void OrthoCamera::setZoom(Real zoom) {
+    this->zoom = zoom;
+    invalidate();
+}
+
 } /* namespace brew */
