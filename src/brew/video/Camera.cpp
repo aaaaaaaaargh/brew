@@ -45,14 +45,13 @@ void Camera::setDirection(const Vec3& vec, const Vec3& ld) {
     if (vec == Vec3::ZERO)
         return;
 
-    // Remember, camera points down -Z of local axes!
-    // Therefore reverse direction of direction vector before determining local Z
-    Vec3 zAdjustVec = -vec;
-    zAdjustVec.normalize();
+    Vec3 zAdjustVec = vec.normalized();
 
     Quaternion targetWorldOrientation;
 
-    if (true) {
+    bool fixedYaw = true;
+
+    if (fixedYaw) {
         Vec3 xVec = Vec3::UNIT_Y.cross(zAdjustVec);
         xVec.normalize();
 
@@ -61,7 +60,6 @@ void Camera::setDirection(const Vec3& vec, const Vec3& ld) {
 
         targetWorldOrientation.setFromAxes(xVec, yVec, zAdjustVec);
     } else {
-
         // Get axes from current quaternion
         Vec3 axes[3];
         orientation.toAxes(axes[0], axes[1], axes[2]);

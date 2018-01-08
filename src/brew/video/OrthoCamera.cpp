@@ -25,11 +25,14 @@ OrthoCamera::OrthoCamera(Real zoom,
 }
 
 void OrthoCamera::onUpdate() {
-    const Real halfViewportWidth = 0.5;
-    const Real halfViewportHeight = 0.5;
+    const Real halfViewportWidth = getViewportSize().x * 0.5f;
+    const Real halfViewportHeight = getViewportSize().y * 0.5f;
 
-    projectionMatrix.setToOrtho(zoom * -halfViewportWidth, zoom * halfViewportWidth, zoom * -halfViewportHeight,
-                                zoom * halfViewportHeight, _near, _far);
+    projectionMatrix.setToOrtho(zoom * -halfViewportWidth,
+                                zoom * halfViewportWidth,
+                                zoom * -halfViewportHeight,
+                                zoom * halfViewportHeight,
+                                _near, _far);
 
     Vec3 forward = orientation * Vec3::UNIT_Z;
     Vec3 up = orientation * Vec3::UNIT_Y;

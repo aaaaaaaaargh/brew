@@ -238,6 +238,7 @@ protected:
 class ShaderVariables : public ProxyObject<ShaderVariablesContextHandle> {
 public:
     static const String BuiltInCombinedCameraMatrix; //< The built-in variable name for the combined camera matrix.
+    static const String BuiltInWorldTransformMatrix; //< The built-in variable name for the current world transform.
 
 public:
     /**

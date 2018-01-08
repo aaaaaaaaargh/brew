@@ -44,6 +44,7 @@ void Viewport::setPhysicalBounds(SizeT x, SizeT y, SizeT width, SizeT height) {
 
 void Viewport::setCamera(std::shared_ptr<Camera> camera) {
     this->camera = camera;
+    this->camera->setViewportSize(virtualSize);
 }
 
 Vec3 Viewport::unproject(const Vec2& screenCoords, bool useFarPlane) const {

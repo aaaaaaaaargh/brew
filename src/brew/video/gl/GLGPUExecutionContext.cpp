@@ -39,7 +39,9 @@ void GLGPUExecutionContext::renderElement(const RenderTarget& target, const Rend
             try {
                 // Try to set the built-in variables. This will throw an exception in case this set does not contain any
                 // built-in variable.
-                renderable.shaderVariables->set(ShaderVariables::BuiltInCombinedCameraMatrix, viewport.getCamera().getCombinedMatrix());
+                const brew::Matrix4& combinedCam = viewport.getCamera().getCombinedMatrix();
+                renderable.shaderVariables->set(ShaderVariables::BuiltInCombinedCameraMatrix, combinedCam);
+                renderable.shaderVariables->set(ShaderVariables::BuiltInWorldTransformMatrix, renderable.worldTransform);
             } catch(const InvalidArgumentException&) {}
 
             auto& shaderVariables = static_cast<GLShaderVariablesContextHandle&>(**renderable.shaderVariables);

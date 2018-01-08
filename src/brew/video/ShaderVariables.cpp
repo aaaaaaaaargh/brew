@@ -16,6 +16,7 @@
 namespace brew {
 
 const String ShaderVariables::BuiltInCombinedCameraMatrix = "combinedCamera";
+const String ShaderVariables::BuiltInWorldTransformMatrix = "worldTransform";
 
 ShaderVariablesLayout::VarDefinition::VarDefinition(const ShaderVariablesLayout& owner)
         : owner(owner){}
@@ -28,6 +29,7 @@ SizeT ShaderVariablesLayout::VarDefinition::getIndex() const {
 ShaderVariablesLayout::ShaderVariablesLayout(bool registerBuiltInVars) {
     if(registerBuiltInVars) {
         define<Matrix4>(ShaderVariables::BuiltInCombinedCameraMatrix);
+        define<Matrix4>(ShaderVariables::BuiltInWorldTransformMatrix);
     }
 }
 
