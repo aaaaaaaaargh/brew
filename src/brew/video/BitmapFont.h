@@ -52,6 +52,8 @@ public:
             IntRect bounds;
         };
 
+        Settings settings;
+
         std::map<char_type, GlyphInfo> glyphs;
     };
 

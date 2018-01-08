@@ -26,6 +26,13 @@
 namespace brew {
 
 /**
+ * Text alignments for font rendering.
+ */
+enum class TextAlign {
+    Left, Center, Right
+};
+
+/**
  * Base class for rendering fonts.
  */
 class Font {
@@ -33,7 +40,9 @@ public:
 	typedef WideString::value_type char_type;
 
     struct RenderSettings {
+        bool multiline = true;
         Real outerSpacing = 3;
+        TextAlign align = TextAlign::Left;
     };
 
 	/**
@@ -49,96 +58,158 @@ public:
     };
 
 	/**
-	 * The alignment of the baseline.
-	 */
-	enum class BaselineAlignment {
-		Horizontal, //< Align horizontally.
-		Vertical //< Align vertically.
-	};
-
-	/**
 	 * The font settings class.
 	 */
 	class Settings {
 	public:
-		BaselineAlignment baselineAlignment; //< The baseline alignment.
-		Real ascent; //< Distance from baseline to the highest coordinate where an outline is placed.
-		Real descent; //< Distance from baseline to the lowest coordinate where an outline is placed. Must be negative.
-		Real linegap; //< Distance between two lines.
+		Real ascent = 0; //< Distance from baseline to the highest coordinate where an outline is placed. A positive value is expected.
+		Real descent = 0; //< Distance from baseline to the lowest coordinate where an outline is placed. A positive value is expected.
+		Real linegap = 0; //< Distance between two lines.
 
 	public:
 		/**
 		 * @return The baseline-to-baseline distance of the font.
 		 */
 		Real getLinespace() const;
-
 	};
 
+    struct GlyphInfo {
+        GlyphInfo(const Glyph& glyph);
+        const Glyph& glyph;
+        RealRect layout;
+    };
+
+    class GlyphLayout;
+
 	/**
-	 * The GlyphLayout class contains information about the positions of glyphs in a string.
+	 * The GlyphRun class contains information about the positions of glyphs in a single line of text.
 	 */
-	class GlyphLayout {
+	class GlyphRun {
 	public:
         /**
-         * Creates a new glyph layout.
+         * Creates a new glyph run.
          * @param font The font to use.
-         * @param string The string to calculate a layout from.
+         * @param string The string to calculate a run from.
          * @param settings The render settings.
          */
-		GlyphLayout(const Font& font, const WideString& string, const RenderSettings& settings);
+        GlyphRun(const Font& font, const WideString& string, const RenderSettings& settings);
 
     public:
-        struct GlyphInfo {
-            GlyphInfo(const Glyph& glyph);
-            const Glyph& glyph;
-            RealRect layout;
-        };
-
         typedef std::vector<GlyphInfo>::const_iterator const_iterator;
 
 	public:
         /**
-         * @return The total width of the layout.
+         * @return The total width of the run.
          */
-		inline SizeT getWidth() const {
+		inline Real getWidth() const {
             return width;
         }
 
         /**
-         * @return THe total height of the layout.
+         * @return THe total height of the run.
          */
-		inline SizeT getHeight() const {
+		inline Real getHeight() const {
             return height;
         }
 
         /**
-         * @return An iterator for the first glyph info of the layout.
+         * @return An iterator for the first glyph info of the run.
          */
         inline const_iterator begin() const {
-            return layout.begin();
+            return glyphs.begin();
         }
 
         /**
-         * @return An iterator for the last glyph info of the layout.
+         * @return An iterator for the last glyph info of the run.
          */
         inline const_iterator end() const {
-            return layout.end();
+            return glyphs.end();
+        }
+
+        /**
+         * @return The baseline offset calculated from the top of this run.
+         */
+        inline Real getBaselineOffset() const {
+            return baselineOffset;
+        }
+
+        /**
+         * @return The layout offset of this run.
+         */
+        inline const Vec2& getOffset() const {
+            return layoutOffset;
         }
 
 	private:
 		void recalculate();
 
 	private:
+        friend class Font::GlyphLayout;
+
 		WideString string;
 		RenderSettings renderSettings;
 		const Font& font;
-        std::vector<GlyphInfo> layout;
-        SizeT width, height;
+        std::vector<GlyphInfo> glyphs;
+        Real width, height;
+        Real baselineOffset;
+        Vec2 layoutOffset;
 	};
 
+    class GlyphLayout {
+    public:
+        /**
+         * Creates a new glyph layout.
+         * @param font The font to use.
+         * @param string The string to calculate a layout from.
+         * @param settings The render settings.
+         */
+        GlyphLayout(const Font& font, const WideString& string, const RenderSettings& settings);
+
+    public:
+        typedef std::vector<GlyphRun>::const_iterator const_iterator;
+
+    public:
+        /**
+         * @return The total width of the run.
+         */
+        inline SizeT getWidth() const {
+            return width;
+        }
+
+        /**
+         * @return THe total height of the run.
+         */
+        inline SizeT getHeight() const {
+            return height;
+        }
+
+        /**
+         * @return An iterator for the first glyph info of the run.
+         */
+        inline const_iterator begin() const {
+            return runs.begin();
+        }
+
+        /**
+         * @return An iterator for the last glyph info of the run.
+         */
+        inline const_iterator end() const {
+            return runs.end();
+        }
+
+    private:
+        void recalculate();
+
+    private:
+        WideString string;
+        RenderSettings renderSettings;
+        const Font& font;
+        std::vector<GlyphRun> runs;
+        Real width, height;
+    };
 
 public:
-	Font();
+	explicit Font(const Settings& settings);
 
 	/**
 	 * Retrieves a glyph for a given codepoint.
@@ -223,6 +294,8 @@ private:
     };
 
     std::unique_ptr<Cache> cache;
+
+    Settings settings;
 };
 
 } /* namespace brew */

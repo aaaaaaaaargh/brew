@@ -13,7 +13,8 @@
 
 namespace brew {
 
-BitmapFont::BitmapFont(const Definition& definition) {
+BitmapFont::BitmapFont(const Definition& definition)
+: Font(definition.settings) {
     // Create the pixmap atlas.
     for (const auto& glyph : definition.glyphs) {
         const IntRect& source = glyph.second.bounds;
@@ -91,6 +92,10 @@ BitmapFont::Definition & BitmapFont::Definition::addGlyph(
                     info
             )
     );
+
+    // Update the settings
+    settings.ascent = std::max(glyph.ascent, settings.ascent);
+    settings.descent = std::max(glyph.descent, settings.descent);
 
     return *this;
 }

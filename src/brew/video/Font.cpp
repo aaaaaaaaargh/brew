@@ -16,8 +16,8 @@
 
 namespace brew {
 
-Font::Font()
-: cache( std::make_unique<Font::Cache>() )
+Font::Font(const Settings& settings)
+: cache( std::make_unique<Font::Cache>() ), settings(settings)
 {}
 
 const Font::Glyph& Font::getGlyph(Font::char_type index) const {
@@ -54,13 +54,15 @@ Font::GlyphLayout Font::calculateLayout(const WideString& string, const Font::Re
 void Font::render(const Font::GlyphLayout& layout, Pixmap& target, Vec2 offset, const Font::RenderSettings& renderSettings) {
     Vec2 origin;
 
-    for(const auto& glyph : layout) {
-        origin.set(
-                offset.x + glyph.layout.getLeft(),
-                offset.y + glyph.layout.getTop()
-        );
+    for(const auto& run : layout) {
+        for(const auto& glyph : run) {
+            origin.set(
+                    offset.x + glyph.layout.getLeft() + run.getOffset().x,
+                    offset.y + glyph.layout.getTop() + run.getOffset().y
+            );
 
-        renderGlyph(glyph.glyph.codePoint, target, origin, renderSettings);
+            renderGlyph(glyph.glyph.codePoint, target, origin, renderSettings);
+        }
     }
 }
 
@@ -81,23 +83,23 @@ std::shared_ptr<Pixmap> Font::render(const Font::GlyphLayout& layout, const Font
 }
 
 Real Font::Settings::getLinespace() const {
-    return ascent - descent + linegap;
+    return ascent + descent + linegap;
 }
 
-Font::GlyphLayout::GlyphLayout(const Font& font, const WideString& string, const Font::RenderSettings& renderSettings)
+Font::GlyphRun::GlyphRun(const Font& font, const WideString& string, const Font::RenderSettings& renderSettings)
 : font(font), string(string), renderSettings(renderSettings){
     recalculate();
 }
 
-void Font::GlyphLayout::recalculate() {
+void Font::GlyphRun::recalculate() {
     Vec2 origin;
-    Real baseline = 0;
 
     // Reset the calculated variables.
     width = height = 0;
-    layout.clear();
+    baselineOffset = 0;
+    layoutOffset.set(0,0);
 
-    origin.set(renderSettings.outerSpacing, renderSettings.outerSpacing);
+    glyphs.clear();
 
     // Calculate the bounding boxes.
     for(char_type ch : string) {
@@ -117,9 +119,9 @@ void Font::GlyphLayout::recalculate() {
             origin.x += glyph.advance;
 
             // Update the baseline.
-            baseline = std::max(glyph.ascent, baseline);
+            baselineOffset = std::max(glyph.ascent, baselineOffset);
 
-            layout.push_back(info);
+            glyphs.push_back(info);
         }
         catch(const NotFoundException&) {
             // Glyph does not exist, skip.
@@ -127,21 +129,77 @@ void Font::GlyphLayout::recalculate() {
     }
 
     // Align the bounding boxes on the baseline
-    for(GlyphInfo& info : layout) {
+    for(GlyphInfo& info : glyphs) {
         info.layout.setY(
-                baseline - info.glyph.ascent
+                baselineOffset - info.glyph.ascent
         );
 
         // Update the image extents.
-        width = std::max(width, static_cast<SizeT>(info.layout.getRight()));
-        height = std::max(height, static_cast<SizeT>(info.layout.getBottom()));
+        width = std::max(width, info.layout.getRight());
+        height = std::max(height, info.layout.getBottom());
+    }
+}
+
+Font::GlyphInfo::GlyphInfo(const Font::Glyph& glyph)
+: glyph(glyph) {}
+
+void Font::GlyphLayout::recalculate() {
+    // Reset the runs.
+    runs.clear();
+
+    std::vector<WideString> lines;
+
+    if(renderSettings.multiline) {
+        lines = string::tokenize(string, L"\n", false, false);
+    } else {
+        lines.push_back(string);
+    }
+
+    width = height = 0;
+
+    Real yOffset = renderSettings.outerSpacing;
+    Real maxLineWidth = 0;
+
+    for(auto& line : lines) {
+        runs.emplace_back(GlyphRun(font, line, renderSettings));
+        auto& run = runs.back();
+
+        // Adjust to the font line height.
+        yOffset += font.settings.ascent - run.getBaselineOffset();
+
+        run.layoutOffset.set(
+                renderSettings.outerSpacing,
+                yOffset
+        );
+
+        width = std::max(width, run.getWidth() + renderSettings.outerSpacing);
+
+        yOffset = font.settings.getLinespace() * runs.size();
+
+        height = yOffset - run.getBaselineOffset();
+
+        maxLineWidth = std::max(run.getWidth(), maxLineWidth);
+    }
+
+    // Set the horizontal line alignment.
+
+
+    for(auto& run : runs) {
+        if(renderSettings.align == TextAlign::Center) {
+            run.layoutOffset.x += (maxLineWidth - run.getWidth()) / 2;
+        } else if(renderSettings.align == TextAlign::Right) {
+            run.layoutOffset.x += maxLineWidth - run.getWidth();
+        }
     }
 
     width += renderSettings.outerSpacing;
     height += renderSettings.outerSpacing;
 }
 
-Font::GlyphLayout::GlyphInfo::GlyphInfo(const Font::Glyph& glyph)
-: glyph(glyph) {}
+Font::GlyphLayout::GlyphLayout(const Font& font, const WideString& string, const Font::RenderSettings& settings)
+        : font(font), string(string), renderSettings(settings)
+{
+    recalculate();
+}
 
 } /* namespace brew */
