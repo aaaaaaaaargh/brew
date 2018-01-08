@@ -24,7 +24,7 @@ macro(brew_add_test name)
                 $<TARGET_OBJECTS:${target}>
                 )
     else()
-        add_executable(${target} ${libtype} ${CMAKE_SOURCE_DIR}/src/cmake/TestsMain.cpp ${sources})
+        add_executable(${target} ${libtype} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/TestsMain.cpp ${sources})
 
         if(BREW_BUILD_MONOLITHIC)
             target_link_libraries(${target} Brew)
@@ -67,7 +67,7 @@ macro(brew_build_monolithic_tests)
 
         set(target BrewUnitTests)
 
-        add_executable(${target} ${CMAKE_SOURCE_DIR}/src/cmake/TestsMain.cpp ${sources})
+        add_executable(${target} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/TestsMain.cpp ${sources})
 
         if(BREW_BUILD_MONOLITHIC)
             target_link_libraries(${target} Brew)

@@ -211,7 +211,7 @@ private:
 
 		if (y > y2) {
 			y = y2;
-			y = -y;
+			h = -y;
 		}
 	}
 

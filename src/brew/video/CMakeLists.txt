@@ -3,8 +3,10 @@ cmake_minimum_required(VERSION 3.6)
 project(BrewVideo)
 
 brew_library(Video
+        BitmapFont.cpp
         Camera.cpp
         Color.cpp
+        Font.cpp
         FrameBuffer.cpp
         Frustum.cpp
         GPUBuffer.cpp
@@ -14,6 +16,7 @@ brew_library(Video
         OrthoCamera.cpp
         PerspectiveCamera.cpp
         Pixmap.cpp
+        PixmapAtlas.cpp
         RenderTarget.cpp
         RenderBatch.cpp
         Shader.cpp

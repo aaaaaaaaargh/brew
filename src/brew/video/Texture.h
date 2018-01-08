@@ -15,6 +15,7 @@
 #include <brew/core/ProxyObjectManager.h>
 #include <brew/video/Color.h>
 #include <brew/video/Pixmap.h>
+#include <brew/core/Rect.h>
 
 namespace brew {
 
@@ -193,6 +194,19 @@ private:
     TextureFormat format;
     TextureFiltering filtering;
     u8 numMipMaps;
+};
+
+class TextureRegion : public RealRect {
+public:
+    explicit TextureRegion(std::shared_ptr<Texture> texture);
+    TextureRegion(std::shared_ptr<Texture> texture, const Rect& region);
+
+    inline const std::shared_ptr<Texture>& getTexture() const {
+        return texture;
+    }
+
+private:
+    std::shared_ptr<Texture> texture;
 };
 
 } /* namespace brew */

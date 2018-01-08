@@ -64,7 +64,7 @@ get_property(IS_BREW_BUILD GLOBAL PROPERTY _THIS_IS_A_BREW_BUILD)
 
 if(IS_BREW_BUILD)
     if(BREW_BUILD_MONOLITHIC)
-        set(BREW_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/src)
+        set(BREW_INCLUDE_DIRS ${BREW_INCLUDE_DIR})
         set(BREW_LIBRARIES "Brew")
     else()
         foreach(dep IN LISTS deps)

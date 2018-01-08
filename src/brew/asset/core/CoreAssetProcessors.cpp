@@ -7,6 +7,7 @@
 
 #include <brew/asset/core/PixmapProcessor.h>
 #include <brew/asset/core/TextureProcessor.h>
+#include <brew/asset/core/BitmapFontProcessor.h>
 
 void brew::CoreAssetProcessors::registerTo(brew::AssetManager& assetManager, VideoContext& videoContext) {
     {
@@ -16,6 +17,10 @@ void brew::CoreAssetProcessors::registerTo(brew::AssetManager& assetManager, Vid
     {
         TextureProcessorParams params(videoContext);
         assetManager.registerProcessor<TextureProcessor>(params);
+    }
+
+    {
+        assetManager.registerProcessor<BitmapFontProcessor>();
     }
 
 }

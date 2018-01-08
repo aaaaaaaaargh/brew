@@ -37,4 +37,14 @@ std::unique_ptr<TextureAllocationData>& TextureContextHandle::getTextureAllocati
     return texture.allocationData;
 }
 
+TextureRegion::TextureRegion(std::shared_ptr<Texture> texture, const Rect& region)
+    : texture(texture), Rect(region) {
+
+}
+
+TextureRegion::TextureRegion(std::shared_ptr<Texture> texture)
+    : texture(texture) {
+    set(0,0, texture->getWidth(), texture->getHeight());
+}
+
 } /* namespace brew */
