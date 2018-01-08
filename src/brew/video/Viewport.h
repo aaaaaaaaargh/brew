@@ -40,6 +40,13 @@ public:
     );
 
     /**
+     * Creates a new viewport.
+     * @param virtualSize The virtual width of the viewport.
+     * @param camera (optional) The camera to use for this viewport.
+     */
+    explicit Viewport(const Vec2& virtualSize, std::shared_ptr<Camera> camera = std::shared_ptr<Camera>());
+
+    /**
      * Sets the virtual size of the viewport.
      * @param width The virtual size.
      * @param height The virtual height.
@@ -171,42 +178,6 @@ private:
     Vec2 virtualSize;
 
     std::shared_ptr<Camera> camera;
-};
-
-/**
- * A viewport implementation that uses the native resolution of the canvas.
- */
-class NativeViewport : public Viewport {
-public:
-    /**
-     * Creates a new native viewport.
-     * @param unitsPerPixel The units per pixel ratio.
-     * @param camera The camera to use.
-     */
-    NativeViewport(Real unitsPerPixel = 1, std::shared_ptr<Camera> camera = std::shared_ptr<Camera>());
-
-    /**
-     * Updates the physical dimensions of the viewport.
-     * @param physicalWidth The new physical width.
-     * @param physicalHeight The new physical height.
-     */
-    void update(SizeT physicalWidth, SizeT physicalHeight) override;
-
-    /**
-     * Sets the units per pixel ratio.
-     * @param unitsPerPixel The new ratio.
-     */
-    void setUnitsPerPixel(Real unitsPerPixel);
-
-    /**
-     * @return This viewports units per pixel ratio.
-     */
-    inline Real getUnitsPerPixel() const {
-        return unitsPerPixel;
-    }
-
-private:
-    Real unitsPerPixel;
 };
 
 } /* namespace brew */

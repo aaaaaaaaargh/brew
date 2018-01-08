@@ -6,6 +6,7 @@ brew_library(Video
         BitmapFont.cpp
         Camera.cpp
         Color.cpp
+        ExtendViewport.cpp
         Font.cpp
         FrameBuffer.cpp
         Frustum.cpp
@@ -13,6 +14,7 @@ brew_library(Video
         GPUExecutionContext.cpp
         IndexBuffer.cpp
         Mesh.cpp
+        NativeViewport.cpp
         OrthoCamera.cpp
         PerspectiveCamera.cpp
         Pixmap.cpp

@@ -20,16 +20,29 @@ void Viewport::setVirtualSize(Real width, Real height) {
 }
 
 Viewport::Viewport(Real virtualWidth, Real virtualHeight, std::shared_ptr<Camera> camera) :
-    physicalX(0), physicalY(0),
-    physicalWidth(0), physicalHeight(0),
-    camera(camera) {
-    if(!camera) {
+        physicalX(0), physicalY(0),
+        physicalWidth(0), physicalHeight(0),
+        camera(camera) {
+    if (!camera) {
         // No camera provided, create a default one.
         this->camera = std::make_shared<PerspectiveCamera>();
     }
 
     setVirtualSize(virtualWidth, virtualHeight);
 }
+
+Viewport::Viewport(const Vec2& virtualSize, std::shared_ptr<Camera> camera) :
+        physicalX(0), physicalY(0),
+        physicalWidth(0), physicalHeight(0),
+        camera(camera) {
+    if (!camera) {
+        // No camera provided, create a default one.
+        this->camera = std::make_shared<PerspectiveCamera>();
+    }
+
+    setVirtualSize(virtualSize);
+}
+
 
 void Viewport::update(SizeT physicalWidth, SizeT physicalHeight) {
     setPhysicalSize(physicalWidth, physicalHeight);
@@ -66,28 +79,10 @@ Vec2 Viewport::project(const Vec3& worldCoords) const {
     Vec3 v = camera->getCombinedMatrix() * worldCoords;
 
     v.x = physicalWidth * (v.x + 1.0f) / 2.0f + physicalX;
-    v.y = physicalHeight* (v.y + 1.0f) / 2.0f + physicalY;
+    v.y = physicalHeight * (v.y + 1.0f) / 2.0f + physicalY;
     v.z = (v.z + 1.0f) / 2.0f;
 
     return Vec2(v.x, v.y);
-}
-
-/**
- * Native viewport implementation.
- */
-
-NativeViewport::NativeViewport(Real unitsPerPixel, std::shared_ptr<Camera> camera) :
-        Viewport(0,0, camera), unitsPerPixel(unitsPerPixel) {
-
-}
-
-void NativeViewport::update(SizeT physicalWidth, SizeT physicalHeight) {
-    Viewport::update(physicalWidth, physicalHeight);
-    setVirtualSize(physicalWidth * unitsPerPixel, physicalHeight * unitsPerPixel);
-}
-
-void NativeViewport::setUnitsPerPixel(Real unitsPerPixel) {
-    this->unitsPerPixel = unitsPerPixel;
 }
 
 } /* namespace brew */

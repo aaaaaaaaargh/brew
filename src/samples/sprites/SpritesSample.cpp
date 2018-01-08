@@ -4,6 +4,7 @@
 #include <brew/video/gl/GLContext.h>
 #include <brew/video/linux/GLXCanvas.h>
 #include <brew/video/RenderBatch.h>
+#include <brew/video/NativeViewport.h>
 #include <brew/asset/core/PixmapProcessor.h>
 
 #include "SampleConfig.h"
