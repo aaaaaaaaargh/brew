@@ -199,7 +199,7 @@ private:
 class TextureRegion : public RealRect {
 public:
     explicit TextureRegion(std::shared_ptr<Texture> texture);
-    TextureRegion(std::shared_ptr<Texture> texture, const Rect& region);
+    TextureRegion(std::shared_ptr<Texture> texture, const RealRect& region);
 
     inline const std::shared_ptr<Texture>& getTexture() const {
         return texture;

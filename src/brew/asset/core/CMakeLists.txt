@@ -5,7 +5,9 @@ project(BrewCoreAssetProcessors)
 brew_library(CoreAssetProcessors
         BitmapFontProcessor.cpp
         CoreAssetProcessors.cpp
+        JSONProcessor.cpp
         PixmapProcessor.cpp
+        TextureAtlasProcessor.cpp
         TextureProcessor.cpp
 )
 

@@ -192,7 +192,7 @@ void Font::GlyphLayout::recalculate() {
         }
     }
 
-    width += renderSettings.outerSpacing;
+    width += renderSettings.outerSpacing * 2;
     height += renderSettings.outerSpacing;
 }
 

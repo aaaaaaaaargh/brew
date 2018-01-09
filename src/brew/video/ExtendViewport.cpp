@@ -11,20 +11,21 @@
 
 #include <brew/video/ExtendViewport.h>
 #include <cmath>
+#include <iostream>
 
 namespace brew {
 
 ExtendViewport::ExtendViewport(Real minVirtualWidth, Real minVirtualHeight, Real maxVirtualWidth, Real maxVirtualHeight,
                                std::shared_ptr<Camera> camera)
         : Viewport(minVirtualWidth, minVirtualHeight, camera) {
-    minSize.set(minVirtualWidth, minVirtualHeight);
-    maxSize.set(maxVirtualWidth, maxVirtualHeight);
+    minVirtualSize.set(minVirtualWidth, minVirtualHeight);
+    maxVirtualSize.set(maxVirtualWidth, maxVirtualHeight);
 }
 
 ExtendViewport::ExtendViewport(const Vec2& minSize, const Vec2& maxSize, std::shared_ptr<Camera> camera)
         : Viewport(minSize, camera) {
-    this->minSize = minSize;
-    this->maxSize = maxSize;
+    this->minVirtualSize = minSize;
+    this->maxVirtualSize = maxSize;
 }
 
 void ExtendViewport::update(SizeT physicalWidth, SizeT physicalHeight) {
@@ -38,7 +39,7 @@ void ExtendViewport::update(SizeT physicalWidth, SizeT physicalHeight) {
     Real scale =
             physicalRatio > virtualRatio ? physicalWidth / getVirtualSize().x : physicalHeight / getVirtualSize().y;
 
-    Vec2 scaled = minSize * scale;
+    Vec2 scaled = minVirtualSize * scale;
 
     // Extend in the short direction.
     auto viewportWidth = static_cast<SizeT>(std::round(scaled.x));
@@ -49,8 +50,8 @@ void ExtendViewport::update(SizeT physicalWidth, SizeT physicalHeight) {
         Real toWorldSpace = virtualSize.y / viewportHeight;
         Real lengthen = (physicalWidth - viewportWidth) * toWorldSpace;
 
-        if (maxSize.x > 0) {
-            lengthen = std::min(lengthen, maxSize.x - minSize.x);
+        if (maxVirtualSize.x > 0) {
+            lengthen = std::min(lengthen, maxVirtualSize.x - minVirtualSize.x);
         }
 
         virtualSize.x += lengthen;
@@ -60,8 +61,8 @@ void ExtendViewport::update(SizeT physicalWidth, SizeT physicalHeight) {
         Real toWorldSpace = virtualSize.x / viewportWidth;
         Real lengthen = (physicalHeight - viewportHeight) * toWorldSpace;
 
-        if (maxSize.y > 0) {
-            lengthen = std::min(lengthen, maxSize.y - minSize.y);
+        if (maxVirtualSize.y > 0) {
+            lengthen = std::min(lengthen, maxVirtualSize.y - minVirtualSize.y);
         }
 
         virtualSize.y += lengthen;
@@ -78,11 +79,11 @@ void ExtendViewport::update(SizeT physicalWidth, SizeT physicalHeight) {
 }
 
 void ExtendViewport::setMinimumVirtualSize(const Vec2& minSize) {
-    this->minSize = minSize;
+    this->minVirtualSize = minSize;
 }
 
 void ExtendViewport::setMaximumVirtualSize(const Vec2& maxSize) {
-    this->maxSize = maxSize;
+    this->maxVirtualSize = maxSize;
 }
 
 } /* namespace brew */

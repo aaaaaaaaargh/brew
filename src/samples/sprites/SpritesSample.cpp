@@ -42,19 +42,19 @@ public:
         auto iBuffer = ctx.createIndexBuffer(6);
 
         vBuffer->write<PositionAttribute>(0, Vec3(0,0,0));
-        vBuffer->write<TexCoordAttribute>(0, Vec2(0,0));
+        vBuffer->write<TexCoordAttribute>(0, Vec2(0,1));
         vBuffer->write<NormalAttribute>(0, Vec3(0,0,-1));
 
         vBuffer->write<PositionAttribute>(1, Vec3(1,0,0));
-        vBuffer->write<TexCoordAttribute>(1, Vec2(1,0));
+        vBuffer->write<TexCoordAttribute>(1, Vec2(1,1));
         vBuffer->write<NormalAttribute>(1, Vec3(0,0,-1));
 
         vBuffer->write<PositionAttribute>(2, Vec3(1,1,0));
-        vBuffer->write<TexCoordAttribute>(2, Vec2(1,1));
+        vBuffer->write<TexCoordAttribute>(2, Vec2(1,0));
         vBuffer->write<NormalAttribute>(2, Vec3(0,0,-1));
 
         vBuffer->write<PositionAttribute>(3, Vec3(0,1,0));
-        vBuffer->write<TexCoordAttribute>(3, Vec2(0,1));
+        vBuffer->write<TexCoordAttribute>(3, Vec2(0,0));
         vBuffer->write<NormalAttribute>(3, Vec3(0,0,-1));
 
         iBuffer->write(0, 0);

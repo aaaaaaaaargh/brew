@@ -50,7 +50,7 @@ public:
      * @return The minimum virtual size.
      */
     inline const Vec2& getMinimumVirtualSize() const {
-        return minSize;
+        return minVirtualSize;
     }
 
     /**
@@ -63,7 +63,7 @@ public:
      * @return The maximum virtual size.
      */
     inline const Vec2& getMaximumVirtualSize() const {
-        return maxSize;
+        return maxVirtualSize;
     }
 
     /**
@@ -73,7 +73,7 @@ public:
     void setMaximumVirtualSize(const Vec2& maxSize);
 
 private:
-    Vec2 minSize, maxSize;
+    Vec2 minVirtualSize, maxVirtualSize;
 };
 
 } /* namespace brew */

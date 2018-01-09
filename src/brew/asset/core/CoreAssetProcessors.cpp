@@ -8,6 +8,8 @@
 #include <brew/asset/core/PixmapProcessor.h>
 #include <brew/asset/core/TextureProcessor.h>
 #include <brew/asset/core/BitmapFontProcessor.h>
+#include <brew/asset/core/JSONProcessor.h>
+#include <brew/asset/core/TextureAtlasProcessor.h>
 
 void brew::CoreAssetProcessors::registerTo(brew::AssetManager& assetManager, VideoContext& videoContext) {
     {
@@ -21,6 +23,14 @@ void brew::CoreAssetProcessors::registerTo(brew::AssetManager& assetManager, Vid
 
     {
         assetManager.registerProcessor<BitmapFontProcessor>();
+    }
+
+    {
+        assetManager.registerProcessor<JSONProcessor>();
+    }
+
+    {
+        assetManager.registerProcessor<TextureAtlasProcessor>();
     }
 
 }

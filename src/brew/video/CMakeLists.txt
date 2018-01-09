@@ -26,6 +26,7 @@ brew_library(Video
         ShaderVariables.cpp
         SubMesh.cpp
         Texture.cpp
+        TextureAtlas.cpp
         VertexAttribute.cpp
         VertexAttributeLayout.cpp
         VertexBuffer.cpp
