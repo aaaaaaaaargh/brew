@@ -53,7 +53,7 @@ public:
      * @param keyFrames A list of key frames to add.
      */
     void addKeyFrames(std::initializer_list<KeyFrameT> keyFrames) {
-        for(const auto& keyFrame : initialKeyFrames) {
+        for(const auto& keyFrame : keyFrames) {
             addKeyFrame(keyFrame);
         }
     }
@@ -127,7 +127,10 @@ public:
             delta = totalTime - delta;
         }
 
-        return static_cast<SizeT>(std::floor(delta / frameDuration));
+        math::clamp(
+                static_cast<SizeT>(std::floor(delta / frameDuration)),
+                0, keyFrames.size() - 1
+                );
     }
 
     /**

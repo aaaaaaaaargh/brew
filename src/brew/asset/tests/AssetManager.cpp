@@ -30,7 +30,7 @@ public:
     };
 
     void load(AssetPipeline& pipeline, const VirtualFileSystem& vfs, AssetBundle& bundle, const String& tag, const ATypeProcessorParams& params) const override {
-        bundle.put(tag, AType());
+        bundle.put(tag, std::make_shared<AType>());
     };
 };
 
@@ -43,9 +43,9 @@ public:
     };
 
     void load(AssetPipeline& pipeline, const VirtualFileSystem& vfs, AssetBundle& bundle, const String& tag, const BTypeProcessorParams& params) const override {
-        pipeline.load("aFile");
+        pipeline.load("aFile", "");
 
-        bundle.put(tag, BType());
+        bundle.put(tag, std::make_shared<BType>());
     };
 };
 
@@ -63,7 +63,9 @@ TEST(Asset, LoadSimpleAsset) {
     ATypeProcessorParams aTypeProcessorParams;
     am.registerProcessor<ATypeProcessor>(aTypeProcessorParams);
 
-    auto result = am.load("/dynamic/aFile");
+    auto result = am.load("/dynamic/aFile", "");
+
+    //auto result = am.load<AType>("/dynamic/aFile", "", aTypeProcessorParams);
 
     EXPECT_TRUE(result.getResult());
 }
@@ -79,7 +81,7 @@ TEST(Asset, LoadAssetWithoutLoader) {
 
     AssetManager am(vfs);
 
-    auto result = am.load("/dynamic/aFile");
+    auto result = am.load("/dynamic/aFile", "");
 
     EXPECT_FALSE(result.getResult());
 }
@@ -102,7 +104,7 @@ TEST(Asset, LoadRecursive) {
     BTypeProcessorParams bTypeProcessorParams;
     am.registerProcessor<BTypeProcessor>(bTypeProcessorParams);
 
-    auto result = am.load("/dynamic/bFile");
+    auto result = am.load("/dynamic/bFile", "");
 
     EXPECT_TRUE(result.getResult());
 }

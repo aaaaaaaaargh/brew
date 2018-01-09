@@ -9,6 +9,7 @@ add_subdirectory(brew/math)
 add_subdirectory(brew/fileio)
 add_subdirectory(brew/video)
 add_subdirectory(brew/asset)
+add_subdirectory(brew/state)
 
 add_subdirectory(samples)
 

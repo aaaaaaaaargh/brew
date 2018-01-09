@@ -21,11 +21,11 @@ using namespace brew;
 TEST(Asset, BundleCRUD) {
     AssetBundle bundle;
 
-    bundle.put<int>("foo", 1234);
-    bundle.put<String>("foo", "FoO!");
+    bundle.put("foo", std::make_shared<int>(1234));
+    bundle.put("foo", std::make_shared<String>("FoO!"));
 
-    ASSERT_EQ(1234, bundle.get<int>("foo"));
-    ASSERT_EQ("FoO!", bundle.get<String>("foo"));
+    ASSERT_EQ(1234, *bundle.get<int>("foo"));
+    ASSERT_EQ("FoO!", *bundle.get<String>("foo"));
 
     bundle.removeAll("foo");
 
