@@ -47,6 +47,10 @@ public:
 	Real delta; //< The primary delta value of the input.
     Real delta2; //< The optional second delta value of the input.
     Real delta3; //< The optional third delta value of the input.
+
+	Real absolute; //< The primary absolute value of the input.
+	Real absolute2; //< The optional second absolute value of the input.
+	Real absolute3; //< The optional third absolute value of the input.
 };
 
 /**

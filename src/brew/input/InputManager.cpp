@@ -70,13 +70,14 @@ void InputManager::DeviceListener::onInputDeviceEvent(const InputDeviceEvent& ev
 
             e.delta = evt.delta;
 
+            e.absolute = evt.absolute;
+
             Mapping mapping = {evt.device, evt.stateId};
             auto rng = manager.axisLookup.equal_range(mapping);
             for (auto it = rng.first; it != rng.second; ++it) {
                 e.stateId = it->second;
 
-                manager.axisStates[it->second] += evt.delta;
-                e.absolute = manager.axisStates[it->second];
+                manager.axisStates[it->second] = evt.absolute;
 
                 manager.fireInputEvent(e);
             }
@@ -87,17 +88,17 @@ void InputManager::DeviceListener::onInputDeviceEvent(const InputDeviceEvent& ev
             e.delta = evt.delta;
             e.delta2 = evt.delta2;
 
+            e.absolute = evt.absolute;
+            e.absolute2 = evt.absolute2;
+
             Mapping2D mapping = {evt.device, evt.stateId, evt.stateId2};
             auto rng = manager.axis2DLookup.equal_range(mapping);
             for (auto it = rng.first; it != rng.second; ++it) {
                 e.stateId = it->second.state;
                 e.stateId2 = it->second.state2;
 
-                manager.axisStates[it->second.state] += evt.delta;
-                manager.axisStates[it->second.state2] += evt.delta2;
-
-                e.absolute = manager.axisStates[it->second.state];
-                e.absolute2 = manager.axisStates[it->second.state];
+                manager.axisStates[it->second.state] = evt.absolute;
+                manager.axisStates[it->second.state2] = evt.absolute2;
 
                 manager.fireInputEvent(e);
             }
