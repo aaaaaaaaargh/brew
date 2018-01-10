@@ -45,7 +45,7 @@ public:
 	 * Creates a new X11 canvas.
 	 * @param context The video context to use with this canvas.
 	 */
-	X11Canvas(VideoContext& context);
+	explicit X11Canvas(VideoContext& context);
 
 public:
 	/**

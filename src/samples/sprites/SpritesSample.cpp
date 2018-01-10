@@ -11,9 +11,9 @@
 
 using namespace brew;
 
-class MyRenderListener : public RenderListener {
+class MyGameListener : public RenderListener {
 public:
-    explicit MyRenderListener(VideoContext& ctx) {
+    explicit MyGameListener(VideoContext& ctx) {
         // Create the virtual file system.
         auto vfs = std::make_shared<VirtualFileSystem>();
         vfs->mountLocal("/", BREW_SAMPLE_VFS_ROOT);
@@ -152,7 +152,7 @@ int main() {
 
     canvas.init(640, 480);
 
-    auto myListener = std::make_shared<MyRenderListener>(ctx);
+    auto myListener = std::make_shared<MyGameListener>(ctx);
     auto& viewport = myListener->viewport;
 
     canvas.addRenderListener(myListener);

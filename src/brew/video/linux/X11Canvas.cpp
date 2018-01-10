@@ -48,7 +48,7 @@ void X11Canvas::onInit() {
 	// Set the even masks
 	swa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | StructureNotifyMask /* resize & destroy */;
 
-	u32 x = 0, y = 0, w = getWidth(), h = getHeight();
+	u32 x = 0, y = 0, w = static_cast<u32>(getWidth()), h = static_cast<u32>(getHeight());
 	win = XCreateWindow(display, parent, x, y, w, h, 0, visual->depth,
 			InputOutput, visual->visual, CWColormap | CWEventMask, &swa);
 
@@ -66,7 +66,6 @@ void X11Canvas::onInit() {
 	XSetWMProtocols(display, win, &wmDeleteMessage, 1);
 
     getAppContext().log->stream("X11Canvas") << "Window created.";
-
 }
 
 void X11Canvas::onDrop() {
