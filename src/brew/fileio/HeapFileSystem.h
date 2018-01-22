@@ -8,7 +8,7 @@
  *  HeapFileSystem.h
  *
  *  Created on: Feb 23, 2016
- *      Author: void
+ *
  */
 
 #ifndef BREW_HEAPFILESYSTEM_H

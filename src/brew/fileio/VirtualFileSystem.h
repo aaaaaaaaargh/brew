@@ -8,7 +8,7 @@
  *  VirtualFileSystem.h
  *
  *  Created on: Feb 11, 2016
- *      Author: void
+ *
  */
 
 #ifndef BREW_VIRTUALFILESYSTEM_H

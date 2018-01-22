@@ -8,7 +8,7 @@
  *  FileStream.h
  *
  *  Created on: Feb 11, 2016
- *      Author: void
+ *
  */
 
 #ifndef BREW_FILESTREAM_H
