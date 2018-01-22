@@ -11,7 +11,6 @@
 
 #include <brew/input/InputDevice.h>
 #include <brew/core/Exception.h>
-#include <iostream>
 
 namespace brew {
 

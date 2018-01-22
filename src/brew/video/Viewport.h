@@ -162,9 +162,17 @@ public:
     /**
      * Performs a screen space to world space coordinate transformation-
      * @param screenCoords the screen coordinates to convert to world coordinates.
+     */
+    inline Vec3 unproject(const Vec2& screenCoords) const {
+        return unproject(Vec3(screenCoords.x, screenCoords.y, 1));
+    }
+
+    /**
+     * Performs a screen space to world space coordinate transformation-
+     * @param screenCoords the screen coordinates to convert to world coordinates, along with a depth component.
      * @param useFarPlane projects the world coordinate onto the cameras far plane if set to true. Uses near plane instead if false.
      */
-    Vec3 unproject(const Vec2& screenCoords, bool useFarPlane=true) const;
+    Vec3 unproject(const Vec3& screenCoords) const;
 
     /**
      * Performs a world space to screen space coordinate transformation-

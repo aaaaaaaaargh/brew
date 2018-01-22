@@ -56,23 +56,24 @@ void Viewport::setPhysicalBounds(SizeT x, SizeT y, SizeT width, SizeT height) {
 }
 
 void Viewport::setCamera(std::shared_ptr<Camera> camera) {
-    this->camera = camera;
+    this->camera = std::move(camera);
     this->camera->setViewportSize(virtualSize);
 }
 
-Vec3 Viewport::unproject(const Vec2& screenCoords, bool useFarPlane) const {
+Vec3 Viewport::unproject(const Vec3& screenCoords) const {
     Real x = screenCoords.x, y = screenCoords.y;
-    x = x - physicalX;
-    y = physicalHeight - y - 1.0f;
-    y = y - physicalY;
+    x -= physicalX;
+    y -= physicalY;
 
     Vec3 v;
 
     v.x = (2.0f * x) / physicalWidth - 1.0f;
-    v.y = (2.0f * y) / physicalHeight - 1.0f;
-    v.z = 2.0f * v.z - 1.0f;
+    v.y = 1.0f - (2.0f * y) / physicalHeight;
+    v.z = 2.0f * screenCoords.z - 1.0f;
 
-    return camera->getInverseCombinedMatrix() * v;
+    const Matrix4& inverseCombinedMatrix = camera->getInverseCombinedMatrix();
+
+    return inverseCombinedMatrix * v;
 }
 
 Vec2 Viewport::project(const Vec3& worldCoords) const {

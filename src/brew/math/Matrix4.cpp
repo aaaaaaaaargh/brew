@@ -214,9 +214,9 @@ Matrix4& Matrix4::invert() {
     Real cofactor3 = getCofactor(m[4], m[5], m[6], m[8], m[9], m[10], m[12], m[13], m[14]);
 
     // get determinant
-    Real determinant = m[0] * cofactor0 - m[1] * cofactor1 + m[2] * cofactor2 - m[3] * cofactor3;
+    Real determinant = getDeterminant();
 
-    if (fabs(determinant) <= 0.00001f) {
+    if (math::equals(determinant, 0, 0.00000001f)) {
         this->operator=(ID);
         return *this;
     }

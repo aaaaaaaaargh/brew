@@ -72,8 +72,7 @@ public:
 	/**
 	 * @return the cameras combined matrix (that is ViewMatrix * ProjectionMatrix)
 	 */
-	inline const Matrix4& getCombinedMatrix() const
-	{
+	inline const Matrix4& getCombinedMatrix() const {
 		return combinedMatrix;
 	}
 

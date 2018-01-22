@@ -15,7 +15,7 @@
 
 namespace brew {
 
-const Real Camera::DefaultNearClip = 0.1f;
+const Real Camera::DefaultNearClip = 1.0f;
 const Real Camera::DefaultFarClip = 100.0f;
 
 Camera::Camera(const Vec3& position, const Vec3& lookAt, Real near, Real far) :

@@ -16,7 +16,7 @@
 #include <memory>
 #include <mutex>
 #include <queue>
-#include <iostream>
+
 namespace brew {
 
 /**

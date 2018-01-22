@@ -10,8 +10,8 @@
  */
 
 #include <brew/video/ExtendViewport.h>
+
 #include <cmath>
-#include <iostream>
 
 namespace brew {
 

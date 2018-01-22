@@ -74,6 +74,19 @@ void GLGPUExecutionContext::renderElement(const RenderTarget& target, const Rend
                 static_cast<GLsizei>(viewport.getPhysicalWidth()),
                 static_cast<GLsizei>(viewport.getPhysicalHeight())
         );
+
+        // Todo: Calculate screen offsets.
+
+        /*glScissor(
+                static_cast<GLint>(viewport.getPhysicalX()),
+                static_cast<GLint>(viewport.getPhysicalY()),
+                static_cast<GLsizei>(viewport.getPhysicalWidth()),
+                static_cast<GLsizei>(viewport.getPhysicalHeight())
+        );*/
+
+        glEnable(GL_SCISSOR_TEST);
+
+        glClear(GL_COLOR_BUFFER_BIT);
     }
 
     glDrawElements(
