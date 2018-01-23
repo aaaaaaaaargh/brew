@@ -251,6 +251,14 @@ public:
     typedef ShaderVariablesLayout::VarType VarType;
 
     /**
+     * Sets a shader variable to a texture region. This will in fact use two variables -
+     * the variable with the given name as texture and a vec4 named [name]_dims containing the region dimensions.
+     * @param name The variable name.
+     * @param textureRegion The texture region.
+     */
+    void set(const String& name, const TextureRegion& textureRegion);
+
+    /**
      * Sets a shader variable.
      * @tparam T The variable type.
      * @param name The name of the variable.

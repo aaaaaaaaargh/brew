@@ -15,6 +15,7 @@
 #include <brew/core/Types.h>
 #include <brew/math/Vec2.h>
 #include <brew/video/Camera.h>
+#include <brew/video/Color.h>
 
 #include <memory>
 
@@ -180,10 +181,24 @@ public:
      */
     Vec2 project(const Vec3& worldCoords) const;
 
+    /**
+     * Sets the background color for this viewport.
+     * @param color The background color.
+     */
+    void setBackgroundColor(const Color& color);
+
+    /**
+     * @return The background color of this viewport.
+     */
+    inline const Color& getBackgroundColor() const {
+        return backgroundColor;
+    }
+
 private:
     SizeT physicalX, physicalY;
     SizeT physicalWidth, physicalHeight;
     Vec2 virtualSize;
+    Color backgroundColor;
 
     std::shared_ptr<Camera> camera;
 };

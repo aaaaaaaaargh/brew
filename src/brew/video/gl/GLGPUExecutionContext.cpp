@@ -10,19 +10,29 @@
  */
 
 #include <brew/video/gl/GLGPUExecutionContext.h>
+#include <brew/video/gl/GLContext.h>
 #include <brew/video/gl/GLExtensions.h>
 #include <brew/video/gl/GLMesh.h>
 #include <brew/video/gl/GLShaderProgram.h>
 #include <brew/video/gl/GLShaderVariables.h>
 #include <brew/video/gl/GLIndexBuffer.h>
 
-#include <brew/video/VideoContext.h>
+// Undefine some X11 stuff.
+#ifdef None
+#undef None
+#endif
 
 namespace brew {
 
 using gl = GL31;
 
-void GLGPUExecutionContext::renderElement(const RenderTarget& target, const Renderable& renderable, const Viewport& viewport) {
+GLGPUExecutionContext::GLGPUExecutionContext(GLContext& context)
+: GPUExecutionContext(context), GLObject(context) {
+
+}
+
+
+void GLGPUExecutionContext::renderElement(const RenderTarget& target, const Renderable& renderable, const Viewport& viewport, const RenderSettings& settings) {
     // Bind the VAO.
     auto& mesh = static_cast<GLMeshContextHandle&>(*renderable.mesh->getMesh());
     mesh.bind();
@@ -45,7 +55,6 @@ void GLGPUExecutionContext::renderElement(const RenderTarget& target, const Rend
             } catch(const InvalidArgumentException&) {}
 
             auto& shaderVariables = static_cast<GLShaderVariablesContextHandle&>(**renderable.shaderVariables);
-            auto& context = target.getContext();
 
             GLuint bindingPoint = 1;
 
@@ -77,16 +86,43 @@ void GLGPUExecutionContext::renderElement(const RenderTarget& target, const Rend
 
         // Todo: Calculate screen offsets.
 
-        /*glScissor(
+        glEnable(GL_SCISSOR_TEST);
+
+        glScissor(
                 static_cast<GLint>(viewport.getPhysicalX()),
                 static_cast<GLint>(viewport.getPhysicalY()),
                 static_cast<GLsizei>(viewport.getPhysicalWidth()),
                 static_cast<GLsizei>(viewport.getPhysicalHeight())
-        );*/
+        );
 
-        glEnable(GL_SCISSOR_TEST);
+        auto& bgColor = viewport.getBackgroundColor();
+        glClearColor(bgColor.rReal(), bgColor.gReal(), bgColor.bReal(), bgColor.aReal());
 
         glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    auto& glStateInfo = getContext().getStateInfo();
+
+    // Handle blending
+    if(settings.blendMode != glStateInfo.blendMode) {
+        if(settings.blendMode == RenderSettings::BlendMode::None) {
+            glDisable(GL_BLEND);
+        } else {
+            if(glStateInfo.blendMode == RenderSettings::BlendMode::None) {
+                glEnable(GL_BLEND);
+            }
+
+            switch(settings.blendMode) {
+                case RenderSettings::BlendMode::SourceAlphaToOneMinusSourceAlpha:
+                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                    break;
+                default:
+                    throw NotSupportedException("Blend mode is not supported.");
+            }
+        }
+
+        // Update the blend mode state.
+        glStateInfo.blendMode = settings.blendMode;
     }
 
     glDrawElements(

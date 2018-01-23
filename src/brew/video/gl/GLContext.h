@@ -116,6 +116,7 @@ public:
 
 public:
     static String getUniformDeclarations(const std::shared_ptr<ShaderVariables>& vars);
+    static String getUniformDeclarations(const ShaderVariablesLayout& layout);
 
 public:
     /**
@@ -123,7 +124,7 @@ public:
      * @param callback The callback to execute.
      * @param syncToFrame Whether to sync the callback to the current frame. This cannot be unset in OpenGL.
      */
-    void execute(ExecuteCallback callback, bool syncToFrame = true) override;
+    void execute(ExecuteCallback callback, bool syncToFrame) override;
 
 
 private:

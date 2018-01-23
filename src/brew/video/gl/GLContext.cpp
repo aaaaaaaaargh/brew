@@ -84,4 +84,8 @@ String GLContext::getUniformDeclarations(const std::shared_ptr<ShaderVariables>&
     return GLShaderVariablesContextHandle::generateUniformDeclarationSource(vars->getDefinition());
 }
 
+String GLContext::getUniformDeclarations(const ShaderVariablesLayout& vars) {
+    return GLShaderVariablesContextHandle::generateUniformDeclarationSource(vars);
+}
+
 } /* namespace brew */

@@ -33,20 +33,35 @@ public:
 public:
     /**
      * Creates a new render batch without draw order.
+     * @param settings The render settings to use for draw calls in this batch.
      */
-    RenderBatch() = default;
+    explicit RenderBatch(const RenderSettings& settings = RenderSettings::Defaults);
 
     /**
      * Creates a new render batch.
      * @param sortingCallback The sorting callback used to estimate the draw order of the elements.
+     * @param settings The render settings to use for draw calls in this batch.
      */
-    explicit RenderBatch(SortingCallback sortingCallback);
+    explicit RenderBatch(SortingCallback sortingCallback, const RenderSettings& settings = RenderSettings::Defaults);
+
+    /**
+     * @return A reference to the render settings of this batch.
+     */
+    inline RenderSettings& getRenderSettings() {
+        return settings;
+    }
 
     /**
      * Adds a new renderable the the batch.
      * @param renderable The renderable to add.
      */
     void add(const Renderable& renderable);
+
+    /**
+     * Adds renderables from a provider.
+     * @param renderable The renderable provider to add the renderables from.
+     */
+    void add(const RenderableProvider& provider);
 
     /**
      * Flushes the batch and executes the drawing on the GPU.
@@ -59,6 +74,7 @@ public:
 private:
     SortingCallback sortingCallback;
     std::list<Renderable> renderables;
+    RenderSettings settings;
 };
 
 }

@@ -321,20 +321,19 @@ String GLShaderVariablesContextHandle::generateUniformDeclarationSource(
                 typeDeclaration = "float";
                 break;
             case ShaderVariables::VarType::Vec2:
-                typeDeclaration = "float";
-                arrayDims *= 2;
+                typeDeclaration = "vec2";
                 break;
             case ShaderVariables::VarType::Vec3:
-                typeDeclaration = "float";
-                arrayDims *= 3;
+                typeDeclaration = "vec3";
                 break;
             case ShaderVariables::VarType::Vec4:
-                typeDeclaration = "float";
-                arrayDims *= 4;
+                typeDeclaration = "vec4";
                 break;
             case ShaderVariables::VarType::Matrix4:
                 typeDeclaration = "mat4";
                 break;
+            default:
+                throw NotSupportedException("Unsupported shader variable type.");
         }
 
         StringStream ss;

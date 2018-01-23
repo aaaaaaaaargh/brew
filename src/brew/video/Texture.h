@@ -196,13 +196,57 @@ private:
     u8 numMipMaps;
 };
 
+/**
+ * A region of a texture.
+ */
 class TextureRegion : public RealRect {
 public:
+    /**
+     * Creates a new texture region for the full sized texture.
+     * @param texture The texture to use.
+     */
     explicit TextureRegion(std::shared_ptr<Texture> texture);
+
+    /**
+     * Creates a new texture region.
+     * @param texture The texture to create the region from.
+     * @param region The region dimensions, in pixels.
+     */
     TextureRegion(std::shared_ptr<Texture> texture, const RealRect& region);
 
+    /**
+     * @return The texture used for this region.
+     */
     inline const std::shared_ptr<Texture>& getTexture() const {
         return texture;
+    }
+
+    /**
+     * @return The U component of the region.
+     */
+    inline Real getU() const {
+        return getLeft() / texture->getWidth();
+    }
+
+    /**
+     * @return The V component of the region.
+     */
+    inline Real getV() const {
+        return getTop() / texture->getHeight();
+    }
+
+    /**
+     * @return The U2 component of the region.
+     */
+    inline Real getU2() const {
+        return getRight() / texture->getWidth();
+    }
+
+    /**
+     * @return The V2 component of the region.
+     */
+    inline Real getV2() const {
+        return getBottom() / texture->getHeight();
     }
 
 private:

@@ -19,8 +19,9 @@ brew_library(Video
         PerspectiveCamera.cpp
         Pixmap.cpp
         PixmapAtlas.cpp
-        RenderTarget.cpp
         RenderBatch.cpp
+        RenderSettings.cpp
+        RenderTarget.cpp
         Shader.cpp
         ShaderProgram.cpp
         ShaderVariables.cpp

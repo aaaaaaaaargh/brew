@@ -12,26 +12,37 @@
 #include <brew/video/RenderBatch.h>
 #include <brew/video/VideoContext.h>
 
+#include <utility>
+
 namespace brew {
 
-RenderBatch::RenderBatch(SortingCallback sortingCallback) :
-        sortingCallback(sortingCallback) {
+RenderBatch::RenderBatch(const RenderSettings& settings) :
+        settings(settings) {
+
+}
+
+RenderBatch::RenderBatch(SortingCallback sortingCallback, const RenderSettings& settings) :
+        sortingCallback(std::move(sortingCallback)), settings(settings) {
 }
 
 void RenderBatch::add(const Renderable& renderable) {
     renderables.push_back(renderable);
 }
 
+void RenderBatch::add(const RenderableProvider& provider) {
+    provider.getRenderables(renderables);
+}
+
 void RenderBatch::flush(const RenderTarget& target, const Viewport& viewport, GPUExecutionContext& context) {
-    if(sortingCallback) {
+    if (sortingCallback) {
         renderables.sort(sortingCallback);
     }
 
-    for(Renderable& renderable : renderables) {
-        context.renderElement(target, renderable, viewport);
+    for (Renderable& renderable : renderables) {
+        context.renderElement(target, renderable, viewport, settings);
     }
 
     renderables.clear();
 }
 
-}
+} /* namespace brew */

@@ -14,6 +14,7 @@
 
 #include <brew/video/Renderable.h>
 #include <brew/video/RenderTarget.h>
+#include <brew/video/RenderSettings.h>
 #include <brew/video/Viewport.h>
 
 namespace brew {
@@ -39,8 +40,9 @@ public:
      * @param target The render target to render the element to.
      * @param renderable The renderable element.
      * @param viewport The viewport to use for rendering.
+     * @param settings The render settings for the draw call.
      */
-    virtual void renderElement(const RenderTarget& target, const Renderable& renderable, const Viewport& viewport) = 0;
+    virtual void renderElement(const RenderTarget& target, const Renderable& renderable, const Viewport& viewport, const RenderSettings& settings) = 0;
 
 private:
     VideoContext& context;

@@ -18,6 +18,8 @@
 
 #include <brew/math/Matrix4.h>
 
+#include <list>
+
 namespace brew {
 
 /**
@@ -30,6 +32,18 @@ public:
     Matrix4 worldTransform; //< The world transformation for the rendered mesh.
     std::shared_ptr<ShaderProgram> shaderProgram; //< The shader program to use.
     std::shared_ptr<ShaderVariables> shaderVariables; //< The shader variables to use.
+};
+
+/**
+ * A class for providing renderables.
+ */
+class RenderableProvider {
+public:
+    /**
+     * Obtains a list of renderables from this provider.
+     * @param result An array containing the results.
+     */
+    virtual void getRenderables(std::list<Renderable>& result) const = 0;
 };
 
 } /* namespace brew */

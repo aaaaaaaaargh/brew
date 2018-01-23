@@ -86,4 +86,8 @@ Vec2 Viewport::project(const Vec3& worldCoords) const {
     return Vec2(v.x, v.y);
 }
 
+void Viewport::setBackgroundColor(const Color& color) {
+    this->backgroundColor = color;
+}
+
 } /* namespace brew */

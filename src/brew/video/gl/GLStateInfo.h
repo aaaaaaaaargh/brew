@@ -13,6 +13,7 @@
 #define BREW_GLSTATEINFO_H
 
 #include <brew/core/Types.h>
+#include <brew/video/RenderSettings.h>
 
 #include <map>
 
@@ -33,7 +34,7 @@ public:
     const Viewport* currentViewport = nullptr; //< The viewport in use.
     bool isScissorTestEnabled = false; //< Whether GL_SCISSOR test is enabled.
     bool isDepthTestEnabled = false; //< Whether GL_DEPTH_TEST is enabled.
-    bool isBlendingEnabled = false; //< Whether GL_BLEND is enabled.
+    RenderSettings::BlendMode blendMode = RenderSettings::BlendMode::None; //< Whether GL_BLEND is enabled.
 };
 
 } /* namespace brew */
