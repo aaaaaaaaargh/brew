@@ -14,6 +14,7 @@
 
 #include <brew/core/ProxyObjectManager.h>
 #include <brew/video/Shader.h>
+#include <brew/video/VideoContextObject.h>
 
 namespace brew {
 
@@ -44,7 +45,7 @@ protected:
 /**
  * A shader program that can be linked from multiple compiled shaders.
  */
-class ShaderProgram : public ProxyObject<ShaderProgramContextHandle> {
+class ShaderProgram : public ProxyObject<ShaderProgramContextHandle>, public VideoContextObject {
 public:
     ShaderProgram(std::initializer_list<std::shared_ptr<Shader> > shaders);
 

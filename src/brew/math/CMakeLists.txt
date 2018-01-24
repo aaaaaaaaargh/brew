@@ -8,6 +8,7 @@ brew_library(Math
         Matrix4.cpp
         Plane.cpp
         Quaternion.cpp
+        Scale2D.cpp
         Vec2.cpp
         Vec3.cpp
         Vec4.cpp

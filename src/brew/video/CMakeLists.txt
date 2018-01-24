@@ -22,6 +22,7 @@ brew_library(Video
         RenderBatch.cpp
         RenderSettings.cpp
         RenderTarget.cpp
+        ScalingViewport.cpp
         Shader.cpp
         ShaderProgram.cpp
         ShaderVariables.cpp

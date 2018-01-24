@@ -15,6 +15,7 @@
 #include <brew/core/Types.h>
 #include <brew/core/HeapBuffer.h>
 #include <brew/core/ProxyObjectManager.h>
+#include <brew/video/VideoContextObject.h>
 
 #include <memory>
 #include <vector>
@@ -62,14 +63,14 @@ protected:
      * @param offset The offset of the part to be synced.
      * @param len The length of the part to be synced.
      */
-    virtual void syncToGPU(SizeT offset=0, SizeT len=0);
+    virtual void syncToGPU(SizeT offset, SizeT len);
 
     /**
      * Syncs back the buffer (or part of it) from the GPU.
      * @param offset The offset of the part to be synced.
      * @param len The length of the part to be synced.
      */
-    virtual void syncFromGPU(SizeT offset=0, SizeT len=0);
+    virtual void syncFromGPU(SizeT offset, SizeT len);
 
 protected:
     void markSyncRange(SizeT from, SizeT to);
@@ -97,7 +98,7 @@ protected:
  * @tparam ContextHandleT The context handle type of this buffer.
  */
 template<typename ContextHandleT>
-class GPUBuffer : public AbstractGPUBuffer, public ProxyObject<ContextHandleT> {
+class GPUBuffer : public AbstractGPUBuffer, public ProxyObject<ContextHandleT>, public VideoContextObject {
 public:
     using AbstractGPUBuffer::AbstractGPUBuffer;
 

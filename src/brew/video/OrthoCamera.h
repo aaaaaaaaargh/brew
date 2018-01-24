@@ -31,10 +31,10 @@ public:
      * @param near The near clip distance.
      * @param far The far clip distance.
 	 */
-	OrthoCamera(Real zoom = 1.0,
+	explicit OrthoCamera(Real zoom = 1.0,
 				const Vec3& position = Vec3::ZERO,
 				const Vec3& lookAt = Vec3::ZERO,
-				Real near = DefaultNearClip,
+				Real near = 0,
 				Real far= DefaultFarClip);
 
 	/**

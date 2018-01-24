@@ -14,6 +14,7 @@
 
 #include <brew/core/ProxyObjectManager.h>
 #include <brew/core/Exception.h>
+#include <brew/video/VideoContextObject.h>
 
 namespace brew {
 
@@ -59,7 +60,7 @@ public:
 /**
  * A single shader that can be linked to a shader program.
  */
-class Shader : public ProxyObject<ShaderContextHandle> {
+class Shader : public ProxyObject<ShaderContextHandle>, public VideoContextObject {
 public:
     /**
      * Constructs a new shader.

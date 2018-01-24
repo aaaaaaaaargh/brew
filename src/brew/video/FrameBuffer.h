@@ -14,6 +14,7 @@
 
 #include <brew/core/ProxyObjectManager.h>
 #include <brew/video/Texture.h>
+#include <brew/video/VideoContextObject.h>
 
 namespace brew {
 
@@ -27,7 +28,7 @@ class FrameBufferContextHandle {};
 /**
  * A class for handling frame buffers.
  */
-class FrameBuffer : public ProxyObject<FrameBufferContextHandle> {
+class FrameBuffer : public ProxyObject<FrameBufferContextHandle>, public VideoContextObject {
 public:
     /**
      * Creates a new frame buffer.

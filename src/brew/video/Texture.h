@@ -16,6 +16,7 @@
 #include <brew/video/Color.h>
 #include <brew/video/Pixmap.h>
 #include <brew/core/Rect.h>
+#include <brew/video/VideoContextObject.h>
 
 namespace brew {
 
@@ -108,7 +109,7 @@ protected:
 /**
  * A class representing textures.
  */
-class Texture : public ProxyObject<TextureContextHandle> {
+class Texture : public ProxyObject<TextureContextHandle>, public VideoContextObject {
 public:
     /**
      * Creates a new empty texture.

@@ -30,63 +30,90 @@ std::shared_ptr<Texture> VideoContext::createTexture(SizeT width,
                                                      TextureFormat format,
                                                      TextureFiltering filtering,
                                                      u8 numMipMaps) {
-    return ProxyObjectManager<Texture, TextureContextHandle>::allocateObject(
+    auto result = ProxyObjectManager<Texture, TextureContextHandle>::allocateObject(
             width, height, color, format, filtering, numMipMaps
     );
+
+    result->context = this;
+    return result;
 }
 
 std::shared_ptr<Texture> VideoContext::createTexture(std::shared_ptr<Pixmap> pixmap,
                                                      TextureFormat format,
                                                      TextureFiltering filtering,
                                                      u8 numMipMaps) {
-    return ProxyObjectManager<Texture, TextureContextHandle>::allocateObject(
+    auto result = ProxyObjectManager<Texture, TextureContextHandle>::allocateObject(
             pixmap, format, filtering, numMipMaps
     );
+
+    result->context = this;
+    return result;
 }
 
 std::shared_ptr<FrameBuffer>
 VideoContext::createFrameBuffer(SizeT width, SizeT height, u8 numColorAttachments, bool hasDepthAttachment,
                                 bool hasStencilAttachment) {
-    return ProxyObjectManager<FrameBuffer, FrameBufferContextHandle>::allocateObject(
+    auto result = ProxyObjectManager<FrameBuffer, FrameBufferContextHandle>::allocateObject(
             *this, width, height, numColorAttachments, hasDepthAttachment, hasStencilAttachment
     );
+
+    result->context = this;
+    return result;
 }
 
 std::shared_ptr<ShaderVariables> VideoContext::createShaderVariables(const ShaderVariablesLayout& definition) {
-    return ProxyObjectManager<ShaderVariables, ShaderVariablesContextHandle>::allocateObject(
+    auto result = ProxyObjectManager<ShaderVariables, ShaderVariablesContextHandle>::allocateObject(
             definition
     );
+
+    result->context = this;
+    return result;
 }
 
 std::shared_ptr<VertexBuffer> VideoContext::createVertexBuffer(SizeT numVertices, const VertexAttributeLayout& layout) {
-    return ProxyObjectManager<VertexBuffer, VertexBufferContextHandle>::allocateObject(
+    auto result = ProxyObjectManager<VertexBuffer, VertexBufferContextHandle>::allocateObject(
             numVertices, layout
     );
+
+    result->context = this;
+    return result;
 }
 
 std::shared_ptr<IndexBuffer> VideoContext::createIndexBuffer(SizeT numIndices) {
-    return ProxyObjectManager<IndexBuffer, IndexBufferContextHandle>::allocateObject(
+    auto result = ProxyObjectManager<IndexBuffer, IndexBufferContextHandle>::allocateObject(
             numIndices
     );
+
+    result->context = this;
+    return result;
 }
 
 std::shared_ptr<Mesh> VideoContext::createMesh(std::shared_ptr<VertexBuffer> vertexBuffer,
                                                std::shared_ptr<IndexBuffer> indexBuffer) {
-    return ProxyObjectManager<Mesh, MeshContextHandle>::allocateObject(
+    auto result = ProxyObjectManager<Mesh, MeshContextHandle>::allocateObject(
             vertexBuffer, indexBuffer
     );
+
+    result->context = this;
+    return result;
 }
 
 std::shared_ptr<Shader> VideoContext::createShader(ShaderType type, const String& shaderSource) {
-    return ProxyObjectManager<Shader, ShaderContextHandle>::allocateObject(
+    auto result = ProxyObjectManager<Shader, ShaderContextHandle>::allocateObject(
             type, shaderSource
     );
+
+    result->context = this;
+    return result;
 }
 
 std::shared_ptr<ShaderProgram> VideoContext::createShaderProgram(std::initializer_list<std::shared_ptr<Shader> > shaders) {
-    return ProxyObjectManager<ShaderProgram, ShaderProgramContextHandle>::allocateObject(
+    auto result = ProxyObjectManager<ShaderProgram, ShaderProgramContextHandle>::allocateObject(
             shaders
     );
+
+    result->context = this;
+    return result;
 }
 
 } /* namespace brew */

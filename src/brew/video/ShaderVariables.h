@@ -20,6 +20,7 @@
 #include <brew/math/Vec4.h>
 #include <brew/math/Matrix4.h>
 #include <brew/video/Texture.h>
+#include <brew/video/VideoContextObject.h>
 
 #include <initializer_list>
 #include <map>
@@ -235,7 +236,7 @@ protected:
     static ShaderVariablesUpdateData& getShaderVariablesUpdateData(ShaderVariables& shaderVariables);
 };
 
-class ShaderVariables : public ProxyObject<ShaderVariablesContextHandle> {
+class ShaderVariables : public ProxyObject<ShaderVariablesContextHandle>, public VideoContextObject {
 public:
     static const String BuiltInCombinedCameraMatrix; //< The built-in variable name for the combined camera matrix.
     static const String BuiltInWorldTransformMatrix; //< The built-in variable name for the current world transform.

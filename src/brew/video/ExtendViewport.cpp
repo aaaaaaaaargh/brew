@@ -12,6 +12,7 @@
 #include <brew/video/ExtendViewport.h>
 
 #include <cmath>
+#include <brew/math/Scale2D.h>
 
 namespace brew {
 
@@ -29,17 +30,13 @@ ExtendViewport::ExtendViewport(const Vec2& minSize, const Vec2& maxSize, std::sh
 }
 
 void ExtendViewport::update(SizeT physicalWidth, SizeT physicalHeight) {
-    Viewport::update(physicalWidth, physicalHeight);
-
     Vec2 virtualSize = getMinimumVirtualSize();
 
-    Real physicalRatio = physicalHeight / physicalWidth;
-    Real virtualRatio = getVirtualSize().y / getVirtualSize().x;
-
-    Real scale =
-            physicalRatio > virtualRatio ? physicalWidth / getVirtualSize().x : physicalHeight / getVirtualSize().y;
-
-    Vec2 scaled = minVirtualSize * scale;
+    Vec2 scaled = Scale2D::apply(
+            Scale2D::Type::Fit,
+            virtualSize,
+            Vec2(physicalWidth, physicalHeight)
+    );
 
     // Extend in the short direction.
     auto viewportWidth = static_cast<SizeT>(std::round(scaled.x));
