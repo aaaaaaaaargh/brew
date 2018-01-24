@@ -126,7 +126,6 @@ public:
         return context;
     }
 
-
 private:
     VideoContext& context;
 };

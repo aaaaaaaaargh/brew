@@ -11,6 +11,7 @@
 
 #include <brew/video/Viewport.h>
 #include <brew/video/PerspectiveCamera.h>
+#include <iostream>
 
 namespace brew {
 
@@ -84,10 +85,6 @@ Vec2 Viewport::project(const Vec3& worldCoords) const {
     v.z = (v.z + 1.0f) / 2.0f;
 
     return Vec2(v.x, v.y);
-}
-
-void Viewport::setBackgroundColor(const Color& color) {
-    this->backgroundColor = color;
 }
 
 } /* namespace brew */

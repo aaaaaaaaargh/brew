@@ -15,6 +15,7 @@
 #include <brew/core/Object.h>
 #include <brew/video/VideoContext.h>
 #include <brew/video/RenderTarget.h>
+#include <brew/core/Counter.h>
 
 namespace brew {
 
@@ -70,6 +71,13 @@ public:
         return inited;
     }
 
+    /**
+     * @return The delta time between the frames.
+     */
+    Real getDeltaTime() const {
+        return frameCounter.getAverage();
+    }
+
 public:
     /**
      * Renders a frame.
@@ -103,6 +111,7 @@ protected:
     virtual void onEndFrame() = 0;
 
 protected:
+    Counter frameCounter;
     SizeT width, height;
     bool inited;
 };

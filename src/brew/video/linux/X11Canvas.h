@@ -49,6 +49,13 @@ public:
 
 public:
 	/**
+	 * Enables or disables the hardware cursor.
+	 * @param enabled Whether to hide or show the cursor.
+	 */
+	void setCursorVisible(bool enabled);
+
+public:
+	/**
      * Called when the canvas is initialized.
      */
 	void onInit() override;
@@ -69,6 +76,9 @@ protected:
 	 */
 	virtual XVisualInfo* chooseVisual() = 0;
 
+private:
+    void updateCursor();
+
 protected:
 	Window parent;
 	Display* display;
@@ -76,6 +86,8 @@ protected:
 	XVisualInfo* visual;
 	Window win;
 	Atom wmDeleteMessage;
+    bool cursorUpdated;
+	bool cursorEnabled;
 };
 
 } /* namespace brew */

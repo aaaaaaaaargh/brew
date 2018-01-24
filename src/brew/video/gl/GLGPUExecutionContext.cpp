@@ -73,35 +73,33 @@ void GLGPUExecutionContext::renderElement(const RenderTarget& target, const Rend
     auto &ibo = static_cast<GLIndexBufferContextHandle&>(*renderable.mesh->getMesh().getIndices());
     ibo.bind();
 
+    auto& glStateInfo = getContext().getStateInfo();
+
     // Apply the viewport.
-    if(mesh.getGLState().currentViewport != &viewport) {
-        mesh.getGLState().currentViewport = &viewport;
+    glStateInfo.currentViewport = &viewport;
 
-        glViewport(
-                static_cast<GLint>(viewport.getPhysicalX()),
-                static_cast<GLint>(viewport.getPhysicalY()),
-                static_cast<GLsizei>(viewport.getPhysicalWidth()),
-                static_cast<GLsizei>(viewport.getPhysicalHeight())
-        );
+    auto viewportY = static_cast<GLint>(target.getHeight() - viewport.getPhysicalY() - viewport.getPhysicalHeight());
 
-        // Todo: Calculate screen offsets.
+    glViewport(
+            static_cast<GLint>(viewport.getPhysicalX()),
+            viewportY,
+            static_cast<GLsizei>(viewport.getPhysicalWidth()),
+            static_cast<GLsizei>(viewport.getPhysicalHeight())
+    );
 
+    // Todo: Calculate screen offsets.
+
+    if(!glStateInfo.isScissorTestEnabled) {
         glEnable(GL_SCISSOR_TEST);
-
-        glScissor(
-                static_cast<GLint>(viewport.getPhysicalX()),
-                static_cast<GLint>(viewport.getPhysicalY()),
-                static_cast<GLsizei>(viewport.getPhysicalWidth()),
-                static_cast<GLsizei>(viewport.getPhysicalHeight())
-        );
-
-        auto& bgColor = viewport.getBackgroundColor();
-        glClearColor(bgColor.rReal(), bgColor.gReal(), bgColor.bReal(), bgColor.aReal());
-
-        glClear(GL_COLOR_BUFFER_BIT);
+        glStateInfo.isScissorTestEnabled = true;
     }
 
-    auto& glStateInfo = getContext().getStateInfo();
+    glScissor(
+            static_cast<GLint>(viewport.getPhysicalX()),
+            viewportY,
+            static_cast<GLsizei>(viewport.getPhysicalWidth()),
+            static_cast<GLsizei>(viewport.getPhysicalHeight())
+    );
 
     // Handle blending
     if(settings.blendMode != glStateInfo.blendMode) {

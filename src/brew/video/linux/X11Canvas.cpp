@@ -16,7 +16,15 @@
 namespace brew {
 
 X11Canvas::X11Canvas(VideoContext& ctx) :
-		VideoCanvas(ctx), display(nullptr), parent(0), cmap(0), visual(nullptr), win(0), wmDeleteMessage(0) {
+		VideoCanvas(ctx),
+		display(nullptr),
+		parent(0),
+		cmap(0),
+		visual(nullptr),
+		win(0),
+		wmDeleteMessage(0),
+        cursorEnabled(true),
+        cursorUpdated(false) {
 
 }
 
@@ -98,6 +106,9 @@ void X11Canvas::onDrop() {
 
 void X11Canvas::onPumpMessages() {
 
+    // Update the cursor
+    updateCursor();
+
 	XEvent xev = {};
 	while (XPending(display) > 0) {
 
@@ -128,6 +139,45 @@ void X11Canvas::onPumpMessages() {
 		}
 	}
 
+}
+
+void X11Canvas::setCursorVisible(bool enabled) {
+	if(cursorEnabled == enabled) {
+		return;
+	}
+
+	cursorEnabled = enabled;
+    cursorUpdated = true;
+}
+
+void X11Canvas::updateCursor() {
+    if(!cursorUpdated) {
+        return;
+    }
+
+    cursorUpdated = false;
+
+    if(!cursorEnabled) {
+        // Hide the cursor
+        ::Pixmap bm_no;
+        Colormap cmap;
+        Cursor no_ptr;
+        XColor black, dummy;
+        static char bm_no_data[] = {0, 0, 0, 0, 0, 0, 0, 0};
+
+        cmap = DefaultColormap(display, DefaultScreen(display));
+        XAllocNamedColor(display, cmap, "black", &black, &dummy);
+        bm_no = XCreateBitmapFromData(display, win, bm_no_data, 8, 8);
+        no_ptr = XCreatePixmapCursor(display, bm_no, bm_no, &black, &black, 0, 0);
+
+        XDefineCursor(display, win, no_ptr);
+        XFreeCursor(display, no_ptr);
+        if (bm_no != None)
+            XFreePixmap(display, bm_no);
+        XFreeColors(display, cmap, &black.pixel, 1, 0);
+    } else {
+        XUndefineCursor(display, win);
+    }
 }
 
 } /* namespace brew */

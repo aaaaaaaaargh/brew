@@ -55,6 +55,8 @@ void VideoCanvas::renderFrame() {
         return;
     }
 
+    frameCounter.measure();
+
     onBeginFrame();
 
     getContext().processPendingOperations();
