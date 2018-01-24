@@ -5,6 +5,7 @@ project(BrewCore)
 brew_library(Core
         AppContext.cpp
         AbstractBuffer.cpp
+        Counter.cpp
         Exception.cpp
         HeapBuffer.cpp
         Log.cpp
