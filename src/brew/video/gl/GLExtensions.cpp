@@ -234,6 +234,16 @@ void GL20::glEnableVertexAttribArray(GLuint index) {
 	_glEnableVertexAttribArray(index);
 }
 
+PFNGLMAPBUFFERPROC _glMapBuffer = nullptr;
+void* GL20::glMapBuffer(GLenum target, GLenum access) {
+	return _glMapBuffer(target, access);
+}
+
+PFNGLUNMAPBUFFERPROC _glUnmapBuffer = nullptr;
+void GL20::glUnmapBuffer(GLenum target) {
+	_glUnmapBuffer(target);
+}
+
 void GL20::init() {
 	INIT_EXTENSION(glGenBuffers);
 	INIT_EXTENSION(glDeleteBuffers);
@@ -270,6 +280,8 @@ void GL20::init() {
 	INIT_EXTENSION(glUniformMatrix4fv);
 	INIT_EXTENSION(glVertexAttribPointer);
 	INIT_EXTENSION(glEnableVertexAttribArray);
+	INIT_EXTENSION(glMapBuffer);
+	INIT_EXTENSION(glUnmapBuffer);
 }
 
 #endif // GL_VERSION_2_0
@@ -356,6 +368,11 @@ void GL30::glBindVertexArray(GLuint array) {
 	_glBindVertexArray(array);
 }
 
+PFNGLMAPBUFFERRANGEPROC _glMapBufferRange = nullptr;
+void* GL30::glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access) {
+	return _glMapBufferRange(target, offset, length, access);
+}
+
 void GL30::init() {
 	INIT_EXTENSION(glGenerateMipmap);
 	INIT_EXTENSION(glGenFramebuffers);
@@ -373,6 +390,7 @@ void GL30::init() {
 	INIT_EXTENSION(glGenVertexArrays);
 	INIT_EXTENSION(glDeleteVertexArrays);
 	INIT_EXTENSION(glBindVertexArray);
+	INIT_EXTENSION(glMapBufferRange);
 }
 
 #endif // GL_VERSION_3_0

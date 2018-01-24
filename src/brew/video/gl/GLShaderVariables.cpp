@@ -13,6 +13,7 @@
 #include <brew/video/gl/GLShaderProgram.h>
 #include <brew/video/gl/GLExtensions.h>
 #include <brew/video/gl/GLTexture.h>
+#include <cstring>
 
 namespace brew {
 
@@ -23,6 +24,11 @@ GLShaderVariablesContextHandle::GLShaderVariablesContextHandle(GLContext& contex
     gl::glGenBuffers(1, &glId);
 
     initialize(vars);
+
+    // Allocate the buffer on the GPU.
+    gl::glBindBuffer(GL_UNIFORM_BUFFER, glId);
+    gl::glBufferData(GL_UNIFORM_BUFFER, buffer->getSize(), nullptr, GL_DYNAMIC_DRAW);
+    gl::glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
     syncToGPU(vars, true);
 }
@@ -47,13 +53,34 @@ void GLShaderVariablesContextHandle::syncToGPU(ShaderVariables& vars, bool perfo
 
     if(performFullSync) {
         // Copy the full buffer.
-        gl::glBufferData(GL_UNIFORM_BUFFER, buffer->getSize(), buffer->getRawPointer(), GL_DYNAMIC_DRAW);
+
+        // Map the buffer to the host memory.
+        void* mappedBufferStorage = gl::glMapBufferRange(GL_UNIFORM_BUFFER, 0, buffer->getSize(), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+        std::memcpy(mappedBufferStorage, buffer->getRawPointer(), buffer->getSize());
+        gl::glUnmapBuffer(GL_UNIFORM_BUFFER);
     }
     else {
         for(auto& value : updates.values) {
             // Copy this part of the buffer.
             VariableLayout& layout = this->layout[value.first];
-            gl::glBufferSubData(GL_UNIFORM_BUFFER, layout.offset, layout.blockSize, buffer->getRawPointer() + layout.offset);
+
+            if(layout.blockSize == 0) {
+                // Textures are stored outside of the buffer so their block size is zero.
+                continue;
+            }
+
+            //gl::glBufferSubData(GL_UNIFORM_BUFFER, layout.offset, layout.blockSize, buffer->getRawPointer() + layout.offset);
+
+            void* mappedBufferStorage = gl::glMapBufferRange(GL_UNIFORM_BUFFER, layout.offset, layout.blockSize, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
+            std::memcpy(mappedBufferStorage, buffer->getRawPointer() + layout.offset, layout.blockSize);
+            gl::glUnmapBuffer(GL_UNIFORM_BUFFER);
+
+            /*if(mappedBufferStorage) {
+                // Copy to host mapped area.
+                std::memcpy(mappedBufferStorage + layout.offset, buffer->getRawPointer() + layout.offset, layout.blockSize);
+            } else {
+
+            }*/
         }
     }
 

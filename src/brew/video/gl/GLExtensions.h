@@ -94,6 +94,8 @@ public:
 	static void glUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value);
 	static void glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid * pointer);
 	static void glEnableVertexAttribArray(GLuint index);
+	static void* glMapBuffer(GLenum target, GLenum access);
+	static void glUnmapBuffer(GLenum target);
 };
 #endif // GL_VERSION_2_0
 
@@ -122,6 +124,7 @@ public:
 	static void glGenVertexArrays(GLsizei n,GLuint *arrays);
 	static void glDeleteVertexArrays(GLsizei n,GLuint *arrays);
 	static void glBindVertexArray(GLuint array);
+	static void* glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
 };
 #endif // GL_VERSION_3_0
 
