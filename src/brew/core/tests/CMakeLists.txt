@@ -5,3 +5,5 @@ brew_add_test(Buffer buffer.cpp)
 brew_add_test(ProxyManager proxymanager.cpp)
 
 brew_add_test(SystemInfo systeminfo.cpp)
+
+brew_add_test(Tree tree.cpp)

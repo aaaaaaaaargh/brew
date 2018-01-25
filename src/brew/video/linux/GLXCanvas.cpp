@@ -45,6 +45,9 @@ void GLXCanvas::onBeginFrame() {
 		glXMakeCurrent(display, win, glxContext);
 	}
 
+	glClearColor(0,0,0,1);
+	glClear(GL_COLOR_BUFFER_BIT);
+
 	GLCanvas::onBeginFrame();
 }
 

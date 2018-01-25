@@ -18,6 +18,10 @@ function(_brew_get_component_dependencies component ret)
     set(_BREW_VIDEOLINUX_DEPENDENCIES VideoGL)
     set(_BREW_ASSETS_DEPENDENCIES Core FileIO)
     set(_BREW_COREASSETPROCESSORS_DEPENDENCIES Video Assets)
+    set(_BREW_STATE_DEPENDENCIES Core)
+    set(_BREW_INPUT_DEPENDENCIES Core)
+    set(_BREW_INPUTLINUX_DEPENDENCIES Input VideoLinux)
+    set(_BREW_UI_DEPENDENCIES Core Video)
 
     string(TOUPPER ${component} icomponent)
 

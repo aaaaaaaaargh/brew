@@ -42,6 +42,19 @@ public:
     };
 
     /**
+     * Loads a new asset and blocks execution until the asset is loaded.
+     * @tparam ProcessorParamsT The processing parameter types for the asset processors.
+     * @param tag The asset tag or filename.
+     * @param typeHint A type hint or an empty string to ignore type hinting.
+     * @param params The processing parameters for the asset processors.
+     * @return The result of the loading operation.
+     */
+    template<typename... ProcessorParamsT>
+    AssetPromise::result_type loadSync(const String& tag, const String& typeHint, ProcessorParamsT &&... params) {
+        return load(tag, typeHint, params...).getResult();
+    };
+
+    /**
      * Registers a new asset processor.
      * @tparam AssetProcessorT The asset processor type to register.
      * @param defaultProcessorParams The default asset processor parameters.

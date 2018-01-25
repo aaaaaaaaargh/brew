@@ -19,7 +19,7 @@ VideoCanvas::VideoCanvas(VideoContext& ctx) :
 
 }
 
-void VideoCanvas::init(const SizeT& width, const SizeT& height) {
+void VideoCanvas::init(SizeT width, SizeT height) {
     if(inited) {
         throw IllegalStateException("Canvas already initialized.");
     }

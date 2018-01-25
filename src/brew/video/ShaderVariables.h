@@ -95,7 +95,7 @@ public:
      * Creates a new shader variables layout.
      * @param registerBuiltInVars Whether to register the engines built-in variables (e.g. camera matrices).
      */
-    ShaderVariablesLayout(bool registerBuiltInVars = true);
+    explicit ShaderVariablesLayout(bool registerBuiltInVars = true);
 
 public:
     /**

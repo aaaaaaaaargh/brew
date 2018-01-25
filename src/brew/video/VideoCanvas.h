@@ -51,7 +51,7 @@ public:
      * @param width the physical width
      * @param height the physical height
      */
-    void init(const SizeT& width, const SizeT& height);
+    void init(SizeT width, SizeT height);
 
     /**
      * Drops (destroys) the canvas.
