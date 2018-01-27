@@ -29,7 +29,12 @@ void TextureProcessor::load(AssetPipeline& assetPipeline, const VirtualFileSyste
 
     auto pixmap = bundle.get<Pixmap>(tag);
 
-    auto texture = params.context.createTexture(*pixmap);
+    auto texture = params.context.createTexture(
+            *pixmap,
+            Texture::DefaultTextureFormat,
+            params.filtering
+    );
+
     bundle.put(tag, texture);
 }
 

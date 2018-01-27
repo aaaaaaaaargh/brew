@@ -33,11 +33,14 @@ public:
 	};
 
 public:
+	static const SizeT DefaultSampleSize; //< The default sample size.
+
+public:
 	/**
 	 * Creates a new counter.
 	 * @param sampleSize The maximum number of samples to use.
 	 */
-	explicit Counter(const SizeT& sampleSize = 5);
+	explicit Counter(SizeT sampleSize = DefaultSampleSize);
 
 	/**
 	 * @return The average delta time between the measured samples.

@@ -17,7 +17,9 @@
 
 namespace brew {
 
-Counter::Counter(const SizeT& sampleSize) :
+const SizeT Counter::DefaultSampleSize = 15;
+
+Counter::Counter(SizeT sampleSize) :
 		buffer(sampleSize),
 		average(0), best(std::numeric_limits<u32>::max()),
 		worst(0) {

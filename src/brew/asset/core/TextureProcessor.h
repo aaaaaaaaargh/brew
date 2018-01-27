@@ -27,6 +27,7 @@ public:
 public:
     VideoContext& context; //< The video context to use.
     bool freeSourcePixmap = true; //< Whether to release the source pixmap asset after texture creation.
+    TextureFiltering filtering = TextureFiltering::Bilinear; //< The texture filtering.
 };
 
 /**

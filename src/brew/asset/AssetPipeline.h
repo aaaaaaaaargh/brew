@@ -86,7 +86,7 @@ public:
 
 private:
     template<typename... ProcessorParamsT>
-    void invoke(const String& tag, const String& typeHint, std::shared_ptr<std::promise<bool> > promise, ProcessorParamsT &&... params) {
+    void invoke(const String& tag, const String& typeHint, const std::shared_ptr<std::promise<bool> >& promise, ProcessorParamsT &&... params) {
         std::vector<std::shared_ptr<ParamsInfo> > thisParamsInfo;
         makeParams(thisParamsInfo, params...);
 
@@ -118,7 +118,7 @@ private:
             // Get the bundle.
             auto bundle = &manager.getDefaultBundle();
 
-            if(typeHint == "" || proc.acceptsType(typeHint)) {
+            if(typeHint.empty() || proc.acceptsType(typeHint)) {
                 // Type is accepted.
                 if (proc.check(*this, *manager.vfs, *bundle, tag, *procParams)) {
                     // Start a new thread and add it to running threads.
@@ -141,9 +141,10 @@ private:
     friend class AssetManager;
 
     template<typename P0, typename... ProcessorParamsT>
-    static void makeParams(std::vector<std::shared_ptr<ParamsInfo> >& paramsInfo, P0 && p0, ProcessorParamsT... params) {
+    static void makeParams(std::vector<std::shared_ptr<ParamsInfo> >& paramsInfo, P0& p0, ProcessorParamsT... params) {
         auto info = std::make_shared<ParamsInfo>();
 
+        info->params = std::make_shared<P0>(p0);
         info->typeHash = typeid(P0).hash_code();
 
         paramsInfo.emplace_back(std::move(info));
