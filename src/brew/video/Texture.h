@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 08.09.17
  *
@@ -15,6 +15,8 @@
 #include <brew/core/ProxyObjectManager.h>
 #include <brew/video/Color.h>
 #include <brew/video/Pixmap.h>
+#include <brew/core/Rect.h>
+#include <brew/video/VideoContextObject.h>
 
 namespace brew {
 
@@ -87,7 +89,7 @@ class Texture;
  * A struct of data that is only of one-time use for the allocation of a texture.
  */
 struct TextureAllocationData {
-    std::unique_ptr<Pixmap> pixmap;
+    std::shared_ptr<Pixmap> pixmap;
     Color initialColor;
 };
 
@@ -107,7 +109,7 @@ protected:
 /**
  * A class representing textures.
  */
-class Texture : public ProxyObject<TextureContextHandle> {
+class Texture : public ProxyObject<TextureContextHandle>, public VideoContextObject {
 public:
     /**
      * Creates a new empty texture.
@@ -131,7 +133,7 @@ public:
      * @param format The texture format.
      * @param filtering The texture filtering.
      */
-    Texture(std::unique_ptr<Pixmap> pixmap,
+    Texture(std::shared_ptr<Pixmap> pixmap,
             TextureFormat format,
             TextureFiltering filtering,
             u8 numMipMaps
@@ -193,6 +195,63 @@ private:
     TextureFormat format;
     TextureFiltering filtering;
     u8 numMipMaps;
+};
+
+/**
+ * A region of a texture.
+ */
+class TextureRegion : public RealRect {
+public:
+    /**
+     * Creates a new texture region for the full sized texture.
+     * @param texture The texture to use.
+     */
+    explicit TextureRegion(std::shared_ptr<Texture> texture);
+
+    /**
+     * Creates a new texture region.
+     * @param texture The texture to create the region from.
+     * @param region The region dimensions, in pixels.
+     */
+    TextureRegion(std::shared_ptr<Texture> texture, const RealRect& region);
+
+    /**
+     * @return The texture used for this region.
+     */
+    inline const std::shared_ptr<Texture>& getTexture() const {
+        return texture;
+    }
+
+    /**
+     * @return The U component of the region.
+     */
+    inline Real getU() const {
+        return getLeft() / texture->getWidth();
+    }
+
+    /**
+     * @return The V component of the region.
+     */
+    inline Real getV() const {
+        return getTop() / texture->getHeight();
+    }
+
+    /**
+     * @return The U2 component of the region.
+     */
+    inline Real getU2() const {
+        return getRight() / texture->getWidth();
+    }
+
+    /**
+     * @return The V2 component of the region.
+     */
+    inline Real getV2() const {
+        return getBottom() / texture->getHeight();
+    }
+
+private:
+    std::shared_ptr<Texture> texture;
 };
 
 } /* namespace brew */

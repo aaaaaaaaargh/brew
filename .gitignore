@@ -1,6 +1,1 @@
-build
-workspace
-ARCHIVE
-doc/doxygen/html
-**/cmake-build-debug
-**/.idea
+# We like global git configurations, so the git ignore file is empty right now.

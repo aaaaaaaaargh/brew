@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Aug 21, 2016
  *
@@ -45,7 +45,14 @@ public:
 	 * Creates a new X11 canvas.
 	 * @param context The video context to use with this canvas.
 	 */
-	X11Canvas(VideoContext& context);
+	explicit X11Canvas(VideoContext& context);
+
+public:
+	/**
+	 * Enables or disables the hardware cursor.
+	 * @param enabled Whether to hide or show the cursor.
+	 */
+	void setCursorVisible(bool enabled);
 
 public:
 	/**
@@ -69,6 +76,9 @@ protected:
 	 */
 	virtual XVisualInfo* chooseVisual() = 0;
 
+private:
+    void updateCursor();
+
 protected:
 	Window parent;
 	Display* display;
@@ -76,6 +86,8 @@ protected:
 	XVisualInfo* visual;
 	Window win;
 	Atom wmDeleteMessage;
+    bool cursorUpdated;
+	bool cursorEnabled;
 };
 
 } /* namespace brew */

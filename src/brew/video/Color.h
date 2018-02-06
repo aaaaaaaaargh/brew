@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Dec 13, 2015
  *
@@ -206,14 +206,14 @@ public:
      * @param factor The multiplication factor
      * @return A new color with the multiplied version of this color
      */
-    Color operator*(const Real& factor) const;
+    Color operator*(Real factor) const;
 
     /**
      * Multiplies this color with a given factor
      * @param factor The multiplication factor
      * @return This color after the multiplication operation
      */
-    Color& operator*=(const Real& factor);
+    Color& operator*=(Real factor);
 
     /**
      * Converts the color into a Vec4 structure.

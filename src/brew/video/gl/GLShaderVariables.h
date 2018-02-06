@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 08.09.17
  *
@@ -17,6 +17,8 @@
 #include <brew/video/Texture.h>
 
 namespace brew {
+
+class GLShaderProgramContextHandle;
 
 class GLShaderVariablesContextHandle : public ShaderVariablesContextHandle, public GLObject {
 public:
@@ -40,7 +42,7 @@ public:
      */
     static String generateUniformDeclarationSource(
             const ShaderVariablesLayout& definition,
-            const String& blockName = "shaderVars"
+            const String& blockName = "vars"
     );
 
 public:
@@ -52,9 +54,10 @@ public:
     void syncToGPU(ShaderVariables& vars, bool performFullSync = false);
 
     /**
-     * Binds this buffer.
+     * Binds this buffer to a given shader program.
+     * @param shaderProgram The shader program to bind this buffer to.
      */
-    void bind();
+    void bind(const GLShaderProgramContextHandle& shaderProgram);
 
     /**
      * Unbinds this buffer.
@@ -76,6 +79,12 @@ private:
 
     std::map<String, VariableLayout> layout;
     std::unique_ptr<HeapBuffer> buffer;
+
+    std::map<String, std::vector<std::shared_ptr<Texture> > > boundTextures;
+    std::map<String, std::vector<GLint> > boundTextureIds;
+    std::vector<String> boundTextureNames;
+
+    std::map<String, GLint> uniformLookup;
 
 private:
     void initialize(ShaderVariables& vars);

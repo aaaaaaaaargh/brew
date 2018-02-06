@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 12.09.17
  *
@@ -30,7 +30,7 @@ protected:
  */
 class IndexBuffer : public GPUBuffer<IndexBufferContextHandle> {
 public:
-    typedef SizeT index_type;
+    typedef u16 index_type;
 
 public:
     /**

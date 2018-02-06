@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 13.09.17
  *
@@ -161,6 +161,22 @@ public:
 };
 
 class PositionAttribute : public Vec3Attribute {
+public:
+    /**
+     * @return The hash of this attribute.
+     */
+    hash_type getHash() const final;
+};
+
+class NormalAttribute : public Vec3Attribute {
+public:
+    /**
+     * @return The hash of this attribute.
+     */
+    hash_type getHash() const final;
+};
+
+class TexCoordAttribute : public Vec2Attribute {
 public:
     /**
      * @return The hash of this attribute.

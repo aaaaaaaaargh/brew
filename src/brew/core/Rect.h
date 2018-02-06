@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Feb 23, 2016
  *
@@ -211,7 +211,7 @@ private:
 
 		if (y > y2) {
 			y = y2;
-			y = -y;
+			h = -y;
 		}
 	}
 

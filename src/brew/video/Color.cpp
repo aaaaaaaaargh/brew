@@ -569,13 +569,13 @@ void Color::toMemory(Byte* data, const ColorFormat& fmt) const {
     }
 }
 
-Color Color::operator*(const Real& factor) const {
+Color Color::operator*(Real factor) const {
     Color r(*this);
     r *= factor;
     return r;
 }
 
-Color& Color::operator*=(const Real& factor) {
+Color& Color::operator*=(Real factor) {
     r = math::clamp<u8>(static_cast<u8>(r * factor), 0, 255);
     g = math::clamp<u8>(static_cast<u8>(g * factor), 0, 255);
     b = math::clamp<u8>(static_cast<u8>(b * factor), 0, 255);

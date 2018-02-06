@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Feb 11, 2016
  *
@@ -135,7 +135,7 @@ public:
      * @param pitch The pitch component.
      * @param roll The roll component.
      */
-    void setFromEulerAngles(const Real& yaw, const Real& pitch, const Real& roll);
+    void setFromEulerAngles(Real yaw, Real pitch, Real roll);
 
     /**
      * Normalizes the quaternion.

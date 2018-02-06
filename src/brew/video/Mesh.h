@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Sep 4, 2016
  *
@@ -16,6 +16,7 @@
 #include <brew/video/VertexBuffer.h>
 #include <brew/video/IndexBuffer.h>
 #include <brew/video/SubMesh.h>
+#include <brew/video/VideoContextObject.h>
 
 namespace brew {
 
@@ -27,7 +28,7 @@ class MeshContextHandle {};
 /**
  * A mesh is a unique set of a vertex and index buffer that together define a structure in 3D space.
  */
-class Mesh: public ProxyObject<MeshContextHandle>, public SubMesh {
+class Mesh : public ProxyObject<MeshContextHandle>, public SubMesh, public VideoContextObject {
 public:
 	/**
 	 * Constructs a new mesh.

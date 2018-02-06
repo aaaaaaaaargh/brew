@@ -3,9 +3,9 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
- *  Created on:
+ *  Created on: Birth of universe.
  *
  */
 
@@ -76,6 +76,7 @@ public:
 	static GLuint glCreateProgram();
 	static void glDeleteProgram(GLuint program);
 	static void glAttachShader(GLuint program, GLuint shader);
+	static void glDetachShader(GLuint program, GLuint shader);
 	static void glLinkProgram(GLuint program);
 	static void glGetProgramiv(GLuint program, GLenum pname, GLint* params);
 	static void glGetProgramInfoLog(GLuint program, GLsizei maxLength, GLsizei *length, GLchar *infoLog);
@@ -93,6 +94,8 @@ public:
 	static void glUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value);
 	static void glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid * pointer);
 	static void glEnableVertexAttribArray(GLuint index);
+	static void* glMapBuffer(GLenum target, GLenum access);
+	static void glUnmapBuffer(GLenum target);
 };
 #endif // GL_VERSION_2_0
 
@@ -121,14 +124,30 @@ public:
 	static void glGenVertexArrays(GLsizei n,GLuint *arrays);
 	static void glDeleteVertexArrays(GLsizei n,GLuint *arrays);
 	static void glBindVertexArray(GLuint array);
+	static void* glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
 };
 #endif // GL_VERSION_3_0
+
+#ifdef GL_VERSION_3_1
+/**
+ * OpenGL 3.1 compatible functionality.
+ */
+class GL31: public GL30 {
+public:
+	static void init();
+
+public:
+	static GLuint glGetUniformBlockIndex(GLuint program, const GLchar* uniformBlockName);
+	static void glUniformBlockBinding(GLuint program, GLuint blockIndex, GLuint bindingPoint);
+    static void glBindBufferBase(GLenum target, GLuint index, GLuint buffer);
+};
+#endif // GL_VERSION_3_1
 
 #ifdef GL_VERSION_3_2
 /**
  * OpenGL 3.2 compatible functionality.
  */
-class GL32: public GL30 {
+class GL32: public GL31 {
 public:
 	static void init();
 

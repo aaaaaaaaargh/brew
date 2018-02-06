@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 08.09.17
  *
@@ -96,10 +96,15 @@ GLint GLTextureContextHandle::getGLComponentType(TextureFormat fmt) {
 GLTextureContextHandle::GLTextureContextHandle(GLContext& context, Texture& texture)
 : GLObject(context) {
 
-    glEnable(GL_TEXTURE_2D);
+    GLStateInfo& glState = getContext().getStateInfo();
+    if(!glState.isTexture2DEnabled) {
+        glEnable(GL_TEXTURE_2D);
+        glState.isTexture2DEnabled = true;
+    }
+
     glGenTextures(1, &glId);
 
-    bind();
+    glBindTexture(GL_TEXTURE_2D, glId);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -125,7 +130,7 @@ GLTextureContextHandle::GLTextureContextHandle(GLContext& context, Texture& text
     TextureFormat inputFormat = texture.getTextureFormat();
 
     std::unique_ptr<TextureAllocationData>& allocationData = getTextureAllocationData(texture);
-    const std::unique_ptr<Pixmap>& pixmap = allocationData->pixmap;
+    const std::shared_ptr<Pixmap>& pixmap = allocationData->pixmap;
 
     if (pixmap) {
         TextureFormat pixmapFormat = static_cast<TextureFormat>(pixmap->getFormat());
@@ -175,7 +180,12 @@ GLTextureContextHandle::GLTextureContextHandle(GLContext& context, Texture& text
 
     allocationData.reset();
 
-    unbind();
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    if(glState.isTexture2DEnabled) {
+        glEnable(GL_TEXTURE_2D);
+        glState.isTexture2DEnabled = false;
+    }
 }
 
 GLTextureContextHandle::~GLTextureContextHandle() {
@@ -190,27 +200,20 @@ void GLTextureContextHandle::bind(u8 textureUnit) {
         glState.isTexture2DEnabled = true;
     }
 
-    if(glState.activeTextureUnit != textureUnit) {
+    if(glState.boundTextures[textureUnit] != glId) {
         glActiveTexture(GL_TEXTURE0 + textureUnit);
-        glState.activeTextureUnit = textureUnit;
-    }
-
-    if(glState.boundTextures[glState.activeTextureUnit] != glId) {
         glBindTexture(GL_TEXTURE_2D, glId);
-        glState.boundTextures[glState.activeTextureUnit] = glId;
+        glState.boundTextures[textureUnit] = glId;
     }
 }
 
-void GLTextureContextHandle::bind() {
-    bind(getGLState().activeTextureUnit);
-}
+void GLTextureContextHandle::unbind(GLContext& ctx, u8 textureUnit) {
+    GLStateInfo& glState = ctx.getStateInfo();
 
-void GLTextureContextHandle::unbind() {
-    GLStateInfo& glState = getContext().getStateInfo();
-
-    if(glState.boundTextures[glState.activeTextureUnit] != 0) {
+    if(glState.boundTextures[textureUnit] != 0) {
+        glActiveTexture(GL_TEXTURE0 + textureUnit);
         glBindTexture(GL_TEXTURE_2D, 0);
-        glState.boundTextures[glState.activeTextureUnit] = 0;
+        glState.boundTextures[textureUnit] = 0;
     }
 
     if(glState.isTexture2DEnabled) {

@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 11.09.17
  *
@@ -15,12 +15,22 @@
 
 namespace brew {
 
+const String ShaderVariables::BuiltInCombinedCameraMatrix = "combinedCamera";
+const String ShaderVariables::BuiltInWorldTransformMatrix = "worldTransform";
+
 ShaderVariablesLayout::VarDefinition::VarDefinition(const ShaderVariablesLayout& owner)
         : owner(owner){}
 
 SizeT ShaderVariablesLayout::VarDefinition::getIndex() const {
     auto it = std::find(owner.orderedLookup.begin(), owner.orderedLookup.end(), name);
     return static_cast<SizeT>(it - owner.orderedLookup.begin());
+}
+
+ShaderVariablesLayout::ShaderVariablesLayout(bool registerBuiltInVars) {
+    if(registerBuiltInVars) {
+        define<Matrix4>(ShaderVariables::BuiltInCombinedCameraMatrix);
+        define<Matrix4>(ShaderVariables::BuiltInWorldTransformMatrix);
+    }
 }
 
 ShaderVariablesLayout& ShaderVariablesLayout::define(ShaderVariablesLayout::VarType type,
@@ -69,11 +79,11 @@ const ShaderVariablesLayout::VarDefinition& ShaderVariablesLayout::getDefinition
 }
 
 ShaderVariablesLayout::const_iterator ShaderVariablesLayout::begin() const {
-    return const_iterator(*this, orderedLookup.begin());
+    return {*this, orderedLookup.begin()};
 }
 
 ShaderVariablesLayout::const_iterator ShaderVariablesLayout::end() const {
-    return const_iterator(*this, orderedLookup.end());
+    return {*this, orderedLookup.end()};
 }
 
 ShaderVariablesLayout::const_iterator::const_iterator(const ShaderVariablesLayout& owner,
@@ -96,7 +106,7 @@ ShaderVariablesLayout::const_iterator& ShaderVariablesLayout::const_iterator::op
 
 
 ShaderVariablesLayout::const_iterator ShaderVariablesLayout::const_iterator::operator+(SizeT increment) const {
-    return const_iterator(owner, orderedIterator+increment);
+    return {owner, orderedIterator+increment};
 }
 
 bool ShaderVariablesLayout::const_iterator::operator==(const ShaderVariablesLayout::const_iterator& other) const {
@@ -159,12 +169,17 @@ template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Matrix4
     return VarType::Matrix4;
 }
 
-template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Texture>() {
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<std::shared_ptr<Texture> >() {
     return VarType::Texture;
 }
 
 ShaderVariables::ShaderVariables(const ShaderVariablesLayout& definition)
 : definition(definition) {}
+
+void ShaderVariables::set(const String& name, const TextureRegion& textureRegion) {
+    set(name, textureRegion.getTexture());
+    set(name + "_dims", Vec4(textureRegion.getU(), textureRegion.getV(), textureRegion.getU2(), textureRegion.getV2()));
+}
 
 ShaderVariablesUpdateData& ShaderVariablesContextHandle::getShaderVariablesUpdateData(ShaderVariables& shaderVariables) {
     return shaderVariables.updateData;

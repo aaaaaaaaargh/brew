@@ -67,10 +67,16 @@ std::unique_ptr<Directory> VirtualFileSystem::getDirectory(const String& dir) co
 
 std::unique_ptr<File> VirtualFileSystem::getFile(const String& path) const {
 	String ndir = normalizePath(path);
+
+	if(ndir.find(directory_separator) != 0) {
+		// Force leading slash.
+		ndir = directory_separator + ndir;
+	}
+
 	auto pos = ndir.find_last_of(directory_separator);
 	auto dn = ndir.substr(0,pos);
 	auto dir = getDirectory(dn);
-	auto filename = path.substr(pos+1);
+	auto filename = path.substr(pos);
 	return dir->getFile(filename);
 }
 

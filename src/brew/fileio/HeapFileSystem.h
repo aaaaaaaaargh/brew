@@ -8,7 +8,7 @@
  *  HeapFileSystem.h
  *
  *  Created on: Feb 23, 2016
- *      Author: void
+ *
  */
 
 #ifndef BREW_HEAPFILESYSTEM_H
@@ -29,11 +29,14 @@ class HeapFile;
 class HeapDirectory : public Directory
 {
 public:
+	typedef std::map<String, std::vector<brew::Byte> > HeapDataT;
+
+public:
 	/**
 	 * Creates a new heap directory.
 	 * @param initial_heap_data A map of keyed data vectors representing the files in this directory.
 	 */
-	explicit HeapDirectory(const std::map<String, std::vector<Byte> >& initial_heap_data = std::map<String, std::vector<Byte> >());
+	explicit HeapDirectory(const HeapDataT& initial_heap_data = HeapDataT());
 
 	/**
 	 * Constructs a heap directory from another directory.
@@ -43,7 +46,19 @@ public:
 	HeapDirectory(HeapDirectory& base, const String& full_path);
 
 public:
-	typedef std::map<brew::String, std::vector<brew::Byte> > HeapDataT;
+    /**
+	 * Adds a new file to the heap directory.
+	 * @param file The file name.
+	 * @param data The heap data string.
+	 */
+    void addFile(const String& file, const String& data);
+
+	/**
+	 * Adds a new file to the heap directory.
+	 * @param file The file name.
+	 * @param data The heap data.
+	 */
+	void addFile(const String& file, const std::vector<brew::Byte>& data);
 
 public:
 	/**

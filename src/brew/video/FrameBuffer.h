@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 07.09.17
  *
@@ -14,6 +14,7 @@
 
 #include <brew/core/ProxyObjectManager.h>
 #include <brew/video/Texture.h>
+#include <brew/video/VideoContextObject.h>
 
 namespace brew {
 
@@ -27,7 +28,7 @@ class FrameBufferContextHandle {};
 /**
  * A class for handling frame buffers.
  */
-class FrameBuffer : public ProxyObject<FrameBufferContextHandle> {
+class FrameBuffer : public ProxyObject<FrameBufferContextHandle>, public VideoContextObject {
 public:
     /**
      * Creates a new frame buffer.

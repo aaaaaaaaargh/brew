@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Dec 30, 2015
  *
@@ -13,7 +13,6 @@
 #include <brew/math/Math.h>
 
 #include <cstring>
-#include <iostream>
 
 namespace brew
 {

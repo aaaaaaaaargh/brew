@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 11.09.17
  *
@@ -20,6 +20,7 @@
 #include <brew/math/Vec4.h>
 #include <brew/math/Matrix4.h>
 #include <brew/video/Texture.h>
+#include <brew/video/VideoContextObject.h>
 
 #include <initializer_list>
 #include <map>
@@ -29,22 +30,24 @@
 namespace brew {
 
 /**
+ * The type of a shader variable.
+ */
+enum class ShaderVarType {
+    u8, u16, u32, u64,
+    s8, s16, s32, s64,
+    Real,
+    Matrix4,
+    Vec2, Vec3, Vec4,
+    Texture
+};
+
+/**
  * The ShadersVariablesDefinition class is required to initialize the shader variables layout before
  * creating them through the driver.
  */
 class ShaderVariablesLayout {
 public:
-    /**
-     * The type of a variable.
-     */
-    enum class VarType {
-        u8, u16, u32, u64,
-        s8, s16, s32, s64,
-        Real,
-        Matrix4,
-        Vec2, Vec3, Vec4,
-        Texture
-    };
+    using VarType = ShaderVarType;
 
     /**
      * This class holds information about defined variables.
@@ -86,6 +89,13 @@ public:
          */
         SizeT getIndex() const;
     };
+
+public:
+    /**
+     * Creates a new shader variables layout.
+     * @param registerBuiltInVars Whether to register the engines built-in variables (e.g. camera matrices).
+     */
+    explicit ShaderVariablesLayout(bool registerBuiltInVars = true);
 
 public:
     /**
@@ -193,7 +203,7 @@ template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Vec3>()
 template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Vec4>();
 
 template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Matrix4>();
-template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<Texture>();
+template<> ShaderVariablesLayout::VarType ShaderVariablesLayout::getType<std::shared_ptr<Texture> >();
 
 /**
  * A structure containing information about the value changes since the last GPU sync operation.
@@ -226,7 +236,11 @@ protected:
     static ShaderVariablesUpdateData& getShaderVariablesUpdateData(ShaderVariables& shaderVariables);
 };
 
-class ShaderVariables : public ProxyObject<ShaderVariablesContextHandle> {
+class ShaderVariables : public ProxyObject<ShaderVariablesContextHandle>, public VideoContextObject {
+public:
+    static const String BuiltInCombinedCameraMatrix; //< The built-in variable name for the combined camera matrix.
+    static const String BuiltInWorldTransformMatrix; //< The built-in variable name for the current world transform.
+
 public:
     /**
      * Creates a new shader variables set.
@@ -236,6 +250,14 @@ public:
 
 public:
     typedef ShaderVariablesLayout::VarType VarType;
+
+    /**
+     * Sets a shader variable to a texture region. This will in fact use two variables -
+     * the variable with the given name as texture and a vec4 named [name]_dims containing the region dimensions.
+     * @param name The variable name.
+     * @param textureRegion The texture region.
+     */
+    void set(const String& name, const TextureRegion& textureRegion);
 
     /**
      * Sets a shader variable.

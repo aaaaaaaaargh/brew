@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Feb 11, 2016
  *
@@ -20,10 +20,7 @@ const Real HALF_PI = PI * 0.5f;
 const Real TWO_PI = PI * 2;
 
 bool equals(Real a, Real b, Real epsilon) {
-	if (a > b)
-		return a - b <= epsilon;
-	else
-		return b - a <= epsilon;
+    return std::fabs(a-b) < epsilon;
 }
 
 } /* namespace math */

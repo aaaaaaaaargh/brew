@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 06.09.17
  *
@@ -17,6 +17,10 @@
 #include <brew/video/gl/GLVertexBuffer.h>
 #include <brew/video/gl/GLIndexBuffer.h>
 #include <brew/video/gl/GLMesh.h>
+#include <brew/video/gl/GLShader.h>
+#include <brew/video/gl/GLShaderProgram.h>
+
+#include <brew/video/gl/GLGPUExecutionContext.h>
 
 namespace brew {
 
@@ -61,6 +65,27 @@ void GLContext::updateObject(IndexBuffer& indexBuffer) {
 
 std::unique_ptr<MeshContextHandle> GLContext::createObject(Mesh& mesh) {
     return std::make_unique<GLMeshContextHandle>(*this, mesh);
+}
+
+std::unique_ptr<ShaderContextHandle> GLContext::createObject(Shader& shader) {
+    return std::make_unique<GLShaderContextHandle>(*this, shader);
+}
+
+std::unique_ptr<ShaderProgramContextHandle> GLContext::createObject(ShaderProgram& shaderProgram) {
+    return std::make_unique<GLShaderProgramContextHandle>(*this, shaderProgram);
+}
+
+void GLContext::execute(VideoContext::ExecuteCallback callback, bool syncToFrame) {
+    GLGPUExecutionContext ctx(*this);
+    callback(ctx);
+}
+
+String GLContext::getUniformDeclarations(const std::shared_ptr<ShaderVariables>& vars) {
+    return GLShaderVariablesContextHandle::generateUniformDeclarationSource(vars->getDefinition());
+}
+
+String GLContext::getUniformDeclarations(const ShaderVariablesLayout& vars) {
+    return GLShaderVariablesContextHandle::generateUniformDeclarationSource(vars);
 }
 
 } /* namespace brew */

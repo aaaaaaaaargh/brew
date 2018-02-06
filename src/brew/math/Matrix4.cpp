@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Feb 11, 2016
  *
@@ -63,6 +63,7 @@ Matrix4::Matrix4(const Matrix4& other) {
 
 Matrix4& Matrix4::operator=(const Matrix4& other) {
     std::copy(&other.a[0], &other.a[16], &a[0]);
+    return *this;
 }
 
 
@@ -171,7 +172,7 @@ Matrix4& Matrix4::operator*=(const Matrix4& other) {
     return *this;
 }
 
-void Matrix4::operator*(Vec3& v) const {
+void Matrix4::apply(Vec3& v) const {
     Real w = 1.0f / (v.x * a[0 * 4 + 3] + v.y * a[1 * 4 + 3] + v.z * a[2 * 4 + 3] + a[3 * 4 + 3]);
 
     v.set(
@@ -181,7 +182,7 @@ void Matrix4::operator*(Vec3& v) const {
     );
 }
 
-void Matrix4::operator*(Vec4& v) const {
+void Matrix4::apply(Vec4& v) const {
     v.set(
             (v.x * a[0 * 4 + 0] + v.y * a[1 * 4 + 0] + v.z * a[2 * 4 + 0] + v.w * a[3 * 4 + 0]),
             (v.x * a[0 * 4 + 1] + v.y * a[1 * 4 + 1] + v.z * a[2 * 4 + 1] + v.w * a[3 * 4 + 1]),
@@ -214,9 +215,9 @@ Matrix4& Matrix4::invert() {
     Real cofactor3 = getCofactor(m[4], m[5], m[6], m[8], m[9], m[10], m[12], m[13], m[14]);
 
     // get determinant
-    Real determinant = m[0] * cofactor0 - m[1] * cofactor1 + m[2] * cofactor2 - m[3] * cofactor3;
+    Real determinant = getDeterminant();
 
-    if (fabs(determinant) <= 0.00001f) {
+    if (math::equals(determinant, 0, 0.00000001f)) {
         this->operator=(ID);
         return *this;
     }

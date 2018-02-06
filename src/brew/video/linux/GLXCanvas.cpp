@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Aug 21, 2016
  *
@@ -32,8 +32,10 @@ void GLXCanvas::onInit() {
 }
 
 void GLXCanvas::onDrop() {
-	if (glxContext != nullptr)
-		glXDestroyContext(display, glxContext);
+	if (glxContext != nullptr) {
+        glXDestroyContext(display, glxContext);
+    }
+    
 	glxContext = nullptr;
 	X11Canvas::onDrop();
 }
@@ -42,6 +44,9 @@ void GLXCanvas::onBeginFrame() {
 	if (glXGetCurrentContext() != glxContext) {
 		glXMakeCurrent(display, win, glxContext);
 	}
+
+	glClearColor(0,0,0,1);
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	GLCanvas::onBeginFrame();
 }

@@ -3,17 +3,16 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 08.09.17
  *
  */
 
 #include <brew/video/gl/GLShaderVariables.h>
+#include <brew/video/gl/GLShaderProgram.h>
 #include <brew/video/gl/GLExtensions.h>
 #include <brew/video/gl/GLTexture.h>
-
-#include <iostream>
 #include <cstring>
 
 namespace brew {
@@ -25,6 +24,11 @@ GLShaderVariablesContextHandle::GLShaderVariablesContextHandle(GLContext& contex
     gl::glGenBuffers(1, &glId);
 
     initialize(vars);
+
+    // Allocate the buffer on the GPU.
+    gl::glBindBuffer(GL_UNIFORM_BUFFER, glId);
+    gl::glBufferData(GL_UNIFORM_BUFFER, buffer->getSize(), nullptr, GL_DYNAMIC_DRAW);
+    gl::glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
     syncToGPU(vars, true);
 }
@@ -40,7 +44,7 @@ void GLShaderVariablesContextHandle::syncToGPU(ShaderVariables& vars, bool perfo
         return;
     }
 
-    bind();
+    gl::glBindBuffer(GL_UNIFORM_BUFFER, glId);
 
     for(auto& value : updates.values) {
         // Copy the updated value to our buffer.
@@ -49,13 +53,34 @@ void GLShaderVariablesContextHandle::syncToGPU(ShaderVariables& vars, bool perfo
 
     if(performFullSync) {
         // Copy the full buffer.
-        gl::glBufferData(GL_UNIFORM_BUFFER, buffer->getSize(), buffer->getRawPointer(), GL_DYNAMIC_DRAW);
+
+        // Map the buffer to the host memory.
+        void* mappedBufferStorage = gl::glMapBufferRange(GL_UNIFORM_BUFFER, 0, buffer->getSize(), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+        std::memcpy(mappedBufferStorage, buffer->getRawPointer(), buffer->getSize());
+        gl::glUnmapBuffer(GL_UNIFORM_BUFFER);
     }
     else {
         for(auto& value : updates.values) {
             // Copy this part of the buffer.
             VariableLayout& layout = this->layout[value.first];
-            gl::glBufferSubData(GL_UNIFORM_BUFFER, layout.offset, layout.blockSize, buffer->getRawPointer() + layout.offset);
+
+            if(layout.blockSize == 0) {
+                // Textures are stored outside of the buffer so their block size is zero.
+                continue;
+            }
+
+            //gl::glBufferSubData(GL_UNIFORM_BUFFER, layout.offset, layout.blockSize, buffer->getRawPointer() + layout.offset);
+
+            void* mappedBufferStorage = gl::glMapBufferRange(GL_UNIFORM_BUFFER, layout.offset, layout.blockSize, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
+            std::memcpy(mappedBufferStorage, buffer->getRawPointer() + layout.offset, layout.blockSize);
+            gl::glUnmapBuffer(GL_UNIFORM_BUFFER);
+
+            /*if(mappedBufferStorage) {
+                // Copy to host mapped area.
+                std::memcpy(mappedBufferStorage + layout.offset, buffer->getRawPointer() + layout.offset, layout.blockSize);
+            } else {
+
+            }*/
         }
     }
 
@@ -138,25 +163,63 @@ void GLShaderVariablesContextHandle::writeValue(
             break;
         }
         case ShaderVariables::VarType::Texture:{
-            auto& val = static_cast<ShaderVariablesUpdateData::Value<Texture>&>(value);
-            SizeT i=0;
+            auto& val = static_cast<ShaderVariablesUpdateData::Value<std::shared_ptr<Texture> >&>(value);
+
+            boundTextures[def.getName()] = val.elements;
+            auto& ids = boundTextureIds[def.getName()];
+            ids.clear();
+
+            // Keep track of the GL ids.
             for(auto& tex : val.elements) {
-                auto& glTex = static_cast<GLTextureContextHandle&>(tex.getContextHandle());
+                auto& glTex = static_cast<GLTextureContextHandle&>(tex->getContextHandle());
                 GLuint id = glTex.getGLId();
-                buffer->write(&id, layout.offset, sizeof(GLuint) * i);
-                i++;
+                ids.push_back(id);
             }
             break;
         }
     }
 }
 
-void GLShaderVariablesContextHandle::bind() {
+void GLShaderVariablesContextHandle::bind(const GLShaderProgramContextHandle& shaderProgram) {
     gl::glBindBuffer(GL_UNIFORM_BUFFER, glId);
+
+    u8 textureUnit = 0;
+
+    for(auto& name : boundTextureNames) {
+        std::vector<GLint> activeTextureUnits;
+
+        for(auto& tex : boundTextures[name]) {
+            auto& glTex = static_cast<GLTextureContextHandle&>(tex->getContextHandle());
+            glTex.bind(textureUnit);
+            activeTextureUnits.push_back(textureUnit++);
+        }
+
+        auto& ids = boundTextureIds[name];
+
+        auto locationIterator = uniformLookup.find(name);
+        if(locationIterator == uniformLookup.end()) {
+            auto loc = gl::glGetUniformLocation(shaderProgram.getGLId(), name.c_str());
+
+            uniformLookup.insert(std::make_pair(name, loc));
+            locationIterator = uniformLookup.find(name);
+        }
+
+        auto location = locationIterator->second;
+
+        gl::glUniform1iv(location, ids.size(), &activeTextureUnits[0]);
+    }
 }
 
 void GLShaderVariablesContextHandle::unbind() {
     gl::glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    u8 textureUnit = 0;
+
+    for(auto& name : boundTextureNames) {
+        for (auto& tex : boundTextures[name]) {
+            GLTextureContextHandle::unbind(getContext(), textureUnit++);
+        }
+    }
 }
 
 void GLShaderVariablesContextHandle::initialize(ShaderVariables& vars) {
@@ -167,6 +230,12 @@ void GLShaderVariablesContextHandle::initialize(ShaderVariables& vars) {
     layout.clear();
 
     for(auto& varDef : definition) {
+        if(varDef.getType() == ShaderVarType::Texture) {
+            // Sampler2D is not allowed in uniform blocks, so we need to keep them out of the buffer.
+            boundTextureNames.push_back(varDef.getName());
+            continue;
+        }
+
         SizeT typeSize = getTypeSize(varDef);
 
         VariableLayout layout;
@@ -246,9 +315,21 @@ String GLShaderVariablesContextHandle::generateUniformDeclarationSource(
     result << blockName;
     result << "{";
 
+    StringStream samplers;
+
     for(auto& var : definition) {
-        String typeDeclaration;
         SizeT arrayDims = var.getNumElements();
+
+        if(var.getType() == ShaderVariables::VarType::Texture) {
+            samplers << "uniform sampler2D " << var.getName() << ";";
+
+            if(arrayDims > 1) {
+                samplers << "[" << arrayDims << "]";
+            }
+            continue;
+        }
+
+        String typeDeclaration;
 
         switch(var.getType()) {
             case ShaderVariables::VarType::u8:
@@ -267,24 +348,19 @@ String GLShaderVariablesContextHandle::generateUniformDeclarationSource(
                 typeDeclaration = "float";
                 break;
             case ShaderVariables::VarType::Vec2:
-                typeDeclaration = "float";
-                arrayDims *= 2;
+                typeDeclaration = "vec2";
                 break;
             case ShaderVariables::VarType::Vec3:
-                typeDeclaration = "float";
-                arrayDims *= 3;
+                typeDeclaration = "vec3";
                 break;
             case ShaderVariables::VarType::Vec4:
-                typeDeclaration = "float";
-                arrayDims *= 4;
+                typeDeclaration = "vec4";
                 break;
             case ShaderVariables::VarType::Matrix4:
-                typeDeclaration = "float";
-                arrayDims *= 16;
+                typeDeclaration = "mat4";
                 break;
-            case ShaderVariables::VarType::Texture:
-                typeDeclaration = "sampler2D";
-                break;
+            default:
+                throw NotSupportedException("Unsupported shader variable type.");
         }
 
         StringStream ss;
@@ -303,6 +379,7 @@ String GLShaderVariablesContextHandle::generateUniformDeclarationSource(
     }
 
     result << "};";
+    result << samplers.str();
 
     return result.str();
 }

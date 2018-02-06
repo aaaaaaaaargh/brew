@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 04.09.17
  *
@@ -16,7 +16,7 @@
 #include <memory>
 #include <mutex>
 #include <queue>
-#include <iostream>
+
 namespace brew {
 
 /**

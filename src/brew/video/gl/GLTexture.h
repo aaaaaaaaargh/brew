@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 08.09.17
  *
@@ -57,14 +57,9 @@ public:
     void bind(u8 textureUnit);
 
     /**
-     * Binds this texture to the active texture unit.
+     * Unbinds a texture from a given texture unit.
      */
-    void bind();
-
-    /**
-     * Unbinds the texture.
-     */
-    void unbind();
+    static void unbind(GLContext& ctx, u8 textureUnit);
 
 
 private:

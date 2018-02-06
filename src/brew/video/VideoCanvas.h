@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Aug 20, 2016
  *
@@ -15,6 +15,7 @@
 #include <brew/core/Object.h>
 #include <brew/video/VideoContext.h>
 #include <brew/video/RenderTarget.h>
+#include <brew/core/Counter.h>
 
 namespace brew {
 
@@ -44,27 +45,13 @@ public:
         return height;
     }
 
-    /**
-     * @return the context bound to this canvas
-     */
-    VideoContext& getContext() {
-        return context;
-    }
-
-    /**
-     * @return a const reference to the context bound to this canvas
-     */
-    const VideoContext& getContext() const {
-        return context;
-    }
-
 public:
     /**
      * Initializes the canvas.
      * @param width the physical width
      * @param height the physical height
      */
-    void init(const SizeT& width, const SizeT& height);
+    void init(SizeT width, SizeT height);
 
     /**
      * Drops (destroys) the canvas.
@@ -82,6 +69,13 @@ public:
      */
     bool isInitialized() const {
         return inited;
+    }
+
+    /**
+     * @return The delta time between the frames.
+     */
+    Real getDeltaTime() const {
+        return frameCounter.getAverage();
     }
 
 public:
@@ -117,8 +111,8 @@ protected:
     virtual void onEndFrame() = 0;
 
 protected:
+    Counter frameCounter;
     SizeT width, height;
-    VideoContext& context;
     bool inited;
 };
 

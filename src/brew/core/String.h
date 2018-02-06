@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 04.09.17
  *
@@ -152,6 +152,20 @@ extern String toKebabCase(const String& str);
  * @return The converted string.
  */
 extern String toCamelCase(const String& str, bool capitalizeFirstLetter = false);
+
+/**
+ * Converts a string to upper case.
+ * @param str The string.
+ * @return The converted string.
+ */
+extern String toUppercase(const String& str);
+
+/**
+ * Converts a string to lower case.
+ * @param str The string.
+ * @return The converted string.
+ */
+extern String toLowercase(const String& str);
 
 /**
  * Implodes a list of elements into a string.

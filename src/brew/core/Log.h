@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Dec 9, 2015
  *
@@ -37,7 +37,7 @@ public:
      * Creates a new log tag.
      * @param tag The display name of the log tag.
      */
-	LogTag(const String& tag);
+	explicit LogTag(const String& tag);
 
 private:
 	friend class LogStream;
@@ -72,11 +72,10 @@ public:
      * Creates a new log stream.
      * @param log The log instance.
      */
-	LogStream(AbstractLog& log);
+	explicit LogStream(AbstractLog& log);
 	~LogStream();
 
 private:
-	friend LogStream logStream(const String&);
 	friend class AbstractLog;
 
     /**
@@ -174,7 +173,7 @@ public:
 	 * Creates a new stream log.
 	 * @param os The output stream to use for this log.
 	 */
-	StreamLog(std::ostream& os = std::cout);
+	explicit StreamLog(std::ostream& os = std::cout);
 
 protected:
 	/**

@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Feb 11, 2016
  *
@@ -228,7 +228,7 @@ Vec3 Quaternion::operator*(const Vec3& other) const {
 	return Vec3(tmp2.x, tmp2.y, tmp2.z);
 }
 
-void Quaternion::setFromEulerAngles(const Real& yaw, const Real& pitch, const Real& roll) {
+void Quaternion::setFromEulerAngles(Real yaw, Real pitch, Real roll) {
 	// Expects radians.
 	Real hr = roll * 0.5f;
 	Real shr = std::sin(hr);

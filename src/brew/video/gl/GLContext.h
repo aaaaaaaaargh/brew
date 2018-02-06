@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 06.09.17
  *
@@ -85,6 +85,20 @@ protected:
      */
     std::unique_ptr<MeshContextHandle> createObject(Mesh& mesh) override;
 
+    /**
+     * Creates a shader handle.
+     * @param shader The shader instance.
+     * @return The context handle of the created instance.
+     */
+    std::unique_ptr<ShaderContextHandle> createObject(Shader& shader) override;
+
+    /**
+     * Creates a shader program handle.
+     * @param shaderProgram The shader program instance.
+     * @return The context handle of the created instance.
+     */
+    std::unique_ptr<ShaderProgramContextHandle> createObject(ShaderProgram& shaderProgram) override;
+
 public:
     /**
 	 * @return The current state of GL.
@@ -99,6 +113,19 @@ public:
     inline const GLStateInfo& getStateInfo() const {
         return glStateInfo;
     }
+
+public:
+    static String getUniformDeclarations(const std::shared_ptr<ShaderVariables>& vars);
+    static String getUniformDeclarations(const ShaderVariablesLayout& layout);
+
+public:
+    /**
+     * Executes a set of GPU operations. For OpenGL this is a blocking operation.
+     * @param callback The callback to execute.
+     * @param syncToFrame Whether to sync the callback to the current frame. This cannot be unset in OpenGL.
+     */
+    void execute(ExecuteCallback callback, bool syncToFrame) override;
+
 
 private:
     GLStateInfo glStateInfo;

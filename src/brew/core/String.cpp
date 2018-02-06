@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 04.09.17
  *
@@ -141,6 +141,20 @@ String toCamelCase(const String& str, bool capitalizeFirstLetter) {
         }
     }
     return ss.str();
+}
+
+String toUppercase(const String& str) {
+    String result = str;
+    std::transform(result.begin(), result.end(), result.begin(), ::toupper);
+
+    return result;
+}
+
+String toLowercase(const String& str) {
+    String result = str;
+    std::transform(result.begin(), result.end(), result.begin(), ::tolower);
+
+    return result;
 }
 
 String join(const String& separator, const std::vector<String>& components) {

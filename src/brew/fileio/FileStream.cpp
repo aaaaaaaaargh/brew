@@ -16,13 +16,11 @@
 namespace brew {
 
 FileStream::FileStream(std::streambuf* streambuf)
-: std::istream(streambuf)
-{
+: std::istream(streambuf)  {
 }
 
-FileStream::~FileStream()
-{
-	delete(_M_streambuf);
+FileStream::~FileStream()  {
+	// delete(_M_streambuf);
 }
 
 SizeT FileStream::getSize() {
@@ -30,7 +28,7 @@ SizeT FileStream::getSize() {
 	seekg(0, end);
 	auto len = tellg() - o;
 	seekg(o, beg);
-	return len;
+	return static_cast<SizeT>(len);
 }
 
 } /* namespace brew */

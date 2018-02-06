@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Aug 21, 2016
  *
@@ -16,7 +16,15 @@
 namespace brew {
 
 X11Canvas::X11Canvas(VideoContext& ctx) :
-		VideoCanvas(ctx), display(nullptr), parent(0), cmap(0), visual(nullptr), win(0), wmDeleteMessage(0) {
+		VideoCanvas(ctx),
+		display(nullptr),
+		parent(0),
+		cmap(0),
+		visual(nullptr),
+		win(0),
+		wmDeleteMessage(0),
+        cursorEnabled(true),
+        cursorUpdated(false) {
 
 }
 
@@ -48,7 +56,7 @@ void X11Canvas::onInit() {
 	// Set the even masks
 	swa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | StructureNotifyMask /* resize & destroy */;
 
-	u32 x = 0, y = 0, w = getWidth(), h = getHeight();
+	u32 x = 0, y = 0, w = static_cast<u32>(getWidth()), h = static_cast<u32>(getHeight());
 	win = XCreateWindow(display, parent, x, y, w, h, 0, visual->depth,
 			InputOutput, visual->visual, CWColormap | CWEventMask, &swa);
 
@@ -66,7 +74,6 @@ void X11Canvas::onInit() {
 	XSetWMProtocols(display, win, &wmDeleteMessage, 1);
 
     getAppContext().log->stream("X11Canvas") << "Window created.";
-
 }
 
 void X11Canvas::onDrop() {
@@ -99,6 +106,9 @@ void X11Canvas::onDrop() {
 
 void X11Canvas::onPumpMessages() {
 
+    // Update the cursor
+    updateCursor();
+
 	XEvent xev = {};
 	while (XPending(display) > 0) {
 
@@ -129,6 +139,45 @@ void X11Canvas::onPumpMessages() {
 		}
 	}
 
+}
+
+void X11Canvas::setCursorVisible(bool enabled) {
+	if(cursorEnabled == enabled) {
+		return;
+	}
+
+	cursorEnabled = enabled;
+    cursorUpdated = true;
+}
+
+void X11Canvas::updateCursor() {
+    if(!cursorUpdated) {
+        return;
+    }
+
+    cursorUpdated = false;
+
+    if(!cursorEnabled) {
+        // Hide the cursor
+        ::Pixmap bm_no;
+        Colormap cmap;
+        Cursor no_ptr;
+        XColor black, dummy;
+        static char bm_no_data[] = {0, 0, 0, 0, 0, 0, 0, 0};
+
+        cmap = DefaultColormap(display, DefaultScreen(display));
+        XAllocNamedColor(display, cmap, "black", &black, &dummy);
+        bm_no = XCreateBitmapFromData(display, win, bm_no_data, 8, 8);
+        no_ptr = XCreatePixmapCursor(display, bm_no, bm_no, &black, &black, 0, 0);
+
+        XDefineCursor(display, win, no_ptr);
+        XFreeCursor(display, no_ptr);
+        if (bm_no != None)
+            XFreePixmap(display, bm_no);
+        XFreeColors(display, cmap, &black.pixel, 1, 0);
+    } else {
+        XUndefineCursor(display, win);
+    }
 }
 
 } /* namespace brew */

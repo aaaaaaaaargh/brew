@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Feb 11, 2016
  *
@@ -103,7 +103,7 @@ inline Real deg2Rad(Real degreeValue) {
  * @param radianValue The angle in radians.
  * @return The angle in degrees.
  */
-inline Real rad2Deg(const Real& radianValue) {
+inline Real rad2Deg(Real radianValue) {
 	static const Real RAD2DEG = (1.0f / (PI / 180.0f));
 	return radianValue * RAD2DEG;
 }

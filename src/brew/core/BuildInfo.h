@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Aug 18 2016
  *
@@ -15,6 +15,11 @@
 
 #ifndef BREW_BUILDINFO_H
 #define BREW_BUILDINFO_H
+
+#if __cplusplus < 201402L
+// Not compiling against C++14.
+#error Not compiling against C++14.
+#endif
 
 #ifndef BREW_DEBUG
 #ifdef DEBUG
@@ -59,14 +64,22 @@
 
 // Platform detection
 #if defined(__linux__)
+#undef BREW_PLATFORM
 #define BREW_PLATFORM BREW_PLATFORM_LINUX
 #endif
 
-#if defined(__MINGW32__ ) or defined (MSW)
+#if defined(__MINGW32__) || defined (MSW)
+#undef BREW_PLATFORM
 #define BREW_PLATFORM BREW_PLATFORM_WINDOWS
 #endif
 
+#if defined(__ANDROID__)
+#undef BREW_PLATFORM
+#define BREW_PLATFORM BREW_PLATFORM_ANDROID
+#endif
+
 #if defined(__APPLE__)
+#undef BREW_PLATFORM
 #include <TargetConditionals.h>
 #if __APPLE__ == TARGET_OS_IPHONE
 #define BREW_PLATFORM BREW_PLATFORM_IOS

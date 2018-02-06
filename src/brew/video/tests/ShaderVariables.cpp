@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 random arts
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 07.09.17
  *
@@ -17,12 +17,12 @@
 using namespace brew;
 
 TEST(ShaderVariables, GetUndefinedVariable) {
-    ShaderVariablesLayout def;
+    ShaderVariablesLayout def(false);
     EXPECT_THROW(def.getDefinition("foo"), NotFoundException);
 }
 
 TEST(ShaderVariables, DefineAndGetVariable) {
-    ShaderVariablesLayout def;
+    ShaderVariablesLayout def(false);
 
     def.define<u8>("foo", 3);
 
@@ -34,7 +34,7 @@ TEST(ShaderVariables, DefineAndGetVariable) {
 }
 
 TEST(ShaderVariables, CorrectDefinitionOrder) {
-    ShaderVariablesLayout def;
+    ShaderVariablesLayout def(false);
 
     def.define<u8>("foo");
     def.define<u8>("bar");
@@ -46,7 +46,7 @@ TEST(ShaderVariables, CorrectDefinitionOrder) {
 }
 
 TEST(ShaderVariables, DefinitionOrderAfterUndefine) {
-    ShaderVariablesLayout def;
+    ShaderVariablesLayout def(false);
 
     def.define<u8>("foo");
     def.define<u8>("bar");
@@ -61,7 +61,7 @@ TEST(ShaderVariables, DefinitionOrderAfterUndefine) {
 }
 
 TEST(ShaderVariables, RedefineWithDifferentType) {
-    ShaderVariablesLayout def;
+    ShaderVariablesLayout def(false);
 
     def.define<u8>("foo");
     EXPECT_EQ(ShaderVariablesLayout::VarType::u8, def.getDefinition("foo").getType());
@@ -71,7 +71,7 @@ TEST(ShaderVariables, RedefineWithDifferentType) {
 }
 
 TEST(ShaderVariables, DefineArrayByDimension) {
-    ShaderVariablesLayout def;
+    ShaderVariablesLayout def(false);
 
     def.define<u8>("foo", 32);
 
@@ -79,7 +79,7 @@ TEST(ShaderVariables, DefineArrayByDimension) {
 }
 
 TEST(ShaderVariables, IterateOverVariables) {
-    ShaderVariablesLayout def;
+    ShaderVariablesLayout def(false);
 
     def.define<u8>("a", 0);
     def.define<u8>("b", 1);
@@ -94,9 +94,9 @@ TEST(ShaderVariables, IterateOverVariables) {
 }
 
 TEST(ShaderVariables, DefineComplexTypes) {
-    ShaderVariablesLayout def;
+    ShaderVariablesLayout def(false);
 
-    def.define<Texture>("foo");
+    def.define<std::shared_ptr<Texture> >("foo");
 
     EXPECT_NO_THROW(def.getDefinition("foo"));
     EXPECT_EQ(ShaderVariablesLayout::VarType::Texture, def.getDefinition("foo").getType());
