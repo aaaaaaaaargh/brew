@@ -11,9 +11,9 @@ add_subdirectory(brew/video)
 add_subdirectory(brew/asset)
 add_subdirectory(brew/state)
 add_subdirectory(brew/input)
-add_subdirectory(brew/ui)
 
-add_subdirectory(samples)
+#add_subdirectory(samples)
 
 brew_build_monolithic_library()
+
 brew_build_monolithic_tests()

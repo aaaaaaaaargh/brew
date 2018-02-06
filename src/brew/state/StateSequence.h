@@ -31,7 +31,8 @@ public:
      * @param states A set of unique pointers holding the states.
      */
     template<typename... States>
-    explicit StateSequence(States&& ... states) {
+    explicit StateSequence(States&& ... states)
+    : isLooping(false) {
         setStates(states...);
     }
 
@@ -46,6 +47,12 @@ public:
      * @return Whether the sequence is completed.
      */
     bool isDone() const;
+
+    /**
+     * Sets the looping behaviour of this sequence. Looping will cause isDone() to never be true.
+     * @param isLooping Whether the sequence should loop after reaching the last state.
+     */
+    void setLooping(bool isLooping);
 
 protected:
     bool onAdvanceState() final;
@@ -65,6 +72,7 @@ private:
     typedef std::vector<std::unique_ptr<State> > StatesContainer;
     StatesContainer states;
     typename StatesContainer::iterator currentState;
+    bool isLooping;
 };
 
 } /* namespace brew */

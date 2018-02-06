@@ -154,6 +154,20 @@ extern String toKebabCase(const String& str);
 extern String toCamelCase(const String& str, bool capitalizeFirstLetter = false);
 
 /**
+ * Converts a string to upper case.
+ * @param str The string.
+ * @return The converted string.
+ */
+extern String toUppercase(const String& str);
+
+/**
+ * Converts a string to lower case.
+ * @param str The string.
+ * @return The converted string.
+ */
+extern String toLowercase(const String& str);
+
+/**
  * Implodes a list of elements into a string.
  * @tparam T The type of the elements to implode, must be string-convertible.
  * @tparam ContainerT The container type, must support range-based-for loops.

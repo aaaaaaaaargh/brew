@@ -15,9 +15,11 @@
 #include <brew/core/Types.h>
 
 #include <map>
-#include <thread>
 #include <set>
+#include <vector>
+#include <thread>
 #include <mutex>
+#include <algorithm>
 
 namespace brew {
 
@@ -36,7 +38,7 @@ class TreeNode;
 template <typename NodeT>
 class TreeNodeIterator {
 private:
-    typedef std::vector<std::unique_ptr<TreeNode<NodeT> > > vector_type;
+    typedef std::vector<std::unique_ptr<NodeT > > vector_type;
 
 public:
     TreeNodeIterator(typename vector_type::iterator currentIterator,
@@ -155,18 +157,21 @@ private:
 template<typename NodeT>
 class TreeNodeAccessor {
 public:
-    TreeNodeAccessor(TreeNode<NodeT>& node)
+    TreeNodeAccessor(NodeT& node)
     : node(node), childSet(*this) {
     }
 
-    TreeNode<NodeT>& createChild() {
-        auto node = std::make_unique<NodeT>();
-        childrenCreated.emplace_back(std::move(node));
+    NodeT& createChild() {
+        auto child = std::make_unique<NodeT>();
+
+        child->parent = &node;
+
+        childrenCreated.emplace_back(std::move(child));
         return *childrenCreated.back();
     }
 
-    void deleteChild(TreeNode<NodeT>& n) {
-        auto it = std::find_if(childrenCreated.begin(), childrenCreated.end(), [&] (const std::unique_ptr<TreeNode<NodeT> >& ptr) {
+    void deleteChild(NodeT& n) {
+        auto it = std::find_if(childrenCreated.begin(), childrenCreated.end(), [&] (const std::unique_ptr<NodeT >& ptr) {
             return ptr.get() == &n;
         });
 
@@ -188,9 +193,9 @@ private:
     friend class TreeChildNodeSet<NodeT>;
     friend class TreeNodeIterator<NodeT>;
 
-    TreeNode<NodeT>& node;
-    std::vector <std::unique_ptr<TreeNode<NodeT> > > childrenCreated;
-    std::set <TreeNode<NodeT>* > childrenDeleted;
+    NodeT& node;
+    std::vector <std::unique_ptr<NodeT > > childrenCreated;
+    std::set <NodeT* > childrenDeleted;
     TreeChildNodeSet<NodeT> childSet;
 };
 
@@ -209,12 +214,12 @@ public:
         return id;
     }
 
-    TreeNodeAccessorT& getNodeAccessor(const TreeNode<NodeT>& node) {
+    TreeNodeAccessorT& getNodeAccessor(const NodeT& node) {
         // Look for an existing accessor or create a new one.
         auto it = nodeAccessors.find(&node);
 
         if(it == nodeAccessors.end()) {
-            nodeAccessors.emplace(std::make_pair(&node, std::make_unique<TreeNodeAccessorT>(const_cast<TreeNode<NodeT>&>(node))));
+            nodeAccessors.emplace(std::make_pair(&node, std::make_unique<TreeNodeAccessorT>(const_cast<NodeT&>(node))));
 
             it = nodeAccessors.find(&node);
         }
@@ -226,7 +231,7 @@ private:
     friend class Tree<NodeT>;
 
     id_type id;
-    std::map <const TreeNode<NodeT>*, std::unique_ptr<TreeNodeAccessorT> > nodeAccessors;
+    std::map <const NodeT*, std::unique_ptr<TreeNodeAccessorT> > nodeAccessors;
 };
 
 template<typename NodeT>
@@ -242,6 +247,7 @@ public:
 
 private:
     friend class Tree<NodeT>;
+
     std::map<typename TreeNodeAccessorContextT::id_type, TreeNodeAccessorContextT> nodeAccessors;
     std::mutex mutex;
 };
@@ -266,21 +272,24 @@ public:
         getAccessor().deleteChild(node);
     }
 
-protected:
+private:
     TreeNodeAccessor<NodeT>& getAccessor() {
-        return contextProvider->getCurrentNodeAccessorContext().getNodeAccessor(*this);
+        return contextProvider->getCurrentNodeAccessorContext().getNodeAccessor(static_cast<NodeT&>(*this));
     }
 
     const TreeNodeAccessor<NodeT>& getAccessor() const {
-        return contextProvider->getCurrentNodeAccessorContext().getNodeAccessor(*this);
+        return contextProvider->getCurrentNodeAccessorContext().getNodeAccessor(static_cast<const NodeT&>(*this));
     }
 
 private:
     friend class Tree<NodeT>;
     friend class TreeChildNodeSet<NodeT>;
+    friend class TreeNodeAccessor<NodeT>;
+
     TreeNodeAccessorContextProviderT* contextProvider;
 
-    std::vector<std::unique_ptr<TreeNode<NodeT> > > children;
+    std::vector<std::unique_ptr<NodeT > > children;
+    NodeT* parent = nullptr;
 };
 
 template <typename NodeT>
@@ -303,11 +312,11 @@ public:
 
             for(auto& contextEntry : accessorContext.nodeAccessors) {
                 TreeNodeAccessor<NodeT>& accessor = *contextEntry.second;
-                TreeNode<NodeT>& node = accessor.node;
+                NodeT& node = accessor.node;
 
                 // Delete existing nodes.
                 for(auto& nodeToDelete : accessor.childrenDeleted) {
-                    auto it = std::find_if(node.children.begin(), node.children.end(), [&] (std::unique_ptr<TreeNode<NodeT> >& child) {
+                    auto it = std::find_if(node.children.begin(), node.children.end(), [&] (std::unique_ptr<NodeT >& child) {
                        return child.get() == nodeToDelete;
                     });
 
