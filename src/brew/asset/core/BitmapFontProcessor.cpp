@@ -3,18 +3,14 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2017 r.acc
- *
- *  BitmapFontProcessor.cpp
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 28.05.17
- *      Author: void
+ *
  */
 #include <brew/asset/core/BitmapFontProcessor.h>
 
 #include <brew/asset/AssetManager.h>
-
-#include <brew/video/BitmapFont.h>
 
 namespace brew {
 
