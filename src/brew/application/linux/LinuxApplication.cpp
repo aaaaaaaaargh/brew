@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2018 [insert fancy company name here]
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 31.01.18
  *
@@ -21,12 +21,17 @@ void LinuxApplication::start() {
 
     canvas->init(cfg.windowWidth, cfg.windowHeight);
 
+    listener->onStart();
+
     while(canvas->isInitialized()) {
-        // TODO...
+        canvas->pumpMessages();
+
+        // TODO ...
+
         canvas->renderFrame();
     }
 
-    canvas->drop();
+    listener->onQuit();
 }
 
 } /* namespace brew */

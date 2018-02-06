@@ -1,3 +1,12 @@
+##
+#
+#  |_  _ _
+#  |_)| (/_VV
+#
+#  Copyright 2015-2018 Marcus v. Keil
+#
+##
+
 cmake_minimum_required(VERSION 3.6)
 
 include (cmake/brew.cmake)
@@ -13,7 +22,7 @@ add_subdirectory(brew/state)
 add_subdirectory(brew/input)
 add_subdirectory(brew/application)
 
-#add_subdirectory(samples)
+add_subdirectory(samples)
 
 brew_build_monolithic_library()
 

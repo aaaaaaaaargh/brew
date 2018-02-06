@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2017 [insert fancy company name here]
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 30.01.18
  *

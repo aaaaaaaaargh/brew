@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2018 [insert fancy company name here]
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 31.01.18
  *
@@ -12,6 +12,9 @@
 #ifndef BREW_APPLICATION_H
 #define BREW_APPLICATION_H
 
+#include <brew/core/Object.h>
+#include <brew/application/ApplicationListener.h>
+
 namespace brew {
 
 /**
@@ -19,10 +22,10 @@ namespace brew {
  * @tparam ConfigT The application config structure type.
  */
 template<typename ConfigT>
-class Application {
+class Application : public Object {
 public:
-    explicit Application(const ConfigT& config)
-            : config(config) {
+    explicit Application(std::unique_ptr<ApplicationListener> && listener, const ConfigT& config)
+            : config(config), listener(std::move(listener)) {
     }
 
 public:
@@ -41,6 +44,9 @@ public:
 
 private:
     ConfigT config;
+
+protected:
+    std::unique_ptr<ApplicationListener> listener;
 };
 
 } /* namespace brew */

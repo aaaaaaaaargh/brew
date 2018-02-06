@@ -1,3 +1,12 @@
+##
+#
+#  |_  _ _
+#  |_)| (/_VV
+#
+#  Copyright 2015-2018 Marcus v. Keil
+#
+##
+
 # - Try to find BREW.
 # Usage: find_package(BREW REQUIRED [COMPONENTS component1 component2])
 # Once done this will define

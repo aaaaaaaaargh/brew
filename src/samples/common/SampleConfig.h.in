@@ -1,0 +1,27 @@
+/**
+ *
+ *  |_  _ _
+ *  |_)| (/_VV
+ *
+ *  Copyright 2015-2018 Marcus v. Keil
+ *
+ *  Created on: 07.01.18
+ *
+ */
+
+#ifndef BREW_SAMPLECONFIG_H
+#define BREW_SAMPLECONFIG_H
+
+#cmakedefine BREW_SAMPLE_VFS_ROOT "@BREW_SAMPLE_VFS_ROOT@"
+
+#include <brew/core/BuildInfo.h>
+
+#if BREW_PLATFORM == BREW_PLATFORM_LINUX
+#include <brew/application/linux/LinuxApplication.h>
+brew::LinuxApplicationConfig getSampleApplicationConfig() {
+    brew::LinuxApplicationConfig cfg;
+    return cfg;
+}
+#endif // BREW_PLATFORM
+
+#endif //BREW_SAMPLECONFIG_H
