@@ -1,6 +1,12 @@
 /**
- *  Copyright 2015-2018 random arts
+ *
+ *  |_  _ _
+ *  |_)| (/_VV
+ *
+ *  Copyright 2015-2018 Marcus v. Keil
+ *
  *  Created on: 07.01.18
+ *
  */
 
 #include <brew/asset/core/CoreAssetProcessors.h>
