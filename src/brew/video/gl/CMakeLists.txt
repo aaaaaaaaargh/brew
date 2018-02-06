@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.6)
 
+find_package(OpenGL QUIET)
+if(OPENGL_FOUND)
+
 project(BrewVideoGL)
 
 brew_library(VideoGL
@@ -21,3 +24,5 @@ brew_library(VideoGL
 brew_link_libraries(GL)
 
 # add_subdirectory(tests) # TODO: Fix the tests.
+
+endif()

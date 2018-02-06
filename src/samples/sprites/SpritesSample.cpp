@@ -146,9 +146,14 @@ public:
     Real t = 0;
 };
 
+#if BREW_PLATFORM == BREW_PLATFORM_LINUX
+#define ContextType GLContext
+#define CanvasType GLXCanvas
+#endif
+
 int main() {
-    GLContext ctx;
-    GLXCanvas canvas(ctx);
+    ContextType ctx;
+    CanvasType canvas(ctx);
 
     canvas.init(640, 480);
 

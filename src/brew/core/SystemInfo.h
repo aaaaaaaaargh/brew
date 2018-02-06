@@ -65,7 +65,7 @@ namespace detail {
  * A static class providing access to system relevant information.
  */
 class SystemInfo {
-private:
+public:
     SystemInfo() = delete;
 
 public:

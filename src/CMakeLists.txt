@@ -11,7 +11,7 @@ add_subdirectory(brew/video)
 add_subdirectory(brew/asset)
 add_subdirectory(brew/state)
 add_subdirectory(brew/input)
-add_subdirectory(brew/ui)
+add_subdirectory(brew/application)
 
 add_subdirectory(samples)
 
