@@ -15,7 +15,7 @@
 #include <brew/asset/AssetProcessor.h>
 #include <brew/video/VideoContext.h>
 
-#include "json.hpp"
+#include "json/json.hpp"
 
 namespace brew {
 
