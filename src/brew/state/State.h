@@ -16,6 +16,7 @@
 
 #include <memory>
 #include <atomic>
+#include <brew/core/Object.h>
 
 namespace brew {
 
@@ -24,7 +25,7 @@ class State;
 /**
  * A state completion token blocks a state from advancing until it is released.
  */
-class StateCompletionToken {
+class StateCompletitionToken {
     friend class State;
 
 public:
@@ -32,12 +33,12 @@ public:
      * Creates a new completion token. Prefer to use State::getCompletiionToken() instead.
      * @param owner The token owner.
      */
-    explicit StateCompletionToken(State& owner);
+    explicit StateCompletitionToken(State& owner);
 
     /**
      * Releases the token and unblocks the state.
      */
-    ~StateCompletionToken();
+    ~StateCompletitionToken();
 
 private:
     State& owner;
@@ -46,8 +47,8 @@ private:
 /**
  * A single state in a sequence.
  */
-class State {
-    friend class StateCompletionToken;
+class State : public Object {
+    friend class StateCompletitionToken;
 
 public:
     /**
@@ -60,7 +61,7 @@ public:
      * Gets a completion token that prevents the state from advancing as long as its not released.
      * @return A pointer to a new completion token.
      */
-    std::unique_ptr<StateCompletionToken> getCompletitionToken();
+    std::unique_ptr<StateCompletitionToken> getCompletitionToken();
 
     /**
      * Tries to advance the state. Either blocks if there are unreleased completion tokens or onAdvanceState() returns false.

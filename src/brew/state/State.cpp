@@ -7,12 +7,12 @@
 
 namespace brew {
 
-StateCompletionToken::StateCompletionToken(State& owner) :
+StateCompletitionToken::StateCompletitionToken(State& owner) :
         owner(owner) {
     owner.numActiveTokens++;
 }
 
-StateCompletionToken::~StateCompletionToken() {
+StateCompletitionToken::~StateCompletitionToken() {
     owner.numActiveTokens--;
 }
 

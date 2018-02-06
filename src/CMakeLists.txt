@@ -13,7 +13,8 @@ add_subdirectory(brew/state)
 add_subdirectory(brew/input)
 add_subdirectory(brew/application)
 
-add_subdirectory(samples)
+#add_subdirectory(samples)
 
 brew_build_monolithic_library()
+
 brew_build_monolithic_tests()

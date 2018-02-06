@@ -49,7 +49,11 @@ bool StateSequence::onAdvanceState() {
     return isDone();
 }
 
-std::unique_ptr<StateCompletionToken> State::getCompletitionToken() {
-    return std::make_unique<StateCompletionToken>(*this);
+void StateSequence::setLooping(bool isLooping) {
+    this->isLooping = isLooping;
+}
+
+std::unique_ptr<StateCompletitionToken> State::getCompletitionToken() {
+    return std::make_unique<StateCompletitionToken>(*this);
 }
 } /* namespace brew */

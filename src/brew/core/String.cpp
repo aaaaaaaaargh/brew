@@ -143,6 +143,20 @@ String toCamelCase(const String& str, bool capitalizeFirstLetter) {
     return ss.str();
 }
 
+String toUppercase(const String& str) {
+    String result = str;
+    std::transform(result.begin(), result.end(), result.begin(), ::toupper);
+
+    return result;
+}
+
+String toLowercase(const String& str) {
+    String result = str;
+    std::transform(result.begin(), result.end(), result.begin(), ::tolower);
+
+    return result;
+}
+
 String join(const String& separator, const std::vector<String>& components) {
     String result;
     bool first = true;

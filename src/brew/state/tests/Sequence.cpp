@@ -14,6 +14,7 @@
 #include <brew/core/String.h>
 #include <brew/state/StateSequence.h>
 #include <future>
+#include <utility>
 
 using namespace brew;
 
@@ -25,8 +26,8 @@ public:
 public:
     MyState() : counter(*static_cast<SizeT*>(nullptr)) {}
 
-    explicit MyState(const String& id, SizeT& counter)
-    : id(id), counter(counter) {
+    explicit MyState(String id, SizeT& counter)
+    : id(std::move(id)), counter(counter) {
 
     }
 
