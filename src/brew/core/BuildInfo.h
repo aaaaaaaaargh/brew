@@ -16,6 +16,11 @@
 #ifndef BREW_BUILDINFO_H
 #define BREW_BUILDINFO_H
 
+#if __cplusplus < 201402L
+// Not compiling against C++14.
+#error Not compiling against C++14.
+#endif
+
 #ifndef BREW_DEBUG
 #ifdef DEBUG
 #define BREW_DEBUG 1
@@ -63,7 +68,7 @@
 #define BREW_PLATFORM BREW_PLATFORM_LINUX
 #endif
 
-#if defined(__MINGW32__ ) or defined (MSW)
+#if defined(__MINGW32__) || defined (MSW)
 #undef BREW_PLATFORM
 #define BREW_PLATFORM BREW_PLATFORM_WINDOWS
 #endif

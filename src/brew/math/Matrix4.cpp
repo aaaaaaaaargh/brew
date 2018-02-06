@@ -63,6 +63,7 @@ Matrix4::Matrix4(const Matrix4& other) {
 
 Matrix4& Matrix4::operator=(const Matrix4& other) {
     std::copy(&other.a[0], &other.a[16], &a[0]);
+    return *this;
 }
 
 

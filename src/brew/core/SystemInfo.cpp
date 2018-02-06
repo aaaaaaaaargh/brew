@@ -62,7 +62,7 @@ SizeT SystemInfo::getTotalMemory() {
 }
 
 const String& SystemInfo::getCWD() {
-    systemQuery.getCWD();
+    return systemQuery.getCWD();
 }
 
 } /* namespace brew */

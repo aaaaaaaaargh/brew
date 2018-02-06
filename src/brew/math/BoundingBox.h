@@ -56,7 +56,7 @@ public:
 	BoundingBox operator += (const Vec3& point);
 	BoundingBox operator + (const BoundingBox& other) const;
 	BoundingBox operator + (const Vec3& point) const;
-	BoundingBox operator *= (const Matrix4& transform);
+	BoundingBox& operator *= (const Matrix4& transform);
 	BoundingBox operator * (const Matrix4& transform) const;
 
 	bool operator == (const BoundingBox& other) const;

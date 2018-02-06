@@ -92,7 +92,7 @@ BoundingBox BoundingBox::operator +(const Vec3& point) const {
 	return bb;
 }
 
-BoundingBox BoundingBox::operator*=(const Matrix4& transform) {
+BoundingBox& BoundingBox::operator*=(const Matrix4& transform) {
 	Real x0 = min.x, y0 = min.y, z0 = min.z, x1 = max.x, y1 = max.y, z1 = max.z;
 	this->operator=(BoundingBox::INF);
 	Vec3 tmpVector;
@@ -122,6 +122,8 @@ BoundingBox BoundingBox::operator*=(const Matrix4& transform) {
 
 	tmpVector.set(x1, y1, z1);
 	this->operator+=(transform * tmpVector);
+
+	return *this;
 }
 
 BoundingBox BoundingBox::operator*(const Matrix4& transform) const {

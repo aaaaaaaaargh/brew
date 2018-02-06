@@ -74,11 +74,12 @@ public:
      * @return The current working directory.
      */
     const String& getCWD() override {
-        return "stub";
+        static const String cwd = ".";
+        return cwd;
     }
 };
 
 } /* namespace detail */
 } /* namespace brew */
 
-#endif //BREW_LINUXSYSTEMINFO_H
+#endif //BREW_ANDROIDSYSTEMINFO_H

@@ -8,7 +8,7 @@ option(BREW_BUILD_MONOLITHIC_TESTS "Create a single target for all unit tests." 
 # @param name The name of the test, will be prefixed with "Test_".
 macro(brew_add_test name)
     if(BREW_BUILD_TESTS)
-        find_package(GTest QUIET)
+        find_package(GTest REQUIRED)
         set(target "Test_${name}")
 
         project(${target})

@@ -22,6 +22,10 @@ function(_brew_get_component_dependencies component ret)
     set(_BREW_INPUT_DEPENDENCIES Core)
     set(_BREW_INPUTLINUX_DEPENDENCIES Input VideoLinux)
 
+    set(_BREW_APPLICATION_DEPENDENCIES Core Math Video FileIO Assets Input)
+    set(_BREW_APPLICATIONLINUX_DEPENDENCIES Application InputLinux VideoLinux)
+    set(_BREW_APPLICATIONANDROID_DEPENDENCIES Application)
+
     string(TOUPPER ${component} icomponent)
 
     set(localdeps ${_BREW_${icomponent}_DEPENDENCIES})
