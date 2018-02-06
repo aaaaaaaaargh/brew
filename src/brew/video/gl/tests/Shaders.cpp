@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2018 [insert fancy company name here]
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 07.09.17
  *
@@ -17,7 +17,7 @@
 using namespace brew;
 
 TEST_F(GLContextTest, SetShaderVars) {
-    ShaderVariablesLayout shaderDef;
+    ShaderVariablesLayout shaderDef(false);
     shaderDef.define<Real>("foo");
 
     auto shaderVars = context->createShaderVariables(shaderDef);
@@ -34,7 +34,7 @@ TEST_F(GLContextTest, SetShaderVars) {
 }
 
 TEST_F(GLContextTest, UpdateShaderVars) {
-    ShaderVariablesLayout shaderDef;
+    ShaderVariablesLayout shaderDef(false);
     shaderDef.define<Real>("foo");
 
     auto shaderVars = context->createShaderVariables(shaderDef);
@@ -54,7 +54,7 @@ TEST_F(GLContextTest, UpdateShaderVars) {
 }
 
 TEST_F(GLContextTest, CreateShaderVarsBufferWithSingleValue) {
-    ShaderVariablesLayout shaderDef;
+    ShaderVariablesLayout shaderDef(false);
     shaderDef.define<Real>("foo");
 
     auto shaderVars = context->createShaderVariables(shaderDef);
@@ -74,7 +74,7 @@ TEST_F(GLContextTest, CreateShaderVarsBufferWithSingleValue) {
 }
 
 TEST_F(GLContextTest, CreateShaderVarsBufferWithArray) {
-    ShaderVariablesLayout shaderDef;
+    ShaderVariablesLayout shaderDef(false);
     shaderDef.define<Real>("foo", 3);
 
     auto shaderVars = context->createShaderVariables(shaderDef);
@@ -98,7 +98,7 @@ TEST_F(GLContextTest, CreateShaderVarsBufferWithArray) {
 }
 
 TEST_F(GLContextTest, UpdateShaderVarsBuffer) {
-    ShaderVariablesLayout shaderDef;
+    ShaderVariablesLayout shaderDef(false);
     shaderDef.define<Real>("foo");
 
     auto shaderVars = context->createShaderVariables(shaderDef);
@@ -111,7 +111,7 @@ TEST_F(GLContextTest, UpdateShaderVarsBuffer) {
 
     context->processPendingOperations();
 
-    GLShaderVariablesContextHandle& handle = static_cast<GLShaderVariablesContextHandle&>(**shaderVars);
+    auto& handle = static_cast<GLShaderVariablesContextHandle&>(**shaderVars);
 
     EXPECT_EQ(sizeof(Real), handle.getBuffer().getSize());
 
@@ -122,12 +122,12 @@ TEST_F(GLContextTest, UpdateShaderVarsBuffer) {
 }
 
 TEST_F(GLContextTest, ShaderInterfaceBlockGeneration) {
-    ShaderVariablesLayout shaderDef;
+    ShaderVariablesLayout shaderDef(false);
     shaderDef.define<Real>("foo");
     shaderDef.define<Vec3>("bar");
-    shaderDef.define<Texture>("baz");
+    shaderDef.define<std::shared_ptr<Texture> >("baz");
 
-    String expected = "layout (std140) uniform quux{float foo;float bar[3];sampler2D baz;};";
+    String expected = "layout (std140) uniform quux{float foo;vec3 bar;};uniform sampler2D baz;";
 
     EXPECT_EQ(expected, GLShaderVariablesContextHandle::generateUniformDeclarationSource(shaderDef, "quux"));
 }

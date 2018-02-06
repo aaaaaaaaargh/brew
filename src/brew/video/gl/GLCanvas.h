@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2018 [insert fancy company name here]
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Aug 22, 2016
  *
@@ -27,6 +27,11 @@ public:
 	 * @param context The context to use for this canvas.
 	 */
 	explicit GLCanvas(GLContext& context);
+
+    /**
+     * Deletes the canvas.
+     */
+	virtual ~GLCanvas() = default;
 
 	/**
      * Called when a frame is about to be rendered.

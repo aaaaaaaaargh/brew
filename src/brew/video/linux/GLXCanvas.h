@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2018 [insert fancy company name here]
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: 05.09.17
  *
@@ -29,7 +29,7 @@ public:
 	 * Creates a new GLX canvas.
 	 * @param context The GL context for this canvas.
 	 */
-	GLXCanvas(GLContext& context);
+	explicit GLXCanvas(GLContext& context);
 
 public:
 	/**

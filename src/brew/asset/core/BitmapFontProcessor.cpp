@@ -107,14 +107,14 @@ void BitmapFontProcessor::load(AssetPipeline& assetPipeline,
     // Parse the lines.
     while (std::getline(*fs.get(), line)) {
         auto values = detail::parseLine(line);
-        const String& tag = values["_tag"];
+        const String& lineTag = values["_tag"];
 
-        if(tag == "common") {
+        if(lineTag == "common") {
             baseline = std::stoi(values["base"]);
             lineHeight = std::stoi(values["lineHeight"]);
         }
 
-        if(tag == "page") {
+        if(lineTag == "page") {
             String fileName = path + values["file"];
             SizeT id = std::stoul(values["id"]);
 
@@ -128,7 +128,7 @@ void BitmapFontProcessor::load(AssetPipeline& assetPipeline,
             );
         }
 
-        if(tag == "char") {
+        if(lineTag == "char") {
             wchar_t codepoint = static_cast<wchar_t>(std::stoul(values["id"]));
             SizeT page = std::stoul(values["page"]);
 
@@ -139,7 +139,7 @@ void BitmapFontProcessor::load(AssetPipeline& assetPipeline,
                     std::stoi(values["height"])
             );
 
-            Font::Glyph glyph;
+            Font::Glyph glyph{};
 
             glyph.codePoint = codepoint;
             glyph.advance = std::stoi(values["xadvance"]);

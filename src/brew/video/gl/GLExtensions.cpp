@@ -3,7 +3,7 @@
  *  |_  _ _
  *  |_)| (/_VV
  *
- *  Copyright 2015-2018 [insert fancy company name here]
+ *  Copyright 2015-2018 Marcus v. Keil
  *
  *  Created on: Birth of universe.
  *
@@ -37,7 +37,8 @@ void GLExtensions::init() {
 template<typename PFNPROC>
 void initExtension(const String& name, PFNPROC& ptr) {
 	if (ptr != nullptr) {
-		throw RuntimeException("GL extension '" + name + "' is already initialized!");
+		return;
+		//throw RuntimeException("GL extension '" + name + "' is already initialized!");
 	}
 
 	ptr = (PFNPROC) GLExtensions::getProcAddress(name);
