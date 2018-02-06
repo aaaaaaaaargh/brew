@@ -29,7 +29,7 @@ public:
 	 * Creates a new GLX canvas.
 	 * @param context The GL context for this canvas.
 	 */
-	GLXCanvas(GLContext& context);
+	explicit GLXCanvas(GLContext& context);
 
 public:
 	/**

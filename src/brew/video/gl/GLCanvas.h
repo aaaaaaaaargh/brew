@@ -28,6 +28,11 @@ public:
 	 */
 	explicit GLCanvas(GLContext& context);
 
+    /**
+     * Deletes the canvas.
+     */
+	virtual ~GLCanvas() = default;
+
 	/**
      * Called when a frame is about to be rendered.
      */
